@@ -1445,9 +1445,11 @@ function AdminAdvisorUpdatesTab() {
   const [reply, setReply]           = useState("");
   const [replying, setReplying]     = useState(false);
   const [roleFilter, setRoleFilter] = useState("all"); // "all" | "advisor" | "retail"
+  const pollRef = useRef(null);
 
   const load = async () => {
-    const data = await dbGet("support_tickets", "select=*,profiles(full_name,email,role)&order=created_at.desc");
+    // Use explicit relationship name to avoid ambiguous join errors from PostgREST
+    const data = await dbGet("support_tickets", "select=*,profiles!support_tickets_user_id_fkey(full_name,email,role)&order=created_at.desc");
     setAllTickets(data || []);
     setLoading(false);
   };
@@ -1463,9 +1465,17 @@ function AdminAdvisorUpdatesTab() {
 
   useEffect(() => { load(); }, []); // eslint-disable-line
 
+  useEffect(() => {
+    clearInterval(pollRef.current);
+    pollRef.current = setInterval(() => {
+      load();
+    }, 15_000);
+    return () => clearInterval(pollRef.current);
+  }, []); // eslint-disable-line
+
   const updateStatus = async (id, status) => {
     await dbPatch("support_tickets", id, { status });
-    setTickets(prev => prev.map(t => t.id===id ? {...t, status} : t));
+    setAllTickets(prev => prev.map(t => t.id===id ? {...t, status} : t));
     setSelected(prev => prev?.id===id ? {...prev, status} : prev);
   };
 
