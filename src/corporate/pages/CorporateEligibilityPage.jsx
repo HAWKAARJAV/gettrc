@@ -1,0 +1,288 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import CorporateAuthShell from "../components/CorporateAuthShell";
+import { RETAIL_THEME } from "../../config/retailTheme";
+import { registerCorporateApplicant } from "../services/corporateAuth";
+
+const C = RETAIL_THEME.colors;
+const SERIF = RETAIL_THEME.fonts.serif;
+const SANS = RETAIL_THEME.fonts.sans;
+const INPUT_STYLE = {
+  width: "100%",
+  padding: "13px 15px",
+  borderRadius: RETAIL_THEME.radius.sm,
+  border: `1.5px solid ${C.border}`,
+  color: C.navy,
+  fontFamily: SANS,
+  fontSize: 14,
+  outline: "none",
+  boxSizing: "border-box",
+  minWidth: 0,
+  maxWidth: "100%",
+};
+
+function SelectPill({ label, value, active, onClick }) {
+  return (
+    <button type="button" onClick={() => onClick(value)} style={{ padding: "11px 14px", borderRadius: RETAIL_THEME.radius.sm, border: `1px solid ${active ? C.gold : C.border}`, background: active ? "rgba(201,168,76,.12)" : C.white, color: C.navy, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+      {label}
+    </button>
+  );
+}
+
+function SectionTitle({ children }) {
+  return <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".14em", marginBottom: 10 }}>{children}</div>;
+}
+
+export default function CorporateEligibilityPage() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({
+    companyName: "",
+    email: "",
+    phone: "",
+    registeredCountry: "",
+    industry: "",
+    website: "",
+    entityType: "",
+    employeeCount: "",
+    annualRevenue: "",
+    countriesOfOperation: "",
+    uaePresence: "",
+    purpose: "",
+    targetJurisdiction: "",
+    urgency: "",
+    taxStructure: "",
+    useCase: "",
+    password: "",
+    confirmPassword: "",
+    terms: false,
+  });
+
+  const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const handleSubmit = async () => {
+    const required = ["companyName", "email", "phone", "registeredCountry", "industry", "entityType", "employeeCount", "annualRevenue", "countriesOfOperation", "uaePresence", "purpose", "targetJurisdiction", "urgency", "taxStructure", "useCase", "password", "confirmPassword"];
+    const missing = required.find((field) => !String(form[field] || "").trim()) || (!form.terms ? "terms" : "");
+    if (missing) {
+      setError(missing === "terms" ? "Please agree to the Terms & Privacy Policy." : "Please complete every field before submitting.");
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      await registerCorporateApplicant({
+        companyName: form.companyName,
+        email: form.email,
+        phone: form.phone,
+        registeredCountry: form.registeredCountry,
+        industry: form.industry,
+        website: form.website,
+        entityType: form.entityType,
+        employeeCount: Number(form.employeeCount),
+        annualRevenue: form.annualRevenue,
+        countriesOfOperation: form.countriesOfOperation,
+        uaePresence: form.uaePresence,
+        purpose: form.purpose,
+        targetJurisdiction: form.targetJurisdiction,
+        urgency: form.urgency,
+        taxStructure: form.taxStructure,
+        useCase: form.useCase,
+        password: form.password,
+      });
+
+      navigate(`/corporate/login?email=${encodeURIComponent(form.email)}`);
+    } catch (submitError) {
+      setError(submitError.message || "Unable to submit corporate eligibility request.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <CorporateAuthShell
+      actions={(
+        <Link to="/corporate/login" style={{ color: C.white, textDecoration: "none", fontSize: 14, fontWeight: 600 }}>Sign In</Link>
+      )}
+    >
+      <style>{`
+        * { box-sizing: border-box; }
+        .corp-eligibility-card * { min-width: 0; }
+        input, button { max-width: 100%; }
+        @media (max-width: 1120px) {
+          .corp-eligibility-layout { grid-template-columns: 1fr !important; }
+          .corp-eligibility-card { width: 100% !important; }
+        }
+        @media (max-width: 720px) {
+          .corp-eligibility-card, .corp-eligibility-panel { width: 100% !important; }
+          .corp-eligibility-two-col { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
+      <div className="corp-eligibility-layout" style={{ display: "grid", gridTemplateColumns: "minmax(300px, .95fr) minmax(340px, 1.05fr)", gap: 24, alignItems: "start", paddingBottom: 16 }}>
+        <div style={{ paddingTop: 16 }}>
+          <div style={{ maxWidth: 560 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".14em", marginBottom: 14 }}>Enterprise Eligibility Workspace</div>
+            <h1 style={{ fontFamily: SERIF, fontSize: "clamp(40px, 4.6vw, 66px)", lineHeight: 1, color: C.white, marginBottom: 18 }}>Check Your Corporate TRC Eligibility</h1>
+            <p style={{ color: "rgba(255,255,255,.78)", fontSize: 16, lineHeight: 1.9, maxWidth: 540, marginBottom: 22 }}>
+              Our compliance specialists manually review each corporate structure to determine applicable tax residency pathways and treaty benefits.
+            </p>
+
+            <div style={{ display: "grid", gap: 12, marginBottom: 22 }}>
+              {["Enterprise compliance review", "Multi-jurisdiction support", "Manual specialist onboarding", "Dedicated compliance managers"].map((item) => (
+                <div key={item} style={{ display: "flex", gap: 10, alignItems: "center", color: C.white, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.08)", borderRadius: RETAIL_THEME.radius.sm, padding: "12px 14px" }}>
+                  <span style={{ color: C.goldLight }}>✓</span>
+                  <span style={{ fontSize: 14, fontWeight: 600 }}>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.08)", borderRadius: RETAIL_THEME.radius.lg, padding: 20 }}>
+              <SectionTitle>Process</SectionTitle>
+              <div style={{ display: "grid", gap: 12 }}>
+                {[
+                  ["1", "Submit Corporate Eligibility Request"],
+                  ["2", "Compliance Team Reviews Structure"],
+                  ["3", "Receive Corporate Eligibility Confirmation"],
+                  ["4", "Consultation & Payment"],
+                  ["5", "Begin Compliance Processing"],
+                ].map(([num, title]) => (
+                  <div key={title} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{num}</div>
+                    <div>
+                      <div style={{ color: C.white, fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{title}</div>
+                      <div style={{ color: "rgba(255,255,255,.68)", fontSize: 13, lineHeight: 1.7 }}>Corporate compliance teams review the structure and route the file appropriately.</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="corp-eligibility-card" style={{ width: "100%", minWidth: 0, background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.glass, overflow: "hidden", boxSizing: "border-box" }}>
+          <div style={{ padding: 24, borderBottom: `1px solid ${C.border}`, background: `linear-gradient(135deg, ${C.offWhite} 0%, ${C.white} 100%)` }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>Corporate Eligibility + Registration</div>
+            <h2 style={{ fontFamily: SERIF, fontSize: 32, color: C.navy, marginBottom: 6 }}>Tell us about your business structure</h2>
+            <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8 }}>Submit your corporate eligibility request and create your account in one guided step.</p>
+          </div>
+
+          <div style={{ padding: 24, display: "grid", gap: 20, width: "100%", minWidth: 0, boxSizing: "border-box" }}>
+            <div>
+              <SectionTitle>Company Details</SectionTitle>
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
+                {[
+                  ["Company Name", "companyName", "Registered company name"],
+                  ["Official Business Email", "email", "business@example.com"],
+                  ["Contact Number", "phone", "+971 ..."],
+                  ["Registered Country", "registeredCountry", "Country of incorporation"],
+                  ["Industry Type", "industry", "Industry or sector"],
+                  ["Company Website", "website", "Optional website"],
+                ].map(([label, key, placeholder]) => (
+                  <div key={key}>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</label>
+                    <input value={form[key]} onChange={(e) => update(key, e.target.value)} placeholder={placeholder} style={INPUT_STYLE} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <SectionTitle>Business Structure</SectionTitle>
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Type of Entity</label>
+                  <input value={form.entityType} onChange={(e) => update("entityType", e.target.value)} placeholder="LLC / Free Zone / Holding Company / Startup / Agency / Other" style={INPUT_STYLE} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Number of Employees</label>
+                  <input value={form.employeeCount} onChange={(e) => update("employeeCount", e.target.value)} type="number" placeholder="e.g. 25" style={INPUT_STYLE} />
+                </div>
+              </div>
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Annual Revenue Range</label>
+                  <input value={form.annualRevenue} onChange={(e) => update("annualRevenue", e.target.value)} placeholder="e.g. USD 1M - 5M" style={INPUT_STYLE} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Countries of Operation</label>
+                  <input value={form.countriesOfOperation} onChange={(e) => update("countriesOfOperation", e.target.value)} placeholder="List primary markets" style={INPUT_STYLE} />
+                </div>
+              </div>
+              <div style={{ marginTop: 14 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Existing UAE Presence?</label>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", rowGap: 10 }}>
+                  <SelectPill label="Yes" value="yes" active={form.uaePresence === "yes"} onClick={(value) => update("uaePresence", value)} />
+                  <SelectPill label="No" value="no" active={form.uaePresence === "no"} onClick={(value) => update("uaePresence", value)} />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <SectionTitle>TRC Requirements</SectionTitle>
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Purpose of Corporate TRC</label>
+                  <input value={form.purpose} onChange={(e) => update("purpose", e.target.value)} placeholder="Treaty access, banking, procurement, etc." style={INPUT_STYLE} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Target Jurisdiction</label>
+                  <input value={form.targetJurisdiction} onChange={(e) => update("targetJurisdiction", e.target.value)} placeholder="Jurisdiction to support" style={INPUT_STYLE} />
+                </div>
+              </div>
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Compliance Urgency</label>
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", rowGap: 10 }}>
+                    {["standard", "urgent", "high"].map((value) => (
+                      <SelectPill key={value} label={value === "high" ? "High Priority" : value.charAt(0).toUpperCase() + value.slice(1)} value={value} active={form.urgency === value} onClick={(val) => update("urgency", val)} />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Current Tax Structure</label>
+                  <input value={form.taxStructure} onChange={(e) => update("taxStructure", e.target.value)} placeholder="Current tax framework or entity setup" style={INPUT_STYLE} />
+                </div>
+              </div>
+              <div style={{ marginTop: 14 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Expected Use Case</label>
+                <input value={form.useCase} onChange={(e) => update("useCase", e.target.value)} placeholder="Banking, procurement, restructuring, treaty support, etc." style={INPUT_STYLE} />
+              </div>
+            </div>
+
+            <div>
+              <SectionTitle>Account Setup</SectionTitle>
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Password</label>
+                  <input value={form.password} type="password" onChange={(e) => update("password", e.target.value)} placeholder="Create a password" style={INPUT_STYLE} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirm Password</label>
+                  <input value={form.confirmPassword} type="password" onChange={(e) => update("confirmPassword", e.target.value)} placeholder="Confirm password" style={INPUT_STYLE} />
+                </div>
+              </div>
+
+              <label style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 14, fontSize: 14, color: C.navy, lineHeight: 1.7, flexWrap: "wrap", rowGap: 10 }}>
+                <input checked={form.terms} onChange={(e) => update("terms", e.target.checked)} type="checkbox" style={{ marginTop: 4 }} />
+                <span>I agree to Terms &amp; Privacy Policy</span>
+              </label>
+            </div>
+
+            {error && <div style={{ background: C.errorBg, border: `1px solid ${C.errorBorder}`, color: C.error, borderRadius: RETAIL_THEME.radius.sm, padding: "12px 14px", fontSize: 13 }}>{error}</div>}
+
+            <button onClick={handleSubmit} disabled={loading} style={{ width: "100%", background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "15px 18px", fontWeight: 700, fontSize: 15, cursor: loading ? "not-allowed" : "pointer", boxShadow: RETAIL_THEME.shadows.gold }}>
+              {loading ? "Submitting…" : "Submit Corporate Eligibility Request"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </CorporateAuthShell>
+  );
+}

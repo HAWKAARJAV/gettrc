@@ -1,0 +1,764 @@
+{
+  "generated": "2026-05-23T07:44:18.368Z",
+  "summary": {
+    "status": "No critical blockers detected in automated runs"
+  },
+  "findings": {
+    "critical": [],
+    "medium": [
+      {
+        "type": "deep_link",
+        "action_url": "/dashboard",
+        "title": null,
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=documents&doc=ee281d1a-469b-413f-8e8d-c9a8580f9cda",
+        "title": "Document rejected",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=b7613e5b-ff2b-44fb-8017-b05d551307ba",
+        "title": "Document rejected",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=41df0d72-1cd9-4f47-9620-3a7412adc880",
+        "title": "Document rejected",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=061fe06a-00ad-4188-b268-114274068152",
+        "title": "Document rejected",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=37c749ba-4c2a-4048-bd1f-4a0e5f3f5d68",
+        "title": "Document rejected",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92?panel=documents&doc=ac22d690-f3e3-4c7d-8f8c-332dc8109c15",
+        "title": "Document rejected",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776",
+        "title": "Advisor assigned",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions",
+        "title": "Payment update",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+        "title": "Advisor assigned",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92?panel=actions",
+        "title": "Payment update",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92",
+        "title": "Advisor assigned",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=actions",
+        "title": "Payment update",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      },
+      {
+        "type": "deep_link",
+        "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions&focus=advisor",
+        "title": "Advisor assigned",
+        "reason": "notification action_url does not map cleanly to app route or is generic",
+        "impact": "user cannot deep-link into specific application or panel",
+        "affected_roles": [
+          "retail",
+          "advisor",
+          "admin"
+        ]
+      }
+    ],
+    "low": [
+      {
+        "type": "notifications_count",
+        "application": "dd41b619-97b3-4202-be28-7255d37e4f92",
+        "notifications_after": 12
+      }
+    ]
+  },
+  "sources": {
+    "full": {
+      "timestamp": "2026-05-23T07:36:52.031Z",
+      "scenarios": [
+        {
+          "role": "retail",
+          "report": {
+            "application_id": "b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+            "applicant_type": "retail",
+            "steps": [
+              {
+                "step": "fetch_initial",
+                "ok": true,
+                "app": {
+                  "id": "b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+                  "user_id": "364bca5b-aeed-4afb-9447-03b6d00c3f38",
+                  "country": null,
+                  "advisor_name": "Arinjay",
+                  "status": "submitted",
+                  "gov_fee": null,
+                  "advisor_fee": null,
+                  "treaty": null,
+                  "notes": null,
+                  "created_at": "2026-05-22T11:11:21.87682",
+                  "applicant_type": "retail",
+                  "advisor_id": "1b51c305-f7e8-471f-a9dc-5449960d7c98",
+                  "application_type": "trc_eligibility",
+                  "eligibility_request_id": "1b07c318-4db0-443a-be13-97291aa86b02",
+                  "workflow_state": "payment_completed",
+                  "payment_state": "completed",
+                  "review_state": "pending_review",
+                  "assigned_manager": null,
+                  "started_at": "2026-05-22T11:11:21.87682",
+                  "completed_at": null,
+                  "advisor_assigned_at": "2026-05-22T22:43:30.311"
+                }
+              },
+              {
+                "step": "create_document",
+                "ok": true,
+                "doc": {
+                  "id": "b7613e5b-ff2b-44fb-8017-b05d551307ba",
+                  "user_id": null,
+                  "application_id": "b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+                  "file_name": null,
+                  "file_size": null,
+                  "category": null,
+                  "status": "pending",
+                  "rejection_note": null,
+                  "uploaded_at": "2026-05-23T07:36:52.236",
+                  "review_status": "pending",
+                  "reviewer_notes": null,
+                  "document_type": "emirates_id",
+                  "file_url": "uploads/e2e-emirates-id.pdf",
+                  "uploaded_by": "364bca5b-aeed-4afb-9447-03b6d00c3f38",
+                  "created_at": "2026-05-23T07:36:52.414098"
+                }
+              },
+              {
+                "step": "review_document_reject",
+                "ok": true,
+                "review": [
+                  {
+                    "id": "b7613e5b-ff2b-44fb-8017-b05d551307ba",
+                    "user_id": null,
+                    "application_id": "b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+                    "file_name": null,
+                    "file_size": null,
+                    "category": null,
+                    "status": "pending",
+                    "rejection_note": null,
+                    "uploaded_at": "2026-05-23T07:36:52.236",
+                    "review_status": "rejected",
+                    "reviewer_notes": "E2E rejection",
+                    "document_type": "emirates_id",
+                    "file_url": "uploads/e2e-emirates-id.pdf",
+                    "uploaded_by": "364bca5b-aeed-4afb-9447-03b6d00c3f38",
+                    "created_at": "2026-05-23T07:36:52.414098"
+                  }
+                ]
+              },
+              {
+                "step": "assign_advisor",
+                "ok": true,
+                "assign": {
+                  "id": "b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+                  "user_id": "364bca5b-aeed-4afb-9447-03b6d00c3f38",
+                  "country": null,
+                  "advisor_name": "E2E Advisor",
+                  "status": "submitted",
+                  "gov_fee": null,
+                  "advisor_fee": null,
+                  "treaty": null,
+                  "notes": null,
+                  "created_at": "2026-05-22T11:11:21.87682",
+                  "applicant_type": "retail",
+                  "advisor_id": "364bca5b-aeed-4afb-9447-03b6d00c3f38",
+                  "application_type": "trc_eligibility",
+                  "eligibility_request_id": "1b07c318-4db0-443a-be13-97291aa86b02",
+                  "workflow_state": "advisor_assigned",
+                  "payment_state": "completed",
+                  "review_state": "pending_review",
+                  "assigned_manager": null,
+                  "started_at": "2026-05-22T11:11:21.87682",
+                  "completed_at": null,
+                  "advisor_assigned_at": "2026-05-23T07:36:52.554"
+                }
+              },
+              {
+                "step": "update_payment",
+                "ok": true,
+                "pay": {
+                  "id": "b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+                  "user_id": "364bca5b-aeed-4afb-9447-03b6d00c3f38",
+                  "country": null,
+                  "advisor_name": "E2E Advisor",
+                  "status": "submitted",
+                  "gov_fee": null,
+                  "advisor_fee": null,
+                  "treaty": null,
+                  "notes": null,
+                  "created_at": "2026-05-22T11:11:21.87682",
+                  "applicant_type": "retail",
+                  "advisor_id": "364bca5b-aeed-4afb-9447-03b6d00c3f38",
+                  "application_type": "trc_eligibility",
+                  "eligibility_request_id": "1b07c318-4db0-443a-be13-97291aa86b02",
+                  "workflow_state": "payment_completed",
+                  "payment_state": "completed",
+                  "review_state": "pending_review",
+                  "assigned_manager": null,
+                  "started_at": "2026-05-22T11:11:21.87682",
+                  "completed_at": null,
+                  "advisor_assigned_at": "2026-05-23T07:36:52.554"
+                }
+              },
+              {
+                "step": "fetch_related",
+                "ok": true,
+                "relatedCounts": {
+                  "documents": 4,
+                  "notifications": 32,
+                  "history": 30
+                }
+              }
+            ]
+          }
+        },
+        {
+          "role": "admin",
+          "application": "cc176f1e-0a2b-4d1c-bd02-1d643e22f776",
+          "actions": {
+            "adminAssign": true,
+            "reviewedDocs": 1
+          }
+        },
+        {
+          "role": "advisor",
+          "application": "dd41b619-97b3-4202-be28-7255d37e4f92",
+          "reviewed": 1
+        },
+        {
+          "role": "advisor",
+          "application": "b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+          "reviewed": 4
+        },
+        {
+          "role": "advisor",
+          "application": "cc176f1e-0a2b-4d1c-bd02-1d643e22f776",
+          "reviewed": 1
+        }
+      ],
+      "brokenRoutes": [],
+      "deepLinkFailures": [
+        {
+          "notif": "3f1d0914-abcd-4889-9e63-6131ddb2e0a6",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "81017bac-2a56-4947-af16-b2ce5d676dbc",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "bf54b04b-da94-4fde-aced-9618a6489c09",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "1eb14140-0300-4a46-b5fb-5a10ef518f16",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "3ba70dc1-b880-4e71-8566-5d071fde791a",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "ff3cb7e9-7a3b-40c9-8bc9-a1b56c653229",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "3633c068-c186-4e05-9daf-d6bc0c17690f",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "ebb8c846-2002-4be6-9933-6de53b81362a",
+          "action_url": "/dashboard"
+        },
+        {
+          "notif": "50e3a111-b123-454b-a99c-a0984ee52e07",
+          "action_url": "/dashboard"
+        }
+      ],
+      "desyncs": []
+    },
+    "integ": {
+      "timestamp": "2026-05-23T07:40:17.563Z",
+      "routes": [
+        "*",
+        "/",
+        "/about",
+        "/admin",
+        "/check-eligibility",
+        "/corporate/check-eligibility",
+        "/corporate/login",
+        "/countries",
+        "/dashboard",
+        "/eligibility-status",
+        "/login",
+        "/marketplace",
+        "/onboarding",
+        "/pricing",
+        "/profile",
+        "/resources",
+        "/solutions",
+        "/support",
+        "/uae",
+        "/verify-email",
+        "advisor",
+        "advisors",
+        "applications",
+        "applications/:id",
+        "billing",
+        "compliance-center",
+        "dashboard",
+        "documents",
+        "eligibility-status",
+        "employees",
+        "messages",
+        "profile",
+        "reports",
+        "residency",
+        "settings",
+        "support"
+      ],
+      "links": [
+        "/"
+      ],
+      "navs": [],
+      "notifAudit": {
+        "total": 55,
+        "failures": [
+          {
+            "id": "b29d91dd-3d9d-47ab-aea5-1ae6c76d08fe",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=documents&doc=ee281d1a-469b-413f-8e8d-c9a8580f9cda",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "f12193af-23bd-40e1-a4ee-81814225ad8f",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=b7613e5b-ff2b-44fb-8017-b05d551307ba",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "03bbd2b6-31a4-4e7d-9741-2ce7b83a5c61",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=41df0d72-1cd9-4f47-9620-3a7412adc880",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "90e9b7e2-ab2f-4df9-b356-813902f921dc",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=061fe06a-00ad-4188-b268-114274068152",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "d33da146-c67e-4497-aae6-00e47759883d",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=37c749ba-4c2a-4048-bd1f-4a0e5f3f5d68",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "839f2a47-0c12-4710-9199-650fccd03e4b",
+            "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92?panel=documents&doc=ac22d690-f3e3-4c7d-8f8c-332dc8109c15",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "00c14b90-0da0-4857-9d44-679e3a0bad32",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=documents&doc=ee281d1a-469b-413f-8e8d-c9a8580f9cda",
+            "title": "Document rejected"
+          },
+          {
+            "id": "c37cb21d-9adc-4611-a7ff-2f6972568743",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776",
+            "title": "Advisor assigned (admin)"
+          },
+          {
+            "id": "26fbe4ac-d464-4f7e-ad41-3003e01e5dd6",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions",
+            "title": "Payment update"
+          },
+          {
+            "id": "444c8587-f5ec-47c4-8345-f82469f8f179",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+            "title": "Advisor assigned"
+          },
+          {
+            "id": "241040cc-4c90-4592-9bb2-570e0391b354",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=b7613e5b-ff2b-44fb-8017-b05d551307ba",
+            "title": "Document rejected"
+          },
+          {
+            "id": "2329f6c3-56c3-4ff8-83b0-dd309c941f8f",
+            "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92?panel=documents&doc=ac22d690-f3e3-4c7d-8f8c-332dc8109c15",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "d4d895be-a35c-4758-b8f8-c7e3bb04561c",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=documents&doc=ee281d1a-469b-413f-8e8d-c9a8580f9cda",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "217bc80e-b24a-4fdd-aa4d-222f894cb361",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=41df0d72-1cd9-4f47-9620-3a7412adc880",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "c81dcf49-38c2-4b15-984c-8c6084dedb42",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=061fe06a-00ad-4188-b268-114274068152",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "f9c50a59-2b15-4e8d-b01c-311b879c6b74",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=37c749ba-4c2a-4048-bd1f-4a0e5f3f5d68",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "95366a21-319f-46a3-8aa4-b95cb1e7ccd2",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=41df0d72-1cd9-4f47-9620-3a7412adc880",
+            "title": "Document rejected"
+          },
+          {
+            "id": "846419ce-44c1-41e2-be73-04c7a1ca842a",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=061fe06a-00ad-4188-b268-114274068152",
+            "title": "Document rejected"
+          },
+          {
+            "id": "da1dce95-920e-4f7f-b688-2ad1a38e4ff8",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=37c749ba-4c2a-4048-bd1f-4a0e5f3f5d68",
+            "title": "Document rejected"
+          },
+          {
+            "id": "24d20516-0a46-46fc-ba8c-f1d58a478227",
+            "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92?panel=documents&doc=ac22d690-f3e3-4c7d-8f8c-332dc8109c15",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "ef73ec27-4673-4c57-9818-744a0b9dbad0",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=documents&doc=ee281d1a-469b-413f-8e8d-c9a8580f9cda",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "e3c157f4-50f8-4628-876a-09c69448d148",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=41df0d72-1cd9-4f47-9620-3a7412adc880",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "0c2c4ebd-1b3e-4e2c-8277-7512b3a39522",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=061fe06a-00ad-4188-b268-114274068152",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "cccd24a4-fc31-4d70-aab7-db3214369924",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=37c749ba-4c2a-4048-bd1f-4a0e5f3f5d68",
+            "title": "Advisor review: approved"
+          },
+          {
+            "id": "caa7297b-32fa-49dc-b5f2-3673a6397537",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=41df0d72-1cd9-4f47-9620-3a7412adc880",
+            "title": "Document rejected"
+          },
+          {
+            "id": "22e3ced6-868d-46e7-b715-384b52308478",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=061fe06a-00ad-4188-b268-114274068152",
+            "title": "Document rejected"
+          },
+          {
+            "id": "d1eca21b-775f-4014-880c-a2eadb47398c",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=37c749ba-4c2a-4048-bd1f-4a0e5f3f5d68",
+            "title": "Document rejected"
+          },
+          {
+            "id": "5dd69f10-925e-4820-b438-41a8ecde58ad",
+            "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92?panel=actions",
+            "title": "Payment update"
+          },
+          {
+            "id": "b05e6472-5442-4a43-b7ed-877d1a0a83a8",
+            "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92",
+            "title": "Advisor assigned"
+          },
+          {
+            "id": "7712cc96-15e2-4347-9767-1b0c7015537d",
+            "action_url": "/retail/applications/dd41b619-97b3-4202-be28-7255d37e4f92?panel=documents&doc=ac22d690-f3e3-4c7d-8f8c-332dc8109c15",
+            "title": "Document rejected"
+          },
+          {
+            "id": "858261a2-4d9e-4e83-854f-283aba53c875",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=actions",
+            "title": "Payment update"
+          },
+          {
+            "id": "86478a5e-9099-4bc0-a663-f4fdd5a9bf26",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776",
+            "title": "Advisor assigned"
+          },
+          {
+            "id": "31f28417-f5a7-4fb5-bbba-5e2914fe0382",
+            "action_url": "/retail/applications/cc176f1e-0a2b-4d1c-bd02-1d643e22f776?panel=documents&doc=ee281d1a-469b-413f-8e8d-c9a8580f9cda",
+            "title": "Document rejected"
+          },
+          {
+            "id": "29bd6bb4-4844-4248-805a-da448dd57a14",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions",
+            "title": "Payment update"
+          },
+          {
+            "id": "43a6c116-d4fb-46d4-b4bd-122b3fb2f655",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=37c749ba-4c2a-4048-bd1f-4a0e5f3f5d68",
+            "title": "Document rejected"
+          },
+          {
+            "id": "92289437-a8d1-430a-afe6-3ddb098d0662",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions&focus=advisor",
+            "title": "Advisor assigned"
+          },
+          {
+            "id": "1dc59a7c-6efc-4e4f-bdf9-34bf63324abf",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions&focus=advisor",
+            "title": "Advisor assignment"
+          },
+          {
+            "id": "2cee5b1f-e327-4344-940c-3e78aadb7b06",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions",
+            "title": "Payment update"
+          },
+          {
+            "id": "6de257f7-2f1c-4592-8481-ce6dacc0383f",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=061fe06a-00ad-4188-b268-114274068152",
+            "title": "Document rejected"
+          },
+          {
+            "id": "62de4de8-2458-4b07-803b-e03f8cb88ea8",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions&focus=advisor",
+            "title": "Advisor assignment"
+          },
+          {
+            "id": "8eeb5fc4-5cc2-46c4-bc76-b05ea73d19a0",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=actions&focus=advisor",
+            "title": "Advisor assigned"
+          },
+          {
+            "id": "15238366-9e67-4113-b363-6470baca28bb",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2?panel=documents&doc=41df0d72-1cd9-4f47-9620-3a7412adc880",
+            "title": "Document rejected"
+          },
+          {
+            "id": "8929501b-6e16-407b-bc4e-be3f6691143e",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+            "title": "Payment completed"
+          },
+          {
+            "id": "376c590a-3e43-48f3-89a1-a499e4ba9a12",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+            "title": "Advisor assigned"
+          },
+          {
+            "id": "420659a8-7307-4246-8ef7-c5570e70687a",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+            "title": "Advisor assigned"
+          },
+          {
+            "id": "3a518e57-e9e6-4801-91c4-0274a047ff1f",
+            "action_url": "/retail/applications/b1525d81-7b96-4865-97d8-b9f1b3b13ca2",
+            "title": "Advisor assigned"
+          }
+        ]
+      },
+      "manualRes": {
+        "actions": [
+          {
+            "application": "dd41b619-97b3-4202-be28-7255d37e4f92",
+            "before": {
+              "id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+              "user_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+              "country": "bhhh",
+              "advisor_name": "E2E Advisor",
+              "status": "submitted",
+              "gov_fee": null,
+              "advisor_fee": null,
+              "treaty": null,
+              "notes": null,
+              "created_at": "2026-05-22T14:02:17.307839",
+              "applicant_type": "retail",
+              "advisor_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+              "application_type": "trc_eligibility",
+              "eligibility_request_id": "cd7918fb-9fcc-440b-8000-17b79aad6063",
+              "workflow_state": "payment_completed",
+              "payment_state": "completed",
+              "review_state": "payment_completed",
+              "assigned_manager": null,
+              "started_at": "2026-05-22T14:02:17.307839",
+              "completed_at": "2026-05-22T14:02:17.307839",
+              "advisor_assigned_at": "2026-05-23T07:35:22.732"
+            },
+            "after": {
+              "id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+              "user_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+              "country": "bhhh",
+              "advisor_name": "Arinjay",
+              "status": "submitted",
+              "gov_fee": null,
+              "advisor_fee": null,
+              "treaty": null,
+              "notes": null,
+              "created_at": "2026-05-22T14:02:17.307839",
+              "applicant_type": "retail",
+              "advisor_id": "1b51c305-f7e8-471f-a9dc-5449960d7c98",
+              "application_type": "trc_eligibility",
+              "eligibility_request_id": "cd7918fb-9fcc-440b-8000-17b79aad6063",
+              "workflow_state": "payment_completed",
+              "payment_state": "completed",
+              "review_state": "payment_completed",
+              "assigned_manager": null,
+              "started_at": "2026-05-22T14:02:17.307839",
+              "completed_at": "2026-05-22T14:02:17.307839",
+              "advisor_assigned_at": "2026-05-23T07:40:16.448"
+            },
+            "documentsBefore": 1,
+            "documentsAfter": 1,
+            "notificationsAfter": 12
+          }
+        ]
+      }
+    }
+  },
+  "recommendations": [
+    {
+      "prio": "P0",
+      "action": "Convert generic notification action_url to application deep-links",
+      "reason": "ensures deep-linking to application/document/panel",
+      "owner": "frontend"
+    },
+    {
+      "prio": "P1",
+      "action": "Ensure notification creation uses application route templates (/retail/applications/:id?panel=...)",
+      "reason": "consistency across roles",
+      "owner": "backend"
+    },
+    {
+      "prio": "P1",
+      "action": "Add server-side validation to ensure notifications.action_url matches known route patterns",
+      "owner": "backend"
+    },
+    {
+      "prio": "P2",
+      "action": "Audit UI Link and navigate uses for string literals to ensure they reference declared routes",
+      "owner": "frontend"
+    },
+    {
+      "prio": "P2",
+      "action": "Add a small integration test that opens each notification.action_url in a headless browser to confirm route resolving",
+      "owner": "qa"
+    }
+  ]
+}

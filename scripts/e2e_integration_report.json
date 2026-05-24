@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-05-23T07:45:10.600Z",
+  "routes": [
+    "*",
+    "/",
+    "/about",
+    "/admin",
+    "/check-eligibility",
+    "/corporate/check-eligibility",
+    "/corporate/login",
+    "/countries",
+    "/dashboard",
+    "/eligibility-status",
+    "/login",
+    "/marketplace",
+    "/onboarding",
+    "/pricing",
+    "/profile",
+    "/resources",
+    "/solutions",
+    "/support",
+    "/uae",
+    "/verify-email",
+    "advisor",
+    "advisors",
+    "applications",
+    "applications/:id",
+    "billing",
+    "compliance-center",
+    "dashboard",
+    "documents",
+    "eligibility-status",
+    "employees",
+    "messages",
+    "profile",
+    "reports",
+    "residency",
+    "settings",
+    "support"
+  ],
+  "links": [
+    "/"
+  ],
+  "navs": [],
+  "notifAudit": {
+    "total": 0,
+    "failures": []
+  },
+  "manualRes": {
+    "actions": []
+  }
+}

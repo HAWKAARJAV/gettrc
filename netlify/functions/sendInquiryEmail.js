@@ -1,0 +1,58 @@
+export async function handler(event) {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method not allowed" };
+  }
+
+  const { name, email, country, message } = JSON.parse(event.body);
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const inquiryToEmail = process.env.INQUIRY_TO_EMAIL || "arinjay2009@gmail.com";
+  const siteUrl = process.env.SITE_URL || "https://gettrc.com";
+
+  if (!resendApiKey) {
+    return { statusCode: 500, body: "Missing RESEND_API_KEY" };
+  }
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${resendApiKey}`,
+    },
+    body: JSON.stringify({
+      from: "TRC Connect <notifications@gettrc.com>",
+      to: inquiryToEmail,
+      subject: `New TRC Inquiry from ${name}`,
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+          <div style="background:#0F2557;padding:32px;border-radius:12px 12px 0 0">
+            <h1 style="color:#C9A84C;margin:0;font-size:24px">New TRC Inquiry</h1>
+            <p style="color:rgba(255,255,255,.7);margin:8px 0 0">gettrc.com</p>
+          </div>
+          <div style="background:#F7F8FC;padding:32px;border-radius:0 0 12px 12px;border:1px solid #E2E8F0">
+            <table style="width:100%;border-collapse:collapse">
+              <tr><td style="padding:10px 0;border-bottom:1px solid #E2E8F0;color:#6B7A99;width:140px">Name</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #E2E8F0;color:#0F2557;font-weight:600">${name}</td></tr>
+              <tr><td style="padding:10px 0;border-bottom:1px solid #E2E8F0;color:#6B7A99">Email</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #E2E8F0;color:#0F2557;font-weight:600">${email}</td></tr>
+              <tr><td style="padding:10px 0;border-bottom:1px solid #E2E8F0;color:#6B7A99">Country</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #E2E8F0;color:#0F2557;font-weight:600">${country}</td></tr>
+              <tr><td style="padding:10px 0;color:#6B7A99;vertical-align:top">Message</td>
+                  <td style="padding:10px 0;color:#0F2557">${message}</td></tr>
+            </table>
+            <a href="${siteUrl}/admin" 
+               style="display:inline-block;margin-top:24px;background:#C9A84C;color:white;
+                      padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700">
+              View in Admin Panel →
+            </a>
+          </div>
+        </div>
+      `,
+    }),
+  });
+
+  const data = await res.json();
+  return {
+    statusCode: res.ok ? 200 : 400,
+    body: JSON.stringify(data),
+  };
+}

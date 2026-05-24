@@ -1,0 +1,145 @@
+{
+  "timestamp": "2026-05-23T07:35:21.246Z",
+  "scenarios": [
+    {
+      "application_id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+      "applicant_type": "retail",
+      "steps": [
+        {
+          "step": "fetch_initial",
+          "ok": true,
+          "app": {
+            "id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+            "user_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+            "country": "bhhh",
+            "advisor_name": null,
+            "status": "submitted",
+            "gov_fee": null,
+            "advisor_fee": null,
+            "treaty": null,
+            "notes": null,
+            "created_at": "2026-05-22T14:02:17.307839",
+            "applicant_type": "retail",
+            "advisor_id": null,
+            "application_type": "trc_eligibility",
+            "eligibility_request_id": "cd7918fb-9fcc-440b-8000-17b79aad6063",
+            "workflow_state": "payment_completed",
+            "payment_state": "completed",
+            "review_state": "payment_completed",
+            "assigned_manager": null,
+            "started_at": "2026-05-22T14:02:17.307839",
+            "completed_at": "2026-05-22T14:02:17.307839",
+            "advisor_assigned_at": null
+          }
+        },
+        {
+          "step": "create_document",
+          "ok": true,
+          "doc": {
+            "id": "ac22d690-f3e3-4c7d-8f8c-332dc8109c15",
+            "user_id": null,
+            "application_id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+            "file_name": null,
+            "file_size": null,
+            "category": null,
+            "status": "pending",
+            "rejection_note": null,
+            "uploaded_at": "2026-05-23T07:35:22.351",
+            "review_status": "pending",
+            "reviewer_notes": null,
+            "document_type": "emirates_id",
+            "file_url": "uploads/e2e-emirates-id.pdf",
+            "uploaded_by": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+            "created_at": "2026-05-23T07:35:22.578598"
+          }
+        },
+        {
+          "step": "review_document_reject",
+          "ok": true,
+          "review": [
+            {
+              "id": "ac22d690-f3e3-4c7d-8f8c-332dc8109c15",
+              "user_id": null,
+              "application_id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+              "file_name": null,
+              "file_size": null,
+              "category": null,
+              "status": "pending",
+              "rejection_note": null,
+              "uploaded_at": "2026-05-23T07:35:22.351",
+              "review_status": "rejected",
+              "reviewer_notes": "E2E rejection",
+              "document_type": "emirates_id",
+              "file_url": "uploads/e2e-emirates-id.pdf",
+              "uploaded_by": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+              "created_at": "2026-05-23T07:35:22.578598"
+            }
+          ]
+        },
+        {
+          "step": "assign_advisor",
+          "ok": true,
+          "assign": {
+            "id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+            "user_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+            "country": "bhhh",
+            "advisor_name": "E2E Advisor",
+            "status": "submitted",
+            "gov_fee": null,
+            "advisor_fee": null,
+            "treaty": null,
+            "notes": null,
+            "created_at": "2026-05-22T14:02:17.307839",
+            "applicant_type": "retail",
+            "advisor_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+            "application_type": "trc_eligibility",
+            "eligibility_request_id": "cd7918fb-9fcc-440b-8000-17b79aad6063",
+            "workflow_state": "advisor_assigned",
+            "payment_state": "completed",
+            "review_state": "payment_completed",
+            "assigned_manager": null,
+            "started_at": "2026-05-22T14:02:17.307839",
+            "completed_at": "2026-05-22T14:02:17.307839",
+            "advisor_assigned_at": "2026-05-23T07:35:22.732"
+          }
+        },
+        {
+          "step": "update_payment",
+          "ok": true,
+          "pay": {
+            "id": "dd41b619-97b3-4202-be28-7255d37e4f92",
+            "user_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+            "country": "bhhh",
+            "advisor_name": "E2E Advisor",
+            "status": "submitted",
+            "gov_fee": null,
+            "advisor_fee": null,
+            "treaty": null,
+            "notes": null,
+            "created_at": "2026-05-22T14:02:17.307839",
+            "applicant_type": "retail",
+            "advisor_id": "f0d7b608-6cbd-412e-9cb1-fafe3a589d00",
+            "application_type": "trc_eligibility",
+            "eligibility_request_id": "cd7918fb-9fcc-440b-8000-17b79aad6063",
+            "workflow_state": "payment_completed",
+            "payment_state": "completed",
+            "review_state": "payment_completed",
+            "assigned_manager": null,
+            "started_at": "2026-05-22T14:02:17.307839",
+            "completed_at": "2026-05-22T14:02:17.307839",
+            "advisor_assigned_at": "2026-05-23T07:35:22.732"
+          }
+        },
+        {
+          "step": "fetch_related",
+          "ok": true,
+          "relatedCounts": {
+            "documents": 1,
+            "notifications": 5,
+            "history": 5
+          }
+        }
+      ]
+    }
+  ]
+}
