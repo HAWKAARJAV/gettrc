@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { SUPABASE_KEY, SUPABASE_URL, supabase } from "./supabaseClient";
 import { APPLICATION_STATES, getApplicationStateMeta, mapLegacyRequestStatusToWorkflowState } from "./workflow/applicationWorkflow";
+import { buildApplicationPatchFromRequest, getLegacyRequestKey, getLegacyRequestTable } from "./workflow/legacyRequestSync";
 import { generateRequiredActions } from "./workflow/generateRequiredActions";
 import useWorkflowMutation from "./hooks/useWorkflowMutation";
 import ApplicationStatusStrip from "./components/ApplicationStatusStrip";
@@ -73,26 +74,37 @@ function deriveWorkflowState(status) {
 }
 
 async function syncApplicationForRequest(requestId, patch, applicantType) {
-  // "needs_more_info" is a pre-payment admin note — it must NOT advance the
-  // application's workflow_state beyond pending_review (which would prematurely
-  // unlock the retail workspace before payment is confirmed).
-  const workflowState = patch.status === "needs_more_info"
-    ? "pending_review"
-    : deriveWorkflowState(patch.status);
-  const paymentState = patch.payment_status || (workflowState === "payment_completed" ? "completed" : "pending");
-  const rows = await dbGet("applications", `select=id&eligibility_request_id=eq.${requestId}&applicant_type=eq.${applicantType}`);
+  const requestTable = getLegacyRequestTable(applicantType);
+  const requestKey = getLegacyRequestKey(applicantType);
+  const requestRows = await dbGet(requestTable, `select=*&id=eq.${requestId}&limit=1`);
+  const request = requestRows?.[0];
+
+  if (!request) {
+    return null;
+  }
+
+  const applicationFilter = applicantType === "corporate"
+    ? `select=*&user_id=eq.${request.company_id}&applicant_type=eq.${applicantType}&limit=1`
+    : `select=*&eligibility_request_id=eq.${request.id}&applicant_type=eq.${applicantType}&limit=1`;
+  const rows = await dbGet("applications", applicationFilter);
   const application = rows?.[0];
 
   if (!application) {
     return null;
   }
 
-  await dbPatch("applications", application.id, {
-    workflow_state: workflowState,
-    review_state: workflowState,
-    payment_state: paymentState,
-    completed_at: workflowState === "payment_completed" || workflowState === "completed" ? new Date().toISOString() : null,
+  const appPatch = buildApplicationPatchFromRequest({
+    applicantType,
+    requestPatch: patch,
+    currentApplication: application,
+    currentRequest: request,
   });
+
+  if (!appPatch) {
+    return application.id;
+  }
+
+  await dbPatch("applications", application.id, appPatch);
   return application.id;
 }
 

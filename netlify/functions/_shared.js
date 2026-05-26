@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { buildLegacyRequestPatchFromApplication, getLegacyRequestKey, getLegacyRequestTable } from "../../src/workflow/legacyRequestSync.js";
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -46,4 +47,45 @@ export async function verifyAdminOrAdvisor(accessToken) {
   }
 
   return { user, profile };
+}
+
+export async function syncLegacyRequestFromApplication({ application, nextPatch = {}, notes = "", advisorLabel = null }) {
+  if (!application?.id || !application?.applicant_type) {
+    return null;
+  }
+
+  const svc = getServiceClient();
+  const applicantType = application.applicant_type;
+  const requestTable = getLegacyRequestTable(applicantType);
+  const requestKey = getLegacyRequestKey(applicantType);
+  const requestFilterValue = applicantType === "corporate" ? application.user_id : application.eligibility_request_id;
+
+  if (!requestFilterValue) {
+    return null;
+  }
+
+  const { data: currentRequest } = await svc.from(requestTable).select("*").eq(requestKey, requestFilterValue).maybeSingle();
+  if (!currentRequest) {
+    return null;
+  }
+
+  const requestPatch = buildLegacyRequestPatchFromApplication({
+    application,
+    nextPatch,
+    currentRequest,
+    notes,
+    advisorLabel,
+  });
+
+  if (!requestPatch) {
+    return currentRequest;
+  }
+
+  const { data: updatedRequest, error } = await svc.from(requestTable).update(requestPatch).eq(requestKey, requestFilterValue).select("*").maybeSingle();
+  if (error) {
+    console.warn(`[syncLegacyRequestFromApplication] Failed to update ${requestTable}`, error);
+    return currentRequest;
+  }
+
+  return updatedRequest || currentRequest;
 }

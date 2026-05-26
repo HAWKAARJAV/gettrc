@@ -1,4 +1,4 @@
-import { getServiceClient, verifyAdminOrAdvisor } from "./_shared";
+import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor } from "./_shared";
 import { APPLICATION_STATES } from "../../src/workflow/workflowStates";
 
 export async function handler(event, context) {
@@ -20,6 +20,8 @@ export async function handler(event, context) {
     // so advisor workspace queries (.eq("advisor_id", session.user.id)) work correctly
     const { data: advisorRecord } = await svc.from("advisors").select("id,user_id").eq("id", advisorId).maybeSingle();
     const resolvedAdvisorUserId = advisorRecord?.user_id || advisorId;
+    const { data: advisorProfile } = await svc.from("profiles").select("full_name,email").eq("id", resolvedAdvisorUserId).maybeSingle();
+    const advisorLabel = advisorProfile?.full_name || advisorProfile?.email || resolvedAdvisorUserId;
 
     const nextPatch = {
       advisor_id: resolvedAdvisorUserId,
@@ -29,6 +31,13 @@ export async function handler(event, context) {
 
     const { data: updated, error: updateError } = await svc.from("applications").update(nextPatch).eq("id", applicationId).select("*").maybeSingle();
     if (updateError) throw updateError;
+
+    await syncLegacyRequestFromApplication({
+      application: updated || existing,
+      nextPatch,
+      notes,
+      advisorLabel,
+    });
 
     // append history and return inserted row
     const { data: historyRows, error: historyError } = await svc.from("application_status_history").insert({

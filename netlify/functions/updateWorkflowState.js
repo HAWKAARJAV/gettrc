@@ -1,4 +1,4 @@
-import { getServiceClient, verifyAdminOrAdvisor } from "./_shared";
+import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor } from "./_shared";
 import { WORKFLOW_STATES } from "../../src/workflow/workflowStates";
 import { sendStatusEmail } from "./_sendStatusEmail";
 
@@ -25,6 +25,12 @@ export async function handler(event, context) {
 
     const { data: updated, error: updateError } = await svc.from("applications").update(nextPatch).eq("id", applicationId).select("*").maybeSingle();
     if (updateError) throw updateError;
+
+    await syncLegacyRequestFromApplication({
+      application: updated || existing,
+      nextPatch,
+      notes,
+    });
 
     const { data: historyRow, error: historyError } = await svc.from("application_status_history").insert({
       application_id: applicationId,
