@@ -1,4 +1,4 @@
-import { mapLegacyRequestStatusToWorkflowState } from "./workflowStates";
+import { mapLegacyRequestStatusToWorkflowState } from "./workflowStates.js";
 
 export function getLegacyRequestTable(applicantType = "retail") {
   return applicantType === "corporate" ? "corporate_eligibility_requests" : "eligibility_requests";
