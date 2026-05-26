@@ -120,7 +120,7 @@ export async function fetchDocumentRequests(applicationId) {
  */
 export async function createDocumentRequest({ applicationId, documentType, description = "" }) {
   const token = localStorage.getItem("trc_token");
-  const res = await fetch("/.netlify/functions/requestDocument", {
+  const res = await fetch("/api/requestDocument", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

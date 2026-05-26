@@ -1429,7 +1429,7 @@ function BookingForm({ preselected, onClose }) {
       }
       // Send email notification
       try {
-        await fetch("/.netlify/functions/sendInquiryEmail", {
+        await fetch("/api/sendInquiryEmail", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

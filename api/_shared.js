@@ -1,0 +1,68 @@
+import { createClient } from "@supabase/supabase-js";
+import { buildLegacyRequestPatchFromApplication, getLegacyRequestKey, getLegacyRequestTable } from "../src/workflow/legacyRequestSync.js";
+
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+export function getServiceClient() {
+  return createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+}
+
+export function normalizeActionUrl(actionUrl, applicationId, applicantType = 'retail') {
+  try {
+    if (!applicationId) return actionUrl || `/${applicantType === 'corporate' ? 'corporate' : 'retail'}`;
+    const base = applicantType === 'corporate' ? '/corporate' : '/retail';
+    const expected = `${base}/applications/${applicationId}`;
+    if (!actionUrl || typeof actionUrl !== 'string') return expected;
+    const cleaned = actionUrl.trim();
+    if (cleaned === '/dashboard' || cleaned === `${base}/dashboard`) return expected;
+    if (!cleaned.includes(applicationId)) return expected;
+    return cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
+  } catch {
+    return actionUrl;
+  }
+}
+
+export async function verifyAdminOrAdvisor(accessToken) {
+  if (!accessToken) throw { status: 401, message: "Missing access token" };
+  const svc = getServiceClient();
+  const { data, error } = await svc.auth.getUser(accessToken);
+  if (error) throw { status: 401, message: "Invalid token" };
+  const user = data?.user || data;
+  if (!user || !user.id) throw { status: 401, message: "Unauthenticated" };
+
+  const { data: profile } = await svc.from("profiles").select("id,role,email").eq("id", user.id).maybeSingle();
+  const isAdminEmail = profile?.email && String(profile.email).toLowerCase() === (process.env.ADMIN_EMAIL || "hawkwilds09@gmail.com");
+  const role = profile?.role || null;
+  if (!isAdminEmail && role !== "admin" && role !== "advisor" && role !== "specialist") {
+    throw { status: 403, message: "Insufficient role" };
+  }
+
+  return { user, profile };
+}
+
+export async function syncLegacyRequestFromApplication({ application, nextPatch = {}, notes = "", advisorLabel = null }) {
+  if (!application?.id || !application?.applicant_type) return null;
+
+  const svc = getServiceClient();
+  const applicantType = application.applicant_type;
+  const requestTable = getLegacyRequestTable(applicantType);
+  const requestKey = getLegacyRequestKey(applicantType);
+  const requestFilterValue = applicantType === "corporate" ? application.user_id : application.eligibility_request_id;
+
+  if (!requestFilterValue) return null;
+
+  const { data: currentRequest } = await svc.from(requestTable).select("*").eq(requestKey, requestFilterValue).maybeSingle();
+  if (!currentRequest) return null;
+
+  const requestPatch = buildLegacyRequestPatchFromApplication({ application, nextPatch, currentRequest, notes, advisorLabel });
+  if (!requestPatch) return currentRequest;
+
+  const { data: updatedRequest, error } = await svc.from(requestTable).update(requestPatch).eq(requestKey, requestFilterValue).select("*").maybeSingle();
+  if (error) {
+    console.warn(`[syncLegacyRequestFromApplication] Failed to update ${requestTable}`, error);
+    return currentRequest;
+  }
+
+  return updatedRequest || currentRequest;
+}

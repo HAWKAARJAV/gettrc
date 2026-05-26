@@ -1,4 +1,4 @@
-const ADMIN_API_PREFIX = "/.netlify/functions";
+const ADMIN_API_PREFIX = "/api";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("trc_token");
