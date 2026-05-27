@@ -626,7 +626,7 @@ function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  PROBLEM — what's broken today                       ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section style={{ background: C.white, padding: "80px 24px 64px" }}>
+      <section id="solutions" style={{ background: C.white, padding: "80px 24px 64px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
             {/* text */}
@@ -666,7 +666,7 @@ function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  FOR WHO — two clear paths                           ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="for-who" style={{ background: C.offWhite, padding: "80px 24px" }}>
+      <section id="for-who" style={{ background: C.offWhite, padding: "80px 24px" }} data-nav="countries">
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <SectionLabel>Two paths, one platform</SectionLabel>
@@ -1757,7 +1757,7 @@ function UAEPage() {
       </section>
 
       {/* ── UAE_ELIGIBILITY ── */}
-      <section style={{ background: C.white, padding: "90px 24px" }}>
+      <section id="countries" style={{ background: C.white, padding: "90px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
             <SectionLabel>Who Qualifies</SectionLabel>
@@ -1817,7 +1817,7 @@ function UAEPage() {
       </section>
 
       {/* ── UAE_DOCUMENTS CHECKLIST ── */}
-      <section style={{ background: C.offWhite, padding: "90px 24px" }}>
+      <section id="resources" style={{ background: C.offWhite, padding: "90px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 40, flexWrap: "wrap", gap: 20 }}>
             <div>
@@ -1914,7 +1914,7 @@ function UAEPage() {
       </section>
 
       {/* ── ADVISORS ── */}
-      <section style={{ background: C.white, padding: "90px 24px" }}>
+      <section id="pricing" style={{ background: C.white, padding: "90px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 48, flexWrap: "wrap", gap: 20 }}>
             <div>
@@ -1937,7 +1937,7 @@ function UAEPage() {
       </section>
 
       {/* ── UAE_TIMELINE + FEES ── */}
-      <section style={{ background: C.offWhite, padding: "90px 24px" }}>
+      <section id="about" style={{ background: C.offWhite, padding: "90px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }} className="two-col">
 
@@ -5110,14 +5110,29 @@ function _AppNavbarInner() {
   },[]);
   const tp = pathname==='/' && !sc;
   const lc = tp?'rgba(255,255,255,.85)':C.navy;
+  // hash = smooth-scroll on homepage; to = hard navigate for Blog
   const NAV=[
-    { label: 'Countries', to: '/countries' },
-    { label: 'Solutions', to: '/solutions' },
-    { label: 'Pricing', to: '/pricing' },
-    { label: 'Blog', to: '/blog' },
-    { label: 'Resources', to: '/resources' },
-    { label: 'About', to: '/about' },
+    { label: 'Countries', hash: 'countries' },
+    { label: 'Solutions', hash: 'solutions' },
+    { label: 'Pricing',   hash: 'pricing'   },
+    { label: 'Blog',      to:   '/blog'      },
+    { label: 'Resources', hash: 'resources'  },
+    { label: 'About',     hash: 'about'      },
   ];
+
+  const scrollTo = (hash) => {
+    if (pathname !== '/') {
+      // Navigate home then scroll after render
+      nav('/');
+      setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 350);
+    } else {
+      const el = document.getElementById(hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const closeSelector = () => setActiveSelector(null);
 
@@ -5163,14 +5178,26 @@ function _AppNavbarInner() {
             color:tp?C.goldLight:C.gold}}> Connect</span>
         </ReactRouterDom.Link>
         <div style={{display:'flex',alignItems:'center',gap:28}}>
-          {NAV.map(l=>(
+          {NAV.map(l=> l.to ? (
             <ReactRouterDom.Link key={l.to} to={l.to} style={{
-              color:pathname===l.to?C.gold:lc,
-              fontSize:14,fontWeight:pathname===l.to?700:500,
-              borderBottom:pathname===l.to?`2px solid ${C.gold}`:'2px solid transparent',
+              color:pathname.startsWith('/blog')?C.gold:lc,
+              fontSize:14,fontWeight:pathname.startsWith('/blog')?700:500,
+              borderBottom:pathname.startsWith('/blog')?`2px solid ${C.gold}`:'2px solid transparent',
               paddingBottom:2,transition:'all .2s',textDecoration:'none'}}>
               {l.label}
             </ReactRouterDom.Link>
+          ) : (
+            <button key={l.hash} onClick={()=>scrollTo(l.hash)}
+              style={{
+                color:lc, fontSize:14, fontWeight:500,
+                border:'none', background:'transparent', cursor:'pointer',
+                borderBottom:'2px solid transparent', paddingBottom:2,
+                transition:'all .2s', fontFamily:'inherit',
+              }}
+              onMouseEnter={e=>e.currentTarget.style.color=C.gold}
+              onMouseLeave={e=>e.currentTarget.style.color=lc}>
+              {l.label}
+            </button>
           ))}
         </div>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
