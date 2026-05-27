@@ -1,6 +1,7 @@
 // AdminDashboard.jsx — gettrc.com/admin
 import { useState, useEffect, useRef } from "react";
 import { SUPABASE_KEY, SUPABASE_URL, supabase } from "./supabaseClient";
+import AdminBlogTab from "./blog/AdminBlogTab";
 import { APPLICATION_STATES, getApplicationStateMeta, mapLegacyRequestStatusToWorkflowState } from "./workflow/applicationWorkflow";
 import { buildApplicationPatchFromRequest, getLegacyRequestKey, getLegacyRequestTable } from "./workflow/legacyRequestSync";
 import { generateRequiredActions } from "./workflow/generateRequiredActions";
@@ -1834,6 +1835,7 @@ export default function AdminDashboard() {
     {key:"advisor_updates",    label:"Advisor Updates",    icon:"📋"},
     {key:"accounts",           label:"Accounts",           icon:"👥"},
     {key:"analytics",          label:"Analytics",          icon:"📊"},
+    {key:"blog",               label:"Blog",               icon:"✍️"},
   ];
 
   return (
@@ -1965,6 +1967,7 @@ export default function AdminDashboard() {
           {tab==="advisor_updates"&&<AdminAdvisorUpdatesTab/>}
           {tab==="accounts"&&<AccountsTab/>}
           {tab==="analytics"&&<AnalyticsTab/>}
+          {tab==="blog"&&<AdminBlogTab/>}
         </main>
       </div>
     </div>

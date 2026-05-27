@@ -42,6 +42,8 @@ import AdvisorCaseDetailPage from "./advisor/pages/AdvisorCaseDetailPage";
 import AdvisorChatPage from "./advisor/pages/AdvisorChatPage";
 import AdvisorUpdatesPage from "./advisor/pages/AdvisorUpdatesPage";
 import AdvisorProfilePage from "./advisor/pages/AdvisorProfilePage";
+import BlogListingPage from "./blog/BlogListingPage";
+import BlogPostPage from "./blog/BlogPostPage";
 
 
 const C = {
@@ -5112,6 +5114,7 @@ function _AppNavbarInner() {
     { label: 'Countries', to: '/countries' },
     { label: 'Solutions', to: '/solutions' },
     { label: 'Pricing', to: '/pricing' },
+    { label: 'Blog', to: '/blog' },
     { label: 'Resources', to: '/resources' },
     { label: 'About', to: '/about' },
   ];
@@ -5281,7 +5284,7 @@ export default function App() {
 
 function AppShell() {
   const { pathname } = ReactRouterDom.useLocation();
-  const hideGlobalNav = pathname.startsWith("/retail") || pathname.startsWith("/corporate") || pathname.startsWith("/advisor") || ["/check-eligibility", "/verify-email", "/login", "/dashboard", "/admin"].includes(pathname);
+  const hideGlobalNav = pathname.startsWith("/retail") || pathname.startsWith("/corporate") || pathname.startsWith("/advisor") || pathname.startsWith("/blog") || ["/check-eligibility", "/verify-email", "/login", "/dashboard", "/admin"].includes(pathname);
 
   return (
     <>
@@ -5297,6 +5300,8 @@ function AppShell() {
         <ReactRouterDom.Route path="/uae" element={<PageErrorBoundary name="UAE Page"><UAEPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/marketplace" element={<PageErrorBoundary name="Marketplace"><MarketplacePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/onboarding" element={<PageErrorBoundary name="Onboarding"><OnboardingPage/></PageErrorBoundary>} />
+        <ReactRouterDom.Route path="/blog" element={<PageErrorBoundary name="Blog"><BlogListingPage/></PageErrorBoundary>} />
+        <ReactRouterDom.Route path="/blog/:slug" element={<PageErrorBoundary name="Blog Post"><BlogPostPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/check-eligibility" element={<RetailEligibilityPage />} />
         <ReactRouterDom.Route path="/verify-email" element={<VerifyRetailEmailPage />} />
         <ReactRouterDom.Route path="/reset-password" element={<RetailResetPasswordPage />} />
