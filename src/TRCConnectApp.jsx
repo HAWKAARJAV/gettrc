@@ -208,6 +208,22 @@ const STEPS = [
   },
 ];
 
+const MARKETING_ROUTE_TARGETS = {
+  "/countries": "for-who",
+  "/solutions": "solutions",
+  "/pricing": "pricing",
+  "/resources": "resources",
+  "/about": "about",
+};
+
+function scrollToElementId(id, behavior = "smooth") {
+  const el = document.getElementById(id);
+  if (!el) return false;
+  const top = el.getBoundingClientRect().top + window.scrollY - 84;
+  window.scrollTo({ top: Math.max(0, top), behavior });
+  return true;
+}
+
 function StarRating({ rating }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
@@ -493,13 +509,21 @@ function DashboardMockup() {
 
 function HomePage() {
   const navigate = ReactRouterDom.useNavigate();
+  const { pathname } = ReactRouterDom.useLocation();
+
+  React.useEffect(() => {
+    const target = MARKETING_ROUTE_TARGETS[pathname];
+    if (!target) return;
+    const timer = window.setTimeout(() => scrollToElementId(target, "auto"), 80);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
 
   return (
     <div style={{ fontFamily: "'DM Sans', -apple-system, sans-serif", color: C.navy, background: C.white }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { overflow-x: hidden; }
+        html, body, #root { max-width: 100%; overflow-x: hidden; }
         ::selection { background: ${C.gold}33; }
         .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.01em; }
         .nav-link:hover { color: ${C.gold}; }
@@ -508,12 +532,19 @@ function HomePage() {
         .country-option:hover { background: ${C.offWhite}; }
         .advisor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
         @media (max-width: 768px) {
-          .hero-grid { flex-direction: column !important; }
+          .hero-grid { display: flex !important; flex-direction: column !important; }
           .advisor-grid { grid-template-columns: 1fr !important; }
           .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 24px !important; }
           .footer-cols { flex-direction: column !important; gap: 32px !important; }
           .steps-grid { flex-direction: column !important; }
           .hide-mobile { display: none !important; }
+        }
+        @media (max-width: 920px) {
+          .marketing-nav-inner { padding: 0 16px !important; }
+          .marketing-links { display: none !important; }
+          .marketing-actions { gap: 8px !important; }
+          .marketing-secondary-action { display: none !important; }
+          .marketing-primary-action { padding: 9px 14px !important; font-size: 13px !important; }
         }
       `}</style>
 
@@ -561,10 +592,10 @@ function HomePage() {
 
               {/* single hero CTA — scroll to audience section */}
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 40 }}>
-                <button onClick={() => document.getElementById('for-who')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: 11, padding: "14px 26px", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 26px rgba(201,168,76,0.42)", letterSpacing: "0.02em" }}>
+                <button onClick={() => scrollToElementId('for-who')} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: 11, padding: "14px 26px", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 26px rgba(201,168,76,0.42)", letterSpacing: "0.02em" }}>
                   Get Started →
                 </button>
-                <button onClick={() => document.getElementById('workflow')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: "rgba(255,255,255,0.08)", color: C.white, border: "1px solid rgba(255,255,255,0.2)", borderRadius: 11, padding: "14px 26px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+                <button onClick={() => scrollToElementId('workflow')} style={{ background: "rgba(255,255,255,0.08)", color: C.white, border: "1px solid rgba(255,255,255,0.2)", borderRadius: 11, padding: "14px 26px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
                   See How It Works
                 </button>
               </div>
@@ -628,7 +659,7 @@ function HomePage() {
           ╚══════════════════════════════════════════════════════╝ */}
       <section id="solutions" style={{ background: C.white, padding: "80px 24px 64px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }} className="hero-grid">
             {/* text */}
             <div>
               <SectionLabel>The actual problem</SectionLabel>
@@ -893,6 +924,116 @@ function HomePage() {
                 <div style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.7 }}>{item.desc}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ╔══════════════════════════════════════════════════════╗
+          ║  PRICING — enterprise-grade service packaging        ║
+          ╚══════════════════════════════════════════════════════╝ */}
+      <section id="pricing" style={{ background: C.offWhite, padding: "80px 24px", scrollMarginTop: 96 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "0.9fr 1.4fr", gap: 44, alignItems: "start" }} className="hero-grid">
+            <div>
+              <SectionLabel>Pricing</SectionLabel>
+              <SectionTitle>Clear packages for serious compliance operations</SectionTitle>
+              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.8, marginTop: 16 }}>
+                TRC Connect is positioned as workflow infrastructure, not a lead form. Pricing separates platform access, advisor execution, and authority fees so individuals and enterprise teams can budget cleanly.
+              </p>
+              <div style={{ marginTop: 22, padding: "16px 18px", background: C.white, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: C.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8 }}>Enterprise note</div>
+                <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.7 }}>
+                  Multi-entity plans are designed for founders, holding companies, and finance teams managing renewals across employees or group structures.
+                </p>
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14 }} className="hero-grid">
+              {[
+                { name: "Individual", price: "Advisor-led", desc: "Best for one UAE resident application.", points: ["Eligibility review", "Document checklist", "Advisor workspace", "Case timeline"], cta: "Start Individual", action: () => navigate('/check-eligibility') },
+                { name: "Corporate", price: "Case scoped", desc: "For one company or founder-led entity.", points: ["Entity assessment", "Corporate documents", "Assigned compliance manager", "Billing and reports"], cta: "Start Corporate", action: () => navigate('/corporate/check-eligibility'), featured: true },
+                { name: "Enterprise", price: "Custom", desc: "For teams managing recurring TRC operations.", points: ["Multi-entity workflow", "Renewal tracking", "Audit-ready exports", "Priority support"], cta: "Discuss Fit", action: () => scrollToElementId('about') },
+              ].map((plan) => (
+                <div key={plan.name} style={{ background: plan.featured ? C.navy : C.white, border: `1px solid ${plan.featured ? "transparent" : C.border}`, borderRadius: 16, padding: 22, boxShadow: plan.featured ? "0 22px 48px rgba(15,37,87,0.22)" : "0 8px 22px rgba(15,37,87,0.06)" }}>
+                  <div style={{ fontSize: 12, color: plan.featured ? C.goldLight : C.gold, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10 }}>{plan.name}</div>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 30, fontWeight: 700, color: plan.featured ? C.white : C.navy, lineHeight: 1 }}>{plan.price}</div>
+                  <p style={{ fontSize: 13, color: plan.featured ? "rgba(255,255,255,0.62)" : C.textMuted, lineHeight: 1.65, marginTop: 12, minHeight: 44 }}>{plan.desc}</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 18, marginBottom: 22 }}>
+                    {plan.points.map((point) => (
+                      <div key={point} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                        <span style={{ color: C.gold, fontWeight: 800, fontSize: 12, marginTop: 2 }}>✓</span>
+                        <span style={{ fontSize: 12, color: plan.featured ? "rgba(255,255,255,0.72)" : C.textMuted, lineHeight: 1.55 }}>{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={plan.action} style={{ width: "100%", background: plan.featured ? `linear-gradient(135deg, ${C.gold}, ${C.goldDark})` : C.offWhite, color: plan.featured ? C.white : C.navy, border: plan.featured ? "none" : `1px solid ${C.border}`, borderRadius: 10, padding: "12px 14px", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
+                    {plan.cta}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ╔══════════════════════════════════════════════════════╗
+          ║  RESOURCES                                          ║
+          ╚══════════════════════════════════════════════════════╝ */}
+      <section id="resources" style={{ background: C.white, padding: "80px 24px", scrollMarginTop: 96 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 42 }}>
+            <SectionLabel>Resources</SectionLabel>
+            <SectionTitle>Compliance intelligence built into the workflow</SectionTitle>
+            <p style={{ fontSize: 15, color: C.textMuted, marginTop: 12, maxWidth: 620, margin: "12px auto 0", lineHeight: 1.75 }}>
+              The resource layer should support a premium startup narrative: operational clarity, document readiness, and country-specific guidance without turning the product into generic content marketing.
+            </p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 18 }} className="hero-grid">
+            {[
+              { title: "Country playbooks", desc: "Jurisdiction-specific eligibility, document, and authority requirements for phase-one TRC markets.", action: "Explore Countries", target: "for-who" },
+              { title: "Document readiness", desc: "Structured checklists that convert advisor requirements into trackable client tasks and upload states.", action: "View Workflow", target: "workflow" },
+              { title: "TRC articles", desc: "SEO-ready education for cross-border income, DTAA benefits, and UAE TRC process questions.", action: "Read Blog", path: "/blog" },
+            ].map((item) => (
+              <div key={item.title} style={{ border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, background: C.offWhite, boxShadow: "0 8px 22px rgba(15,37,87,0.05)" }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 10 }}>{item.title}</div>
+                <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.75, minHeight: 68 }}>{item.desc}</p>
+                <button onClick={() => item.path ? navigate(item.path) : scrollToElementId(item.target)} style={{ marginTop: 18, background: "transparent", color: C.gold, border: "none", padding: 0, fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
+                  {item.action} →
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ╔══════════════════════════════════════════════════════╗
+          ║  ABOUT                                              ║
+          ╚══════════════════════════════════════════════════════╝ */}
+      <section id="about" style={{ background: C.offWhite, padding: "80px 24px", scrollMarginTop: 96 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }} className="hero-grid">
+            <div>
+              <SectionLabel>About TRC Connect</SectionLabel>
+              <SectionTitle>Built as compliance infrastructure for cross-border operators</SectionTitle>
+              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.85, marginTop: 16 }}>
+                The enterprise angle is the strongest one: TRC Connect should feel like an operating system for tax residency cases, with role-based workspaces for clients, companies, advisors, and admins.
+              </p>
+              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.85, marginTop: 14 }}>
+                That means fewer brochure-style claims and more proof of control: workflow states, document ownership, advisor accountability, secure storage, and audit history.
+              </p>
+            </div>
+            <div style={{ background: `linear-gradient(135deg, ${C.navyDark}, ${C.navy})`, borderRadius: 18, padding: 26, boxShadow: "0 24px 60px rgba(15,37,87,0.24)", color: C.white }}>
+              {[
+                { k: "Product thesis", v: "Replace email-heavy advisory delivery with a shared compliance workspace." },
+                { k: "Buyer", v: "Individuals now, enterprise teams and founder-led groups as the expansion motion." },
+                { k: "Moat", v: "Structured case data, verified advisor network, repeatable country playbooks." },
+                { k: "Execution standard", v: "Every status, document, and request should be visible, permissioned, and auditable." },
+              ].map((row, i) => (
+                <div key={row.k} style={{ padding: "15px 0", borderBottom: i < 3 ? "1px solid rgba(255,255,255,0.1)" : "none" }}>
+                  <div style={{ fontSize: 11, color: C.goldLight, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 5 }}>{row.k}</div>
+                  <div style={{ fontSize: 14, color: "rgba(255,255,255,0.72)", lineHeight: 1.65 }}>{row.v}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -5112,7 +5253,7 @@ function _AppNavbarInner() {
   const lc = tp?'rgba(255,255,255,.85)':C.navy;
   // hash = smooth-scroll on homepage; to = hard navigate for Blog
   const NAV=[
-    { label: 'Countries', hash: 'countries' },
+    { label: 'Countries', hash: 'for-who' },
     { label: 'Solutions', hash: 'solutions' },
     { label: 'Pricing',   hash: 'pricing'   },
     { label: 'Blog',      to:   '/blog'      },
@@ -5125,12 +5266,10 @@ function _AppNavbarInner() {
       // Navigate home then scroll after render
       nav('/');
       setTimeout(() => {
-        const el = document.getElementById(hash);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollToElementId(hash);
       }, 350);
     } else {
-      const el = document.getElementById(hash);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToElementId(hash);
     }
   };
 
@@ -5167,7 +5306,7 @@ function _AppNavbarInner() {
       backdropFilter:sc?'blur(12px)':'none',
       borderBottom:sc?`1px solid ${C.border}`:'none',
       transition:'all .3s ease'}}>
-      <div style={{maxWidth:1300,margin:'0 auto',padding:'0 28px',
+      <div className="marketing-nav-inner" style={{maxWidth:1300,margin:'0 auto',padding:'0 28px',
         display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <ReactRouterDom.Link to='/' style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none'}}>
           <div style={{width:36,height:36,background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,
@@ -5177,7 +5316,7 @@ function _AppNavbarInner() {
           <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:400,
             color:tp?C.goldLight:C.gold}}> Connect</span>
         </ReactRouterDom.Link>
-        <div style={{display:'flex',alignItems:'center',gap:28}}>
+        <div className="marketing-links" style={{display:'flex',alignItems:'center',gap:28}}>
           {NAV.map(l=> l.to ? (
             <ReactRouterDom.Link key={l.to} to={l.to} style={{
               color:pathname.startsWith('/blog')?C.gold:lc,
@@ -5200,12 +5339,12 @@ function _AppNavbarInner() {
             </button>
           ))}
         </div>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
+        <div className="marketing-actions" style={{display:'flex',alignItems:'center',gap:10}}>
           <NotificationCenter />
-          <button onClick={() => setActiveSelector('signin')} style={{background:'transparent',border:'none',color:lc,fontSize:14,fontWeight:500,padding:'9px 14px',textDecoration:'none',cursor:'pointer'}}>
+          <button className="marketing-secondary-action" onClick={() => setActiveSelector('signin')} style={{background:'transparent',border:'none',color:lc,fontSize:14,fontWeight:500,padding:'9px 14px',textDecoration:'none',cursor:'pointer'}}>
             Sign In
           </button>
-          <button onClick={() => setActiveSelector('eligibility')} style={{
+          <button className="marketing-primary-action" onClick={() => setActiveSelector('eligibility')} style={{
             background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,
             color:C.white,border:'none',borderRadius:10,padding:'10px 22px',
             fontSize:14,fontWeight:600,cursor:'pointer',
@@ -5274,7 +5413,10 @@ function _AppNavbarInner() {
 
 function ScrollToTop() {
   const {pathname} = ReactRouterDom.useLocation();
-  React.useEffect(()=>{window.scrollTo(0,0);},[pathname]);
+  React.useEffect(()=>{
+    if (MARKETING_ROUTE_TARGETS[pathname]) return;
+    window.scrollTo(0,0);
+  },[pathname]);
   return null;
 }
 
