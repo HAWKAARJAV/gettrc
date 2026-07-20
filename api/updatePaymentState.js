@@ -13,10 +13,15 @@ export default async function handler(req, res) {
     const { data: existing } = await svc.from("applications").select("id,workflow_state,user_id,applicant_type,advisor_id").eq("id", applicationId).maybeSingle();
     if (!existing) return res.status(404).json({ error: "application not found" });
 
+    const nextWorkflowState = paymentState === "completed" ? "payment_completed" : existing.workflow_state;
     const nextPatch = {
       payment_state: paymentState,
       payment_details: details,
-      workflow_state: paymentState === "completed" ? "payment_completed" : existing.workflow_state,
+      workflow_state: nextWorkflowState,
+      // Keep the legacy review_state mirror in sync with workflow_state so the
+      // admin queue (which reads review_state) never disagrees with the
+      // advisor/client views (which read workflow_state).
+      review_state: nextWorkflowState,
       completed_at: paymentState === "completed" ? new Date().toISOString() : existing.completed_at,
     };
 

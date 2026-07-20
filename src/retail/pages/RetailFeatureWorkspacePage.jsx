@@ -3,7 +3,7 @@ import { useOutletContext, useNavigate } from "react-router-dom";
 import { RETAIL_FEATURES, isRetailWorkspaceUnlocked } from "../routes/retailWorkspaceRoutes";
 import RetailLockedWorkspacePage from "./RetailLockedWorkspacePage";
 import { RETAIL_THEME } from "../../config/retailTheme";
-import { createSignedDocumentUrl, DOCUMENT_BUCKET, fetchApplicableDocumentRequirements, fetchApplicationDocuments, fetchDocumentRequests, uploadDocumentForRequest, summarizeDocumentReadiness, uploadApplicationDocument } from "../../documents/documentService";
+import { createSignedDocumentUrl, DOCUMENT_BUCKET, fetchApplicableDocumentRequirements, fetchApplicationDocuments, fetchDocumentRequests, uploadDocumentForRequest, summarizeDocumentReadiness, uploadApplicationDocument, notifyDocumentUploaded } from "../../documents/documentService";
 import { fetchNotifications, markNotificationRead } from "../../notifications/notificationService";
 import EmptyState from '../../components/EmptyState';
 import SkeletonCard from '../../components/SkeletonCard';
@@ -85,6 +85,7 @@ function DocumentsWorkspace({ workspace, refresh }) {
         file,
         uploadedBy: workspace.session.user.id,
       });
+      await notifyDocumentUploaded({ applicationId: workspace.application.id, documentType: requirement.document_name });
       await loadDocuments();
       await refresh();
       setMessage("Document uploaded successfully — your advisor will review it shortly.");

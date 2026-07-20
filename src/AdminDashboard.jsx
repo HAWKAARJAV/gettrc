@@ -546,7 +546,7 @@ function EligibilityRequestsTab() {
         user_id: a.user_id,
         current_country: a.country,
         urgency: a.application_type,
-        status: a.review_state || a.workflow_state || "pending_review",
+        status: a.workflow_state || a.review_state || "pending_review",
         payment_status: a.payment_state || "pending",
         created_at: a.created_at,
         advisor_id: a.advisor_id || null,

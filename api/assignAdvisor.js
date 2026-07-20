@@ -23,6 +23,10 @@ export default async function handler(req, res) {
       advisor_id: resolvedAdvisorUserId,
       advisor_assigned_at: new Date().toISOString(),
       workflow_state: "advisor_assigned",
+      // review_state is a legacy mirror of workflow_state read by the admin
+      // queue — keep the two in lock-step here (as updateWorkflowState does)
+      // so a case never shows a different state to admin vs advisor/client.
+      review_state: "advisor_assigned",
     };
 
     const { data: updated, error: updateError } = await svc.from("applications").update(nextPatch).eq("id", applicationId).select("*").maybeSingle();

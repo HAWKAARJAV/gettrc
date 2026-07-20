@@ -68,6 +68,9 @@ export default async function handler(req, res) {
           paid_at: new Date().toISOString(),
         },
         workflow_state: "payment_completed",
+        // Mirror into the legacy review_state column the admin queue reads, so
+        // the case doesn't show one state to admin and another to advisor/client.
+        review_state: "payment_completed",
         completed_at: existing.completed_at,
       };
 

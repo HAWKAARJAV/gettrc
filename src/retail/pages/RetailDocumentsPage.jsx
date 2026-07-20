@@ -3,7 +3,7 @@ import { useOutletContext, useNavigate } from "react-router-dom";
 import EmptyState from '../../components/EmptyState';
 import { supabase } from "../../supabaseClient";
 import { RETAIL_THEME } from "../../config/retailTheme";
-import { fetchApplicableDocumentRequirements, fetchDocumentRequests } from "../../documents/documentService";
+import { fetchApplicableDocumentRequirements, fetchDocumentRequests, notifyDocumentUploaded } from "../../documents/documentService";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -163,6 +163,9 @@ export default function RetailDocumentsPage() {
     if (!appId || !userId) throw new Error("No active application found.");
     const newDoc = await uploadDoc(appId, userId, docKey, file);
     setDocs(prev => [newDoc, ...prev.filter(d => d.document_type !== docKey)]);
+    // Notify the advisor and nudge the case into documents_under_review.
+    // Best-effort — the upload already succeeded, so this never blocks the UI.
+    notifyDocumentUploaded({ applicationId: appId, documentType: docKey });
   };
 
   const uploaded = docs.filter(d => d.review_status !== "deleted");

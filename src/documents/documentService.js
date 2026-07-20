@@ -149,6 +149,27 @@ export async function createDocumentRequest({ applicationId, documentType, descr
 }
 
 /**
+ * Notify the assigned advisor that the client uploaded a document, and nudge
+ * the application into documents_under_review if it was waiting on documents.
+ * Best-effort: the upload already succeeded, so failures here are swallowed and
+ * never surfaced as an upload error.
+ */
+export async function notifyDocumentUploaded({ applicationId, documentType = "" }) {
+  try {
+    const token = localStorage.getItem("trc_token");
+    if (!token || !applicationId) return false;
+    const res = await fetch("/api/notifyDocumentUploaded", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ applicationId, documentType }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Mark a document_request as fulfilled.
  * Called by the client after they upload the requested document.
  */
@@ -172,6 +193,7 @@ export async function fulfillDocumentRequest(requestId) {
 export async function uploadDocumentForRequest({ applicationId, requestId, documentType, file, uploadedBy }) {
   const doc = await uploadApplicationDocument({ applicationId, documentType, file, uploadedBy });
   await fulfillDocumentRequest(requestId);
+  await notifyDocumentUploaded({ applicationId, documentType });
   return doc;
 }
 
