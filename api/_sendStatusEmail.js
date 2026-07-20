@@ -10,8 +10,8 @@ const EMAIL_CONTENT = {
     subject: "Great news — you're eligible for a UAE Tax Residency Certificate",
     emoji: "✅",
     heading: "Eligibility confirmed",
-    body: "Your eligibility has been verified by our compliance team. We'll reach out shortly to arrange the payment and unlock your full workspace.",
-    cta: { label: "Contact Support", path: "/retail/support" },
+    body: "Your eligibility has been verified by our compliance team. Log in and complete the service fee payment to unlock your full workspace and start document upload.",
+    cta: { label: "Pay Now", path: "/retail/eligibility-status" },
   },
   payment_pending: {
     subject: "Action required: Complete your TRC payment",

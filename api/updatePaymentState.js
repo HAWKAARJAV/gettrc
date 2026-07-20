@@ -1,5 +1,5 @@
 import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor } from "./_shared.js";
-import { sendAdvisorEmail } from "./_sendStatusEmail.js";
+import { sendAdvisorEmail, sendStatusEmail } from "./_sendStatusEmail.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -68,17 +68,24 @@ export default async function handler(req, res) {
     const { data: notifRows, error: notifError } = await svc.from("notifications").insert(notificationsToInsert).select("*");
     if (notifError) console.warn("notification insert warning", notifError);
 
-    if (paymentState === "completed" && existing.advisor_id) {
+    if (paymentState === "completed") {
       try {
         const [{ data: clientProfile }, { data: advisorProfile }] = await Promise.all([
-          svc.from("profiles").select("full_name").eq("id", existing.user_id).maybeSingle(),
-          svc.from("profiles").select("email,full_name").eq("id", existing.advisor_id).maybeSingle(),
+          svc.from("profiles").select("email,full_name").eq("id", existing.user_id).maybeSingle(),
+          existing.advisor_id ? svc.from("profiles").select("email,full_name").eq("id", existing.advisor_id).maybeSingle() : Promise.resolve({ data: null }),
         ]);
+        // This is currently the only usable payment-completion path (the
+        // Stripe webhook that also emails the client requires live keys we
+        // don't have yet), so the client email lives here rather than being
+        // Stripe-only.
+        if (clientProfile?.email) {
+          await sendStatusEmail({ email: clientProfile.email, name: clientProfile.full_name || "", newState: "payment_completed", applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
+        }
         if (advisorProfile?.email) {
           await sendAdvisorEmail({ email: advisorProfile.email, name: advisorProfile.full_name || "", kind: "payment_received", clientName: clientProfile?.full_name, applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
         }
       } catch (emailErr) {
-        console.warn("[updatePaymentState] Advisor email failed (non-fatal):", emailErr?.message || emailErr);
+        console.warn("[updatePaymentState] Status email failed (non-fatal):", emailErr?.message || emailErr);
       }
     }
 
