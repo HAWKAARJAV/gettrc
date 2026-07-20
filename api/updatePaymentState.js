@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     if (!applicationId || !paymentState) return res.status(400).json({ error: "applicationId and paymentState required" });
 
     const svc = getServiceClient();
-    const { data: existing } = await svc.from("applications").select("id,workflow_state,user_id,applicant_type").eq("id", applicationId).maybeSingle();
+    const { data: existing } = await svc.from("applications").select("id,workflow_state,user_id,applicant_type,advisor_id").eq("id", applicationId).maybeSingle();
     if (!existing) return res.status(404).json({ error: "application not found" });
 
     const nextPatch = {
@@ -35,16 +35,31 @@ export default async function handler(req, res) {
     if (historyError) console.warn("history insert warning", historyError);
 
     const actionUrl = `${existing.applicant_type === "corporate" ? "/corporate" : "/retail"}/applications/${applicationId}?panel=summary&focus=payment`;
-    const { data: notifRows, error: notifError } = await svc.from("notifications").insert({
-      user_id: existing.user_id,
-      application_id: applicationId,
-      notification_type: "workflow",
-      title: "Payment update",
-      body: `Payment status for application ${applicationId} updated to ${paymentState}.`,
-      action_url: actionUrl,
-      level: "info",
-      created_at: new Date().toISOString(),
-    }).select("*");
+    const notificationsToInsert = [
+      {
+        user_id: existing.user_id,
+        application_id: applicationId,
+        notification_type: "workflow",
+        title: "Payment update",
+        body: `Payment status for application ${applicationId} updated to ${paymentState}.`,
+        action_url: actionUrl,
+        level: "info",
+        created_at: new Date().toISOString(),
+      },
+    ];
+    if (paymentState === "completed" && existing.advisor_id) {
+      notificationsToInsert.push({
+        user_id: existing.advisor_id,
+        application_id: applicationId,
+        notification_type: "workflow",
+        title: "Payment received",
+        body: `Payment has been confirmed for application ${applicationId} — the case is now ready to proceed.`,
+        action_url: `/advisor/cases/${applicationId}`,
+        level: "info",
+        created_at: new Date().toISOString(),
+      });
+    }
+    const { data: notifRows, error: notifError } = await svc.from("notifications").insert(notificationsToInsert).select("*");
     if (notifError) console.warn("notification insert warning", notifError);
 
     return res.status(200).json({ success: true, data: { application: updated }, historyEntry: historyRow || null, notifications: notifRows || [], error: null });

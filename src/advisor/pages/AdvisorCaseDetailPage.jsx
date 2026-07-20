@@ -11,7 +11,15 @@ import {
   createSignedDocumentUrl,
   DOCUMENT_BUCKET,
 } from "../../documents/documentService";
-import { reviewDocument } from "../../adminApi";
+import { reviewDocument, updateWorkflowState } from "../../adminApi";
+import { fetchTravelHistory, calculatePresenceSummary } from "../../residency/travelHistoryService";
+import {
+  computeRetailEligibilitySignal,
+  computeCorporateEligibilitySignal,
+  getDtaCrossCheckNote,
+  ELIGIBILITY_BASIS_LABELS,
+  CONFIDENCE_TONE,
+} from "../../eligibility/eligibilitySignal";
 
 const C = {
   navy: "#0F2557", navyLight: "#1A3570", gold: "#C9A84C", goldDark: "#A07C2E",
@@ -74,9 +82,237 @@ function WorkflowBadge({ state }) {
 
 // ── tab: Overview ─────────────────────────────────────────────────────────────
 
-function OverviewTab({ caseData }) {
+function ConfidenceBadge({ confidence }) {
+  const tone = CONFIDENCE_TONE[confidence] || { bg: "#F3F4F6", color: C.muted, label: confidence || "unknown" };
+  return (
+    <span style={{ background: tone.bg, color: tone.color, fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 999, textTransform: "uppercase", letterSpacing: ".04em" }}>
+      {tone.label}
+    </span>
+  );
+}
+
+function EligibilitySignalCard({ signal, dtaNote }) {
+  if (!signal) return null;
+  return (
+    <div style={{ background: "#FFFBEB", border: `1px solid #F5E1A4`, borderRadius: 16, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em" }}>Preliminary Eligibility Signal — advisor must confirm</div>
+        <ConfidenceBadge confidence={signal.confidence} />
+      </div>
+      <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 6 }}>{signal.label}</div>
+      <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
+        Basis: {ELIGIBILITY_BASIS_LABELS[signal.basis] || signal.basis}
+        {signal.daySource && <> · Day count source: <strong>{signal.daySource === "tracked" ? "tracked travel history" : signal.daySource === "self_reported" ? "self-reported at signup" : "legacy yes/no answer"}</strong> ({signal.days ?? 0} days)</>}
+      </div>
+      {signal.substanceReviewRecommended && (
+        <div style={{ marginTop: 10, fontSize: 12, color: C.warn, background: C.warnBg, borderRadius: 8, padding: "8px 10px" }}>
+          ⚠ FTA practice may scrutinize genuine operational substance for this entity even though incorporation alone satisfies the statutory test — recommend reviewing before final sign-off.
+        </div>
+      )}
+      {signal.periodEligibilityWarning && (
+        <div style={{ marginTop: 10, fontSize: 12, color: C.warn, background: C.warnBg, borderRadius: 8, padding: "8px 10px" }}>
+          ⚠ {signal.periodEligibilityWarning}
+        </div>
+      )}
+      {signal.feeTier && (
+        <div style={{ marginTop: 10, fontSize: 12, color: C.muted }}>
+          Indicative FTA fees: AED {signal.feeTier.submissionFeeAed} submission + AED {signal.feeTier.processingFeeAed} processing (informational only — no online payment collection).
+        </div>
+      )}
+      {dtaNote && (
+        <div style={{ marginTop: 10, fontSize: 12, color: C.navy, background: C.offWhite2, borderRadius: 8, padding: "8px 10px", lineHeight: 1.6 }}>
+          ℹ {dtaNote}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const RETAIL_BASIS_OPTIONS = [
+  ["183_day", "183-day physical presence test"],
+  ["90_day", "90-day test"],
+  ["interests_test", "Centre of financial & personal interests test"],
+  ["does_not_qualify", "Does not qualify"],
+];
+const CORPORATE_BASIS_OPTIONS = [
+  ["uae_incorporation", "UAE incorporation"],
+  ["effective_management", "Effective management and control (UAE)"],
+  ["does_not_qualify", "Does not qualify"],
+];
+
+function EligibilityDeterminationCard({ caseData, advisorUserId, defaultBasis, onDetermined }) {
+  const alreadyDetermined = Boolean(caseData.eligibility_basis);
+  const [basis, setBasis] = useState(caseData.eligibility_basis || defaultBasis || "");
+  const [notes, setNotes] = useState(caseData.eligibility_notes || "");
+  const [submitting, setSubmitting] = useState(false);
+  const [err, setErr] = useState("");
+
+  const options = caseData.applicant_type === "corporate" ? CORPORATE_BASIS_OPTIONS : RETAIL_BASIS_OPTIONS;
+  const canEdit = !alreadyDetermined && caseData.workflow_state === "pending_review";
+
+  const submit = async () => {
+    if (!basis) { setErr("Select the confirmed basis before submitting."); return; }
+    if (basis === "does_not_qualify" && !notes.trim()) { setErr("Notes are required when the applicant does not qualify."); return; }
+    setSubmitting(true); setErr("");
+    try {
+      const nowIso = new Date().toISOString();
+      const res = await updateWorkflowState({
+        applicationId: caseData.id,
+        newState: basis === "does_not_qualify" ? "rejected" : "eligible",
+        notes: notes.trim(),
+        patch: {
+          eligibility_basis: basis,
+          eligibility_determined_by: advisorUserId,
+          eligibility_determined_at: nowIso,
+          eligibility_notes: notes.trim(),
+        },
+      });
+      if (res?.error) throw new Error(res.error);
+      onDetermined({
+        eligibility_basis: basis,
+        eligibility_determined_by: advisorUserId,
+        eligibility_determined_at: nowIso,
+        eligibility_notes: notes.trim(),
+        workflow_state: basis === "does_not_qualify" ? "rejected" : "eligible",
+      });
+    } catch (e) {
+      setErr(e.message || "Failed to record determination.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Eligibility Determination</div>
+
+      {!canEdit ? (
+        <div>
+          {alreadyDetermined ? (
+            <>
+              <Field label="Confirmed Basis" value={ELIGIBILITY_BASIS_LABELS[caseData.eligibility_basis] || caseData.eligibility_basis} />
+              <Field label="Determined At" value={caseData.eligibility_determined_at ? new Date(caseData.eligibility_determined_at).toLocaleString() : "—"} />
+              {caseData.eligibility_notes && <Field label="Notes" value={caseData.eligibility_notes} />}
+            </>
+          ) : (
+            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>
+              Determination is only recorded while the case is in Pending Review. Current state: {caseData.workflow_state}.
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirmed Basis</div>
+            <select value={basis} onChange={(e) => setBasis(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, color: C.navy, outline: "none" }}>
+              <option value="">— Select —</option>
+              {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Notes {basis === "does_not_qualify" && "(required)"}</div>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Rationale for this determination" style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 13, color: C.navy, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
+          </div>
+          {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{err}</div>}
+          <button onClick={submit} disabled={submitting || !basis}
+            style={{ padding: "10px 20px", borderRadius: 10, background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, color: "#fff", border: "none", fontWeight: 700, cursor: submitting || !basis ? "not-allowed" : "pointer", fontFamily: SANS, opacity: submitting || !basis ? 0.6 : 1 }}>
+            {submitting ? "Saving…" : "Confirm Determination"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+const FILING_ELIGIBLE_STATES = ["payment_completed", "documents_pending", "documents_under_review", "advisor_assigned", "processing"];
+
+function MarkAsFiledCard({ caseData, onFiled }) {
+  const [notes, setNotes] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [err, setErr] = useState("");
+
+  const alreadyFiled = ["submitted_to_authority", "completed"].includes(caseData.workflow_state);
+  const canFile = FILING_ELIGIBLE_STATES.includes(caseData.workflow_state);
+
+  if (!alreadyFiled && !canFile) return null;
+
+  const submit = async () => {
+    setSubmitting(true);
+    setErr("");
+    try {
+      const res = await updateWorkflowState({
+        applicationId: caseData.id,
+        newState: "submitted_to_authority",
+        notes: notes.trim() || "Application filed with the UAE Federal Tax Authority",
+        patch: {},
+      });
+      if (res?.error) throw new Error(res.error);
+      onFiled({ workflow_state: "submitted_to_authority" });
+    } catch (e) {
+      setErr(e.message || "Failed to mark as filed.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Filing</div>
+      {alreadyFiled ? (
+        <div style={{ fontSize: 13, color: C.success, fontWeight: 700 }}>✓ Filed with the UAE Federal Tax Authority.</div>
+      ) : (
+        <>
+          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, marginBottom: 12 }}>
+            Once all required documents are approved and you're ready to submit this application to the FTA, record it here — the client will be notified that their case has been filed.
+          </div>
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Optional notes (e.g. FTA reference number)" style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 13, color: C.navy, outline: "none", resize: "vertical", boxSizing: "border-box", marginBottom: 12 }} />
+          {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{err}</div>}
+          <button onClick={submit} disabled={submitting}
+            style={{ padding: "10px 20px", borderRadius: 10, background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, color: "#fff", border: "none", fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer", fontFamily: SANS, opacity: submitting ? 0.6 : 1 }}>
+            {submitting ? "Filing…" : "Mark as Filed with FTA →"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+function OverviewTab({ caseData, advisorUserId, onCaseUpdate }) {
   const client = caseData.profiles || {};
   const elig   = caseData.eligibility_requests || {};
+  const isCorporate = caseData.applicant_type === "corporate";
+
+  const corpElig = caseData.corporate_eligibility_requests;
+  const loadingCorpElig = isCorporate && corpElig === undefined;
+  const [presenceSummary, setPresenceSummary] = useState(null);
+
+  useEffect(() => {
+    if (isCorporate || !caseData.user_id) return;
+    let cancelled = false;
+    fetchTravelHistory(caseData.user_id)
+      .then((trips) => { if (!cancelled) setPresenceSummary(calculatePresenceSummary(trips)); })
+      .catch(() => { if (!cancelled) setPresenceSummary(null); });
+    return () => { cancelled = true; };
+  }, [isCorporate, caseData.user_id]);
+
+  const signal = useMemo(() => {
+    if (isCorporate) {
+      if (!corpElig || Object.keys(corpElig).length === 0) return null;
+      return computeCorporateEligibilitySignal({ corporateEligibilityRequest: corpElig });
+    }
+    if (Object.keys(elig).length === 0) return null;
+    return computeRetailEligibilitySignal({ eligibilityRequest: elig, presenceSummary, nationality: client.nationality });
+  }, [isCorporate, corpElig, elig, presenceSummary, client.nationality]);
+
+  const dtaNote = useMemo(() => {
+    if (isCorporate) return getDtaCrossCheckNote({ trcPurpose: corpElig?.trc_purpose, treatyCountry: corpElig?.target_treaty_country });
+    return getDtaCrossCheckNote({ trcPurpose: elig.trc_purpose, treatyCountry: elig.treaty_country });
+  }, [isCorporate, corpElig, elig]);
+
+  const handleDetermined = (patch) => {
+    onCaseUpdate?.((prev) => ({ ...prev, ...patch }));
+  };
+
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 18 }}>
       {/* Client info */}
@@ -92,10 +328,25 @@ function OverviewTab({ caseData }) {
       {/* Eligibility details */}
       <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Eligibility Details</div>
-        {caseData.applicant_type === "corporate" ? (
-          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, fontStyle: "italic" }}>
-            Corporate eligibility is assessed separately by the compliance team and is not shown here. Review the company's corporate eligibility request through the admin dashboard.
-          </div>
+        {isCorporate ? (
+          loadingCorpElig ? (
+            <div style={{ fontSize: 13, color: C.muted }}>Loading…</div>
+          ) : !corpElig || Object.keys(corpElig).length === 0 ? (
+            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>No corporate eligibility record linked to this application yet.</div>
+          ) : (
+            <>
+              <Field label="Incorporation Date"     value={corpElig.incorporation_date} />
+              <Field label="Incorporation Location" value={corpElig.incorporation_location} />
+              <Field label="Has Corporate Tax TRN"  value={corpElig.has_corporate_tax_trn} />
+              <Field label="Corporate Tax TRN"      value={corpElig.corporate_tax_trn} />
+              <Field label="Filed Corporate Tax Return" value={corpElig.has_filed_corporate_tax_return} />
+              <Field label="TRC Purpose"            value={corpElig.trc_purpose} />
+              <Field label="Target Treaty Country"  value={corpElig.target_treaty_country} />
+              <Field label="Effective Mgmt Statement" value={corpElig.effective_management_statement} />
+              <Field label="Board Meetings in UAE"  value={corpElig.board_meetings_in_uae} />
+              <Field label="Key Decision Makers in UAE" value={corpElig.key_decision_makers_in_uae} />
+            </>
+          )
         ) : Object.keys(elig).length === 0 ? (
           <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>
             No eligibility record linked to this application yet.
@@ -105,7 +356,15 @@ function OverviewTab({ caseData }) {
             <Field label="Current Country" value={elig.current_country} />
             <Field label="UAE Visa"         value={elig.uae_visa} />
             <Field label="Emirates ID"      value={elig.emirates_id} />
-            <Field label="Days in UAE"      value={elig.days_in_uae} />
+            <Field label="VAT Registered"   value={elig.vat_registered} />
+            <Field label="TRC Period Year"  value={elig.trc_period_year} />
+            <Field label="Days in UAE (self-reported)" value={elig.days_in_uae} />
+            <Field label="Has Permanent Residence" value={elig.has_permanent_residence} />
+            <Field label="UAE Employment/Business" value={elig.has_uae_employment_or_business} />
+            <Field label="Centre of Interests" value={elig.is_centre_of_interests} />
+            <Field label="Visa Type"        value={elig.visa_type} />
+            <Field label="TRC Purpose"      value={elig.trc_purpose} />
+            <Field label="Treaty Country"   value={elig.treaty_country} />
             <Field label="Occupation"       value={elig.occupation} />
             <Field label="Income Source"    value={elig.income_source} />
             <Field label="Purpose"          value={elig.purpose} />
@@ -124,6 +383,17 @@ function OverviewTab({ caseData }) {
         <Field label="Advisor Assigned" value={caseData.advisor_assigned_at ? new Date(caseData.advisor_assigned_at).toLocaleString() : "—"} />
         <Field label="Started At"       value={caseData.started_at ? new Date(caseData.started_at).toLocaleDateString() : "—"} />
       </div>
+
+      {signal && <EligibilitySignalCard signal={signal} dtaNote={dtaNote} />}
+
+      <EligibilityDeterminationCard
+        caseData={caseData}
+        advisorUserId={advisorUserId}
+        defaultBasis={signal && signal.confidence !== "does_not_clearly_qualify" ? signal.basis : ""}
+        onDetermined={handleDetermined}
+      />
+
+      <MarkAsFiledCard caseData={caseData} onFiled={handleDetermined} />
     </div>
   );
 }
@@ -295,22 +565,35 @@ function DocumentsTab({ caseData, advisorUserId }) {
   const mountedRef                        = useRef(true);
 
   const answers = useMemo(() => {
+    if (caseData?.applicant_type === "corporate") {
+      // Corporate cases have no `eligibility_requests` row (that FK is
+      // retail-only) — the determined/preliminary basis and incorporation
+      // facts drive corporate document gating instead.
+      return {
+        eligibilityBasis: caseData.eligibility_basis || "",
+        incorporationLocation: caseData.corporate_eligibility_requests?.incorporation_location || "",
+        hasCorporateTaxTrn: caseData.corporate_eligibility_requests?.has_corporate_tax_trn || "",
+        trcPurpose: caseData.corporate_eligibility_requests?.trc_purpose || "",
+      };
+    }
     const elig = caseData?.eligibility_requests || {};
     return {
-      occupation:    elig.occupation,
-      business_owner: String(elig.occupation || "").toLowerCase().includes("business"),
+      eligibilityBasis: caseData?.eligibility_basis || "",
+      occupation: elig.occupation,
+      hasUaeEmploymentOrBusiness: elig.has_uae_employment_or_business,
+      hasPermanentResidence: elig.has_permanent_residence,
+      trcPurpose: elig.trc_purpose,
     };
-  }, [caseData?.eligibility_requests]);
+  }, [caseData]);
 
   const load = useCallback(async () => {
     if (!caseData?.id) return;
     setLoadingDocs(true);
-    const country = caseData.country || "AE";
     const appType = caseData.applicant_type || "retail";
     const [docs, reqs, reqs2] = await Promise.all([
       fetchApplicationDocuments(caseData.id),
       fetchDocumentRequests(caseData.id),
-      fetchApplicableDocumentRequirements({ country, applicantType: appType, answers }),
+      fetchApplicableDocumentRequirements({ applicantType: appType, answers }),
     ]);
     if (mountedRef.current) {
       setDocuments(docs);
@@ -731,6 +1014,28 @@ export default function AdvisorCaseDetailPage() {
       .then(({ data }) => { setCaseData(data); setLoading(false); });
   }, [id, workspace.cases]);
 
+  // Corporate cases have no eligibility_requests row (that FK is retail-only)
+  // — fetch corporate_eligibility_requests separately by company id (=
+  // applications.user_id for corporate rows) once the base case has loaded.
+  // Requires the "Advisors see assigned corporate eligibility requests" RLS
+  // policy — without it this silently returns nothing (advisors aren't the
+  // company owner or is_admin_user()).
+  useEffect(() => {
+    if (!caseData || caseData.applicant_type !== "corporate" || !caseData.user_id) return;
+    if (caseData.corporate_eligibility_requests !== undefined) return;
+    let cancelled = false;
+    supabase
+      .from("corporate_eligibility_requests")
+      .select("*")
+      .eq("company_id", caseData.user_id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled) return;
+        setCaseData(prev => prev ? { ...prev, corporate_eligibility_requests: data || null } : prev);
+      });
+    return () => { cancelled = true; };
+  }, [caseData]);
+
   // Fetch unread message count (from client to this advisor)
   useEffect(() => {
     if (!id || !advisorUserId) return;
@@ -833,7 +1138,7 @@ export default function AdvisorCaseDetailPage() {
       </div>
 
       {/* Tab content */}
-      {activeTab === "overview"  && <OverviewTab  caseData={caseData} />}
+      {activeTab === "overview"  && <OverviewTab  caseData={caseData} advisorUserId={advisorUserId} onCaseUpdate={setCaseData} />}
       {activeTab === "documents" && <DocumentsTab caseData={caseData} advisorUserId={advisorUserId} />}
       {activeTab === "messages"  && <MessagesTab  caseData={caseData} advisorUserId={advisorUserId} />}
     </div>

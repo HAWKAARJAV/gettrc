@@ -52,7 +52,7 @@ function DocumentsWorkspace({ workspace, refresh }) {
   const loadDocuments = useCallback(async () => {
     if (!workspace.application?.id) return;
     const [nextRequirements, nextDocuments, nextRequests] = await Promise.all([
-      fetchApplicableDocumentRequirements({ country: workspace.application?.country || "AE", applicantType: "retail", answers }),
+      fetchApplicableDocumentRequirements({ applicantType: "retail", answers }),
       fetchApplicationDocuments(workspace.application.id),
       fetchDocumentRequests(workspace.application.id),
     ]);

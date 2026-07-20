@@ -86,19 +86,20 @@ const FALLBACK_CONTENT = {
   cta: { label: "View Dashboard", path: "/retail/dashboard" },
 };
 
-export async function sendStatusEmail({ email, name, newState, applicationId, siteUrl = "https://gettrc.com" }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.warn("[sendStatusEmail] RESEND_API_KEY not set — skipping email");
-    return;
-  }
+export function renderNotesBlock(notes, heading = "Note from your advisor:") {
+  if (!notes) return "";
+  return `
+      <div style="margin:0 0 28px;padding:16px 20px;background:#F7F8FC;border-left:3px solid #C9A84C;border-radius:6px">
+        <p style="font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#0F2557;margin:0 0 6px">${heading}</p>
+        <p style="font-size:14px;color:#4A5568;line-height:1.65;margin:0;white-space:pre-wrap">${notes}</p>
+      </div>`;
+}
 
-  const content = EMAIL_CONTENT[newState] || FALLBACK_CONTENT;
-  const ctaUrl = `${siteUrl}${content.cta.path}`;
+function buildEmailHtml({ content, name, applicationId, siteUrl, notes, ctaUrl }) {
   const refId = (applicationId || "").slice(0, 8).toUpperCase();
   const firstName = (name || "there").split(" ")[0];
 
-  const html = `
+  return `
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
@@ -116,6 +117,7 @@ export async function sendStatusEmail({ email, name, newState, applicationId, si
     <div style="padding:36px 40px">
       <p style="font-size:16px;color:#0F2557;margin:0 0 16px">Hi ${firstName},</p>
       <p style="font-size:15px;color:#4A5568;line-height:1.75;margin:0 0 28px">${content.body}</p>
+      ${renderNotesBlock(notes)}
       <a href="${ctaUrl}" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#A07C2E);color:#fff;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px">
         ${content.cta.label} →
       </a>
@@ -131,17 +133,56 @@ export async function sendStatusEmail({ email, name, newState, applicationId, si
   </div>
 </body>
 </html>`.trim();
+}
+
+async function dispatchEmail({ email, subject, html, logContext }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("[sendStatusEmail] RESEND_API_KEY not set — skipping email");
+    return;
+  }
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ from: "TRC Connect <notifications@gettrc.com>", to: email, subject: content.subject, html }),
+    body: JSON.stringify({ from: "TRC Connect <notifications@gettrc.com>", to: email, subject, html }),
   });
 
   if (!res.ok) {
     const err = await res.text().catch(() => "unknown");
     console.warn(`[sendStatusEmail] Resend error (${res.status}): ${err}`);
   } else {
-    console.log(`[sendStatusEmail] Email sent → ${email} (state: ${newState})`);
+    console.log(`[sendStatusEmail] Email sent → ${email} (${logContext})`);
   }
+}
+
+export async function sendStatusEmail({ email, name, newState, applicationId, siteUrl = "https://gettrc.com", notes = "" }) {
+  const content = EMAIL_CONTENT[newState] || FALLBACK_CONTENT;
+  const ctaUrl = `${siteUrl}${content.cta.path}`;
+  const html = buildEmailHtml({ content, name, applicationId, siteUrl, notes, ctaUrl });
+  await dispatchEmail({ email, subject: content.subject, html, logContext: `state: ${newState}` });
+}
+
+export async function sendDocumentEmail({ email, name, kind, documentType, notes = "", applicationId, siteUrl = "https://gettrc.com", applicantType = "retail" }) {
+  const basePath = applicantType === "corporate" ? "/corporate/documents" : "/retail/documents";
+  const content =
+    kind === "requested"
+      ? {
+          subject: `Action required: ${documentType} requested`,
+          emoji: "📁",
+          heading: "A document has been requested",
+          body: `Your advisor has requested the following document for your application: <strong>${documentType}</strong>. Please upload it as soon as possible to keep your application on track.`,
+          cta: { label: "Upload Your Document", path: basePath },
+        }
+      : {
+          subject: "Action required: a document needs resubmission",
+          emoji: "⚠️",
+          heading: "A document needs resubmission",
+          body: `Your <strong>${documentType}</strong> was reviewed and could not be accepted as submitted. Please review the note below and upload a corrected copy.`,
+          cta: { label: "Resubmit Your Document", path: basePath },
+        };
+
+  const ctaUrl = `${siteUrl}${content.cta.path}`;
+  const html = buildEmailHtml({ content, name, applicationId, siteUrl, notes, ctaUrl });
+  await dispatchEmail({ email, subject: content.subject, html, logContext: `document ${kind}` });
 }

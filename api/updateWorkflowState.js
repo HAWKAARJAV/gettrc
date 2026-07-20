@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     try {
       const { data: profile } = await svc.from("profiles").select("email,full_name").eq("id", existing.user_id).maybeSingle();
       if (profile?.email) {
-        await sendStatusEmail({ email: profile.email, name: profile.full_name || "", newState, applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
+        await sendStatusEmail({ email: profile.email, name: profile.full_name || "", newState, applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com", notes });
       }
     } catch (emailErr) {
       console.warn("[updateWorkflowState] Status email failed (non-fatal):", emailErr?.message || emailErr);

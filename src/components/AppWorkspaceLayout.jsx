@@ -1,5 +1,6 @@
 import React from "react";
 import { RETAIL_THEME } from "../config/retailTheme";
+import NotificationCenter from "./NotificationCenter";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -28,10 +29,15 @@ export default function AppWorkspaceLayout({
             <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.7, maxWidth: 760 }}>{description}</p>
             {stageLabel && <p style={{ color: C.muted, fontSize: 13, marginTop: 8 }}>{stageLabel}</p>}
           </div>
-          <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "12px 14px", boxShadow: RETAIL_THEME.shadows.card }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 4 }}>Account</div>
-            <div style={{ fontSize: 14, color: C.navy, fontWeight: 700 }}>{accountValue}</div>
-            <div style={{ marginTop: 5, fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".08em" }}>{accountLabel}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "10px 12px", boxShadow: RETAIL_THEME.shadows.card }}>
+              <NotificationCenter />
+            </div>
+            <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "12px 14px", boxShadow: RETAIL_THEME.shadows.card }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 4 }}>Account</div>
+              <div style={{ fontSize: 14, color: C.navy, fontWeight: 700 }}>{accountValue}</div>
+              <div style={{ marginTop: 5, fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".08em" }}>{accountLabel}</div>
+            </div>
           </div>
         </div>
 

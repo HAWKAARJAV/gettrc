@@ -117,7 +117,6 @@ export default function AdvisorProfilePage() {
 
           {advisor ? (
             <>
-              <Field label="Country"   value={advisor.country} />
               <Field label="Languages" value={languages.length ? languages.join(", ") : null} />
 
               <div style={{ padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>

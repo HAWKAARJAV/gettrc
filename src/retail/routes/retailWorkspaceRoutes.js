@@ -67,7 +67,7 @@ export const RETAIL_FEATURES = {
       "Travel periods with inclusive day counting",
       "90-day and 183-day threshold visibility",
       "Timeline evidence for specialist review",
-      "Country-aware residency configuration",
+      "UAE residency tracking configuration",
     ],
   },
 };

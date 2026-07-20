@@ -7,6 +7,28 @@ import { registerCorporateApplicant } from "../services/corporateAuth";
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
 const SANS = RETAIL_THEME.fonts.sans;
+
+const INCORPORATION_LOCATION_OPTIONS = [
+  ["UAE Mainland", "uae_mainland"],
+  ["UAE Free Zone", "uae_freezone"],
+  ["UAE Offshore", "uae_offshore"],
+  ["Foreign", "foreign"],
+];
+
+// Keep in sync with TREATY_COUNTRIES in src/pages/EligibilityRegistrationPage.jsx.
+const TREATY_COUNTRIES = [
+  "Algeria", "Armenia", "Austria", "Azerbaijan", "Bangladesh", "Belarus", "Belgium", "Bosnia and Herzegovina",
+  "Brunei", "Bulgaria", "Canada", "China", "Cyprus", "Czech Republic", "Egypt", "Estonia", "Ethiopia", "Finland",
+  "France", "Georgia", "Germany", "Greece", "Hong Kong", "Hungary", "India", "Indonesia", "Ireland", "Italy",
+  "Japan", "Jordan", "Kazakhstan", "Kenya", "Kyrgyzstan", "Latvia", "Lebanon", "Lithuania", "Luxembourg",
+  "Malaysia", "Malta", "Mauritius", "Mexico", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Netherlands",
+  "New Zealand", "Pakistan", "Panama", "Philippines", "Poland", "Portugal", "Romania", "Russia", "Rwanda",
+  "Senegal", "Serbia", "Seychelles", "Singapore", "Slovakia", "Slovenia", "South Africa", "South Korea", "Spain",
+  "Sri Lanka", "Sudan", "Switzerland", "Syria", "Tajikistan", "Thailand", "Tunisia", "Turkey", "Turkmenistan",
+  "Ukraine", "United Kingdom", "Uzbekistan", "Venezuela", "Vietnam", "Yemen",
+];
+const TREATY_COUNTRY_OPTIONS = TREATY_COUNTRIES.map((c) => [c, c]);
+
 const INPUT_STYLE = {
   width: "100%",
   padding: "13px 15px",
@@ -20,6 +42,7 @@ const INPUT_STYLE = {
   minWidth: 0,
   maxWidth: "100%",
 };
+const SELECT_STYLE = { ...INPUT_STYLE, background: C.white, cursor: "pointer" };
 
 function SelectPill({ label, value, active, onClick }) {
   return (
@@ -41,7 +64,6 @@ export default function CorporateEligibilityPage() {
     companyName: "",
     email: "",
     phone: "",
-    registeredCountry: "",
     industry: "",
     website: "",
     entityType: "",
@@ -49,6 +71,16 @@ export default function CorporateEligibilityPage() {
     annualRevenue: "",
     countriesOfOperation: "",
     uaePresence: "",
+    incorporationDate: "",
+    incorporationLocation: "",
+    hasCorporateTaxTrn: "",
+    corporateTaxTrn: "",
+    hasFiledCorporateTaxReturn: "",
+    trcPurpose: "",
+    targetTreatyCountry: "",
+    effectiveManagementStatement: "",
+    boardMeetingsInUae: "",
+    keyDecisionMakersInUae: "",
     purpose: "",
     targetJurisdiction: "",
     urgency: "",
@@ -62,11 +94,27 @@ export default function CorporateEligibilityPage() {
   const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = async () => {
-    const required = ["companyName", "email", "phone", "registeredCountry", "industry", "entityType", "employeeCount", "annualRevenue", "countriesOfOperation", "uaePresence", "purpose", "targetJurisdiction", "urgency", "taxStructure", "useCase", "password", "confirmPassword"];
+    const required = ["companyName", "email", "phone", "industry", "entityType", "employeeCount", "annualRevenue", "countriesOfOperation", "uaePresence", "incorporationDate", "incorporationLocation", "hasCorporateTaxTrn", "hasFiledCorporateTaxReturn", "trcPurpose", "purpose", "targetJurisdiction", "urgency", "taxStructure", "useCase", "password", "confirmPassword"];
     const missing = required.find((field) => !String(form[field] || "").trim()) || (!form.terms ? "terms" : "");
     if (missing) {
       setError(missing === "terms" ? "Please agree to the Terms & Privacy Policy." : "Please complete every field before submitting.");
       return;
+    }
+    if (form.hasCorporateTaxTrn === "yes" && !String(form.corporateTaxTrn || "").trim()) {
+      setError("Please provide your Corporate Tax TRN.");
+      return;
+    }
+    if (form.trcPurpose === "treaty" && !String(form.targetTreatyCountry || "").trim()) {
+      setError("Please select the treaty country this TRC is for.");
+      return;
+    }
+    if (form.incorporationLocation === "foreign") {
+      const foreignRequired = ["effectiveManagementStatement", "boardMeetingsInUae", "keyDecisionMakersInUae"];
+      const missingForeign = foreignRequired.find((field) => !String(form[field] || "").trim());
+      if (missingForeign) {
+        setError("Please complete the effective management and control details for foreign-incorporated entities.");
+        return;
+      }
     }
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
@@ -81,7 +129,6 @@ export default function CorporateEligibilityPage() {
         companyName: form.companyName,
         email: form.email,
         phone: form.phone,
-        registeredCountry: form.registeredCountry,
         industry: form.industry,
         website: form.website,
         entityType: form.entityType,
@@ -89,6 +136,16 @@ export default function CorporateEligibilityPage() {
         annualRevenue: form.annualRevenue,
         countriesOfOperation: form.countriesOfOperation,
         uaePresence: form.uaePresence,
+        incorporationDate: form.incorporationDate,
+        incorporationLocation: form.incorporationLocation,
+        hasCorporateTaxTrn: form.hasCorporateTaxTrn,
+        corporateTaxTrn: form.hasCorporateTaxTrn === "yes" ? form.corporateTaxTrn : "",
+        hasFiledCorporateTaxReturn: form.hasFiledCorporateTaxReturn,
+        trcPurpose: form.trcPurpose,
+        targetTreatyCountry: form.trcPurpose === "treaty" ? form.targetTreatyCountry : "",
+        effectiveManagementStatement: form.incorporationLocation === "foreign" ? form.effectiveManagementStatement : "",
+        boardMeetingsInUae: form.incorporationLocation === "foreign" ? form.boardMeetingsInUae : "",
+        keyDecisionMakersInUae: form.incorporationLocation === "foreign" ? form.keyDecisionMakersInUae : "",
         purpose: form.purpose,
         targetJurisdiction: form.targetJurisdiction,
         urgency: form.urgency,
@@ -181,7 +238,6 @@ export default function CorporateEligibilityPage() {
                   ["Company Name", "companyName", "Registered company name"],
                   ["Official Business Email", "email", "business@example.com"],
                   ["Contact Number", "phone", "+971 ..."],
-                  ["Registered Country", "registeredCountry", "Country of incorporation"],
                   ["Industry Type", "industry", "Industry or sector"],
                   ["Company Website", "website", "Optional website"],
                 ].map(([label, key, placeholder]) => (
@@ -190,6 +246,12 @@ export default function CorporateEligibilityPage() {
                     <input value={form[key]} onChange={(e) => update(key, e.target.value)} placeholder={placeholder} style={INPUT_STYLE} />
                   </div>
                 ))}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Registered Country</label>
+                  <div style={{ ...INPUT_STYLE, display: "flex", alignItems: "center", gap: 8, background: C.offWhite, color: C.muted, cursor: "not-allowed" }}>
+                    🇦🇪 United Arab Emirates
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -222,6 +284,110 @@ export default function CorporateEligibilityPage() {
                   <SelectPill label="No" value="no" active={form.uaePresence === "no"} onClick={(value) => update("uaePresence", value)} />
                 </div>
               </div>
+            </div>
+
+            <div>
+              <SectionTitle>Incorporation & Tax Status</SectionTitle>
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Date of Incorporation</label>
+                  <input value={form.incorporationDate} onChange={(e) => update("incorporationDate", e.target.value)} type="date" style={INPUT_STYLE} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Place of Incorporation</label>
+                  <select value={form.incorporationLocation} onChange={(e) => update("incorporationLocation", e.target.value)} style={SELECT_STYLE}>
+                    <option value="">Select an option</option>
+                    {INCORPORATION_LOCATION_OPTIONS.map(([label, value]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Do you hold a Corporate Tax TRN?</label>
+                  <select value={form.hasCorporateTaxTrn} onChange={(e) => update("hasCorporateTaxTrn", e.target.value)} style={SELECT_STYLE}>
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+                {form.hasCorporateTaxTrn === "yes" && (
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Corporate Tax TRN</label>
+                    <input value={form.corporateTaxTrn} onChange={(e) => update("corporateTaxTrn", e.target.value)} placeholder="Corporate Tax registration number" style={INPUT_STYLE} />
+                  </div>
+                )}
+              </div>
+              <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7, marginTop: 8 }}>
+                Informational only — the processing fee is AED 500 if you hold a Corporate Tax TRN, or AED 1,750 if you do not. This app does not process payments.
+              </p>
+
+              <div style={{ marginTop: 14 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Have you filed a Corporate Tax Return?</label>
+                <select value={form.hasFiledCorporateTaxReturn} onChange={(e) => update("hasFiledCorporateTaxReturn", e.target.value)} style={SELECT_STYLE}>
+                  <option value="">Select an option</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7, marginTop: 8 }}>
+                  Newly incorporated entities that have not yet filed a Corporate Tax Return must be established 12+ months before applying for a TRC.
+                </p>
+              </div>
+
+              <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Do you require TRC under a Tax Treaty, or issued under UAE Domestic law?</label>
+                  <select value={form.trcPurpose} onChange={(e) => update("trcPurpose", e.target.value)} style={SELECT_STYLE}>
+                    <option value="">Select an option</option>
+                    <option value="domestic">UAE Domestic Law</option>
+                    <option value="treaty">Tax Treaty</option>
+                  </select>
+                  <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7, marginTop: 8 }}>
+                    Domestic law TRC needs less documentation. Choose Tax Treaty only if you need to claim relief in a specific treaty country.
+                  </p>
+                </div>
+                {form.trcPurpose === "treaty" && (
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Which country's tax treaty is this TRC for?</label>
+                    <select value={form.targetTreatyCountry} onChange={(e) => update("targetTreatyCountry", e.target.value)} style={SELECT_STYLE}>
+                      <option value="">Select a country</option>
+                      {TREATY_COUNTRY_OPTIONS.map(([label, value]) => (
+                        <option key={value} value={value}>{label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              {form.incorporationLocation === "foreign" && (
+                <div style={{ marginTop: 14, background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 12 }}>Effective Management &amp; Control in the UAE</div>
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Describe how effective management and control of the company is exercised in the UAE</label>
+                    <textarea value={form.effectiveManagementStatement} onChange={(e) => update("effectiveManagementStatement", e.target.value)} placeholder="Where board decisions are made, delegation of authority, shareholder activity, etc." rows={4} style={{ ...INPUT_STYLE, resize: "vertical", fontFamily: SANS }} />
+                  </div>
+                  <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
+                    <div>
+                      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Are board meetings held in the UAE?</label>
+                      <select value={form.boardMeetingsInUae} onChange={(e) => update("boardMeetingsInUae", e.target.value)} style={SELECT_STYLE}>
+                        <option value="">Select an option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Are key decision makers based in the UAE?</label>
+                      <select value={form.keyDecisionMakersInUae} onChange={(e) => update("keyDecisionMakersInUae", e.target.value)} style={SELECT_STYLE}>
+                        <option value="">Select an option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>

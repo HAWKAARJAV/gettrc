@@ -165,7 +165,6 @@ export function CorporateProfilePage() {
     company_name: workspace.profile?.company_name || "",
     business_email: workspace.profile?.business_email || "",
     phone: workspace.profile?.phone || "",
-    registered_country: workspace.profile?.registered_country || "",
     industry: workspace.profile?.industry || "",
     website: workspace.profile?.website || "",
   });
@@ -193,12 +192,18 @@ export function CorporateProfilePage() {
     <div style={{ display: "grid", gap: 18 }}>
       <Card title="Company profile" subtitle="Confirm the corporate identity details used for compliance review.">
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
-          {["company_name", "business_email", "phone", "registered_country", "industry", "website"].map((key) => (
+          {["company_name", "business_email", "phone", "industry", "website"].map((key) => (
             <div key={key}>
               <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{key.replaceAll("_", " ")}</label>
               <input value={form[key]} onChange={(e) => update(key, e.target.value)} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
           ))}
+          <div>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>registered country</label>
+            <div style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.muted, fontSize: 14, boxSizing: "border-box", background: C.offWhite }}>
+              {workspace.profile?.registered_country || "UAE"}
+            </div>
+          </div>
         </div>
         {message && <div style={{ marginTop: 14, color: C.gold, fontSize: 13, fontWeight: 700 }}>{message}</div>}
         <button onClick={saveProfile} disabled={saving} style={{ marginTop: 16, background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
@@ -249,7 +254,7 @@ export function CorporateSupportPage() {
     const { data } = await supabase
       .from("support_tickets")
       .select("*")
-      .eq("applicant_id", userId)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false });
     setTickets(data || []);
     setLoadingTickets(false);
@@ -277,9 +282,8 @@ export function CorporateSupportPage() {
     setNotice({ text: "", ok: true });
     try {
       const { error } = await supabase.from("support_tickets").insert({
-        applicant_id:   userId,
+        user_id:        userId,
         application_id: appId || null,
-        role:           "corporate",
         subject:        subject.trim(),
         message:        message.trim(),
       });

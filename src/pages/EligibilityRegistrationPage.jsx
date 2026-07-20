@@ -1,27 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { registerRetailApplicant } from "../services/retailAuth";
-import { fetchAssessmentQuestions, groupAssessmentQuestions, shouldRenderQuestion } from "../services/assessmentService";
+import { shouldRenderQuestion } from "../services/assessmentService";
 import { RETAIL_THEME as P } from "../config/retailTheme";
+import { SectionLabel, SectionCard, QuestionField } from "../eligibility/retailQuestionnaire";
+import {
+  INPUT_STYLE, dedupeQuestions,
+  RESIDENCY_QUESTIONS, PROFESSIONAL_QUESTIONS,
+  resolveOccupation, resolvePurpose,
+} from "../eligibility/retailQuestionnaireData";
 
 const z = P.colors;
 const SERIF = P.fonts.serif;
 const SANS = P.fonts.sans;
-
-const INPUT_STYLE = {
-  width: "100%",
-  padding: "13px 15px",
-  borderRadius: P.radius.sm,
-  border: `1.5px solid ${z.border}`,
-  color: z.navy,
-  fontFamily: SANS,
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-  minWidth: 0,
-  maxWidth: "100%",
-};
 
 const PROCESS_STEPS = [
   { num: "1", title: "Submit Eligibility Request", desc: "Share the core facts of your residence, visa, and professional profile." },
@@ -53,128 +45,43 @@ function EligibilityShell({ children }) {
   );
 }
 
-function SectionLabel({ children }) {
-  return <div style={{ fontSize: 11, fontWeight: 700, color: z.gold, textTransform: "uppercase", letterSpacing: ".14em", marginBottom: 10 }}>{children}</div>;
-}
-
-function OptionButton({ label, value, active, onClick, compact = false }) {
-  return (
-    <button type="button" onClick={() => onClick(value)}
-      style={{ padding: compact ? "10px 12px" : "11px 14px", borderRadius: P.radius.sm, border: `1px solid ${active ? z.gold : z.border}`, background: active ? "rgba(201,168,76,.12)" : z.white, color: z.navy, fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", minWidth: 0 }}>
-      {label}
-    </button>
-  );
-}
-
-function QuestionField({ question, value, onChange }) {
-  const fieldKey = question.field_key || question.id;
-  const label = question.question;
-  const placeholder = question.placeholder || "";
-
-  if (question.field_type === "boolean") {
-    return (
-      <div>
-        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</label>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", rowGap: 10 }}>
-          <OptionButton label="Yes" value="true" active={String(value) === "true"} onClick={v => onChange(fieldKey, v)} />
-          <OptionButton label="No" value="false" active={String(value) === "false"} onClick={v => onChange(fieldKey, v)} />
-        </div>
-      </div>
-    );
-  }
-
-  if (question.field_type === "select") {
-    const isUrgency = fieldKey === "urgency";
-    const opts = isUrgency
-      ? [["Standard", "standard"], ["Urgent", "urgent"], ["High Priority", "high"]]
-      : [["Yes", "yes"], ["No", "no"]];
-    return (
-      <div style={isUrgency ? { gridColumn: "1 / -1" } : undefined}>
-        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</label>
-        <div style={isUrgency ? { display: "grid", gridTemplateColumns: "repeat(3, minmax(0, max-content))", gap: 10, alignItems: "center" } : { display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", rowGap: 10 }}>
-          {opts.map(([l, v]) => (
-            <OptionButton key={v} label={l} value={v} active={value === v} onClick={v => onChange(fieldKey, v)} compact={isUrgency} />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</label>
-      <input value={value || ""} onChange={e => onChange(fieldKey, e.target.value)} type={question.field_type === "number" ? "number" : "text"} placeholder={placeholder} style={INPUT_STYLE} />
-    </div>
-  );
-}
-
-function dedupeQuestions(questions = []) {
-  const seen = new Set();
-  return (questions || []).filter(q => {
-    const key = `${String(q.field_key || "").trim().toLowerCase()}::${String(q.question || "").trim().toLowerCase().replace(/\?/g, "").replace(/\s+/g, " ")}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-// ─── Fallback questions used when the DB table is empty ──────────────────────
-const FALLBACK_RESIDENCY = [
-  { id: "currentCountry", field_key: "currentCountry", question: "Current country of residence", field_type: "text", placeholder: "Current residence" },
-  { id: "daysInUae", field_key: "daysInUae", question: "Days stayed in UAE", field_type: "number", placeholder: "e.g. 45" },
-  { id: "uaeVisa", field_key: "uaeVisa", question: "UAE residence visa?", field_type: "select" },
-  { id: "emiratesId", field_key: "emiratesId", question: "Emirates ID available?", field_type: "select" },
-  { id: "visaType", field_key: "visaType", question: "Visa type", field_type: "text", placeholder: "Employment, investor, freelance, family, etc." },
-];
-
-const FALLBACK_PROFESSIONAL = [
-  { id: "occupation", field_key: "occupation", question: "Occupation", field_type: "text", placeholder: "Your role" },
-  { id: "incomeSource", field_key: "incomeSource", question: "Income source", field_type: "text", placeholder: "Salary, business, investments" },
-  { id: "purpose", field_key: "purpose", question: "Purpose of TRC", field_type: "text", placeholder: "Personal, corporate, banking, etc." },
-  { id: "urgency", field_key: "urgency", question: "Urgency level", field_type: "select" },
-];
-
-const REQUIRED_FIELDS = ["fullName", "email", "phone", "nationality", "currentCountry", "uaeVisa", "emiratesId", "daysInUae", "visaType", "occupation", "incomeSource", "purpose", "urgency", "password", "confirmPassword"];
+const REQUIRED_FIELDS = ["fullName", "email", "phone", "nationality", "currentCountry", "vatRegistered", "trcPeriodYear", "daysInUaePeriod", "uaeVisa", "emiratesId", "visaType", "hasPermanentResidence", "hasUaeEmploymentOrBusiness", "isCentreOfFinancialPersonalInterests", "trcPurpose", "occupation", "incomeSource", "purpose", "urgency", "password", "confirmPassword"];
 
 export default function EligibilityRegistrationPage() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [dynamicQuestions, setDynamicQuestions] = useState([]);
 
   const [form, setForm] = useState({
     fullName: "", email: "", phone: "", nationality: "",
-    currentCountry: "", uaeVisa: "", emiratesId: "", daysInUae: "", visaType: "",
-    occupation: "", incomeSource: "", purpose: "", urgency: "",
+    currentCountry: "", uaeVisa: "", emiratesId: "", visaType: "",
+    vatRegistered: "", trcPeriodYear: "", daysInUaePeriod: "",
+    hasPermanentResidence: "", hasUaeEmploymentOrBusiness: "", isCentreOfFinancialPersonalInterests: "",
+    trcPurpose: "", treatyCountry: "",
+    occupation: "", occupationOther: "", incomeSource: "", purpose: "", purposeOther: "", urgency: "",
     password: "", confirmPassword: "", terms: false,
   });
 
   const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
-  useEffect(() => {
-    fetchAssessmentQuestions({ country: "AE", applicantType: "retail" })
-      .then(setDynamicQuestions)
-      .catch(() => setDynamicQuestions([]));
-  }, []);
-
-  const grouped = useMemo(() => {
-    const filtered = dynamicQuestions.filter(q => q.field_key && ["residency", "professional"].includes(q.section));
-    return groupAssessmentQuestions(dedupeQuestions(filtered));
-  }, [dynamicQuestions]);
-
-  const hasDynamic = Object.keys(grouped).length > 0;
-  const residencyQs  = hasDynamic ? (grouped.residency || []) : FALLBACK_RESIDENCY;
-  const professionalQs = hasDynamic ? (grouped.professional || []) : FALLBACK_PROFESSIONAL;
+  const residencyQs = RESIDENCY_QUESTIONS;
+  const professionalQs = PROFESSIONAL_QUESTIONS;
 
   const handleSubmit = async () => {
     // Validate all required fields
     const missing = REQUIRED_FIELDS.find(f => !String(form[f] || "").trim());
     if (missing) { setError("Please complete every field before submitting."); return; }
+    if (form.trcPurpose === "treaty" && !String(form.treatyCountry || "").trim()) {
+      setError("Please select the treaty country."); return;
+    }
+    if (form.occupation === "other" && !String(form.occupationOther || "").trim()) {
+      setError("Please specify your occupation."); return;
+    }
+    if (form.purpose === "other" && !String(form.purposeOther || "").trim()) {
+      setError("Please specify the purpose of your TRC."); return;
+    }
     if (!form.terms) { setError("Please agree to the Terms & Privacy Policy."); return; }
     if (form.password !== form.confirmPassword) { setError("Passwords do not match."); return; }
-    if (String(form.daysInUae || "").trim() !== "" && !/^\d+$/.test(String(form.daysInUae).trim())) {
-      setError("Please enter a valid number for 'Days stayed in UAE'."); return;
-    }
 
     setSubmitting(true);
     setError("");
@@ -187,17 +94,22 @@ export default function EligibilityRegistrationPage() {
         currentCountry: form.currentCountry,
         uaeVisa: form.uaeVisa,
         emiratesId: form.emiratesId,
-        daysInUae: Number(form.daysInUae),
         visaType: form.visaType,
-        occupation: form.occupation,
+        vatRegistered: form.vatRegistered,
+        trcPeriodYear: form.trcPeriodYear,
+        daysInUaePeriod: form.daysInUaePeriod,
+        hasPermanentResidence: form.hasPermanentResidence,
+        hasUaeEmploymentOrBusiness: form.hasUaeEmploymentOrBusiness,
+        isCentreOfFinancialPersonalInterests: form.isCentreOfFinancialPersonalInterests,
+        trcPurpose: form.trcPurpose,
+        treatyCountry: form.trcPurpose === "treaty" ? form.treatyCountry : "",
+        occupation: resolveOccupation(form.occupation, form.occupationOther),
         incomeSource: form.incomeSource,
-        purpose: form.purpose,
+        purpose: resolvePurpose(form.purpose, form.purposeOther),
         urgency: form.urgency,
         password: form.password,
       });
-      localStorage.setItem("trc_pending_email", form.email);
-      localStorage.setItem("trc_pending_name", form.fullName);
-      navigate(`/verify-email?email=${encodeURIComponent(form.email)}`);
+      navigate("/retail/login", { state: { justRegistered: true, email: form.email } });
     } catch (e) {
       console.error("Eligibility submission error:", e);
       const msg = (e && (e.message || e.error_description || e.msg)) || "Unable to submit eligibility request.";
@@ -222,7 +134,25 @@ export default function EligibilityRegistrationPage() {
       <style>{`
         * { box-sizing: border-box; }
         .eligibility-card * { min-width: 0; }
-        input, button { max-width: 100%; }
+        input, button, select { max-width: 100%; }
+        .elig-input, .elig-select {
+          transition: border-color .15s, box-shadow .15s;
+        }
+        .elig-input:hover, .elig-select:hover { border-color: ${z.gold}99 !important; }
+        .elig-input:focus, .elig-select:focus {
+          border-color: ${z.gold} !important;
+          box-shadow: 0 0 0 3px rgba(201,168,76,.16);
+        }
+        .elig-select {
+          cursor: pointer;
+          -webkit-appearance: none;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7' fill='none'%3E%3Cpath d='M1 1L5.5 5.5L10 1' stroke='%236B7A99' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 14px center;
+          padding-right: 38px !important;
+        }
+        .elig-pill:hover { border-color: ${z.gold} !important; }
         @media (max-width: 1120px) {
           .eligibility-layout { grid-template-columns: 1fr !important; }
           .eligibility-card { width: 100% !important; }
@@ -273,24 +203,21 @@ export default function EligibilityRegistrationPage() {
             <p style={{ color: z.muted, fontSize: 14, lineHeight: 1.8 }}>Submit your eligibility request and create your retail account in one guided step.</p>
           </div>
 
-          <div style={{ padding: 24, display: "grid", gap: 20, width: "100%", minWidth: 0, boxSizing: "border-box" }}>
+          <div style={{ padding: 24, display: "grid", gap: 16, width: "100%", minWidth: 0, boxSizing: "border-box" }}>
 
-            {/* Basic Details */}
-            <div>
-              <SectionLabel>Basic Details</SectionLabel>
+            <SectionCard number={1} title="Basic Details" description="Your personal identification information.">
               <div className="eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
-                {[["Full Name", "fullName", "Your legal name"], ["Email Address", "email", "you@example.com"], ["Phone Number", "phone", "+971 ..."], ["Nationality", "nationality", "Your nationality"]].map(([label, field, ph]) => (
+                {[["Full Name", "fullName", "Your legal name", "Must match your passport exactly."], ["Email Address", "email", "you@example.com"], ["Phone Number", "phone", "+971 ..."], ["Nationality", "nationality", "Your nationality"]].map(([label, field, ph, note]) => (
                   <div key={field} style={{ gridColumn: "span 1" }}>
                     <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</label>
-                    <input value={form[field]} onChange={e => set(field, e.target.value)} placeholder={ph} style={INPUT_STYLE} />
+                    <input className="elig-input" value={form[field]} onChange={e => set(field, e.target.value)} placeholder={ph} style={INPUT_STYLE} />
+                    {note && <div style={{ fontSize: 11, color: z.muted, marginTop: 6, lineHeight: 1.5 }}>{note}</div>}
                   </div>
                 ))}
               </div>
-            </div>
+            </SectionCard>
 
-            {/* UAE Eligibility */}
-            <div>
-              <SectionLabel>UAE Eligibility</SectionLabel>
+            <SectionCard number={2} title="UAE Eligibility" description="Determines which of the three UAE tax-residency tests applies to you.">
               <div className="eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
                 {dedupeQuestions(residencyQs).filter(q => shouldRenderQuestion(q, form)).map((q, i) => {
                   const key = q.field_key || q.id || String(i);
@@ -299,11 +226,9 @@ export default function EligibilityRegistrationPage() {
                   return <QuestionField key={`${key}-${i}`} question={q} value={form[q.field_key]} onChange={set} />;
                 })}
               </div>
-            </div>
+            </SectionCard>
 
-            {/* Professional Details */}
-            <div>
-              <SectionLabel>Professional Details</SectionLabel>
+            <SectionCard number={3} title="Professional Details" description="Helps your advisor tailor the required documents to your profile.">
               <div className="eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
                 {dedupeQuestions(professionalQs).filter(q => shouldRenderQuestion(q, form)).map((q, i) => {
                   const key = q.field_key || q.id || String(i);
@@ -312,26 +237,24 @@ export default function EligibilityRegistrationPage() {
                   return <QuestionField key={`${key}-${i}`} question={q} value={form[q.field_key]} onChange={set} />;
                 })}
               </div>
-            </div>
+            </SectionCard>
 
-            {/* Account Setup */}
-            <div>
-              <SectionLabel>Account Setup</SectionLabel>
+            <SectionCard number={4} title="Account Setup" description="Create your login to track this application.">
               <div className="eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Password</label>
-                  <input value={form.password} type="password" onChange={e => set("password", e.target.value)} placeholder="Create a password" style={INPUT_STYLE} />
+                  <input className="elig-input" value={form.password} type="password" onChange={e => set("password", e.target.value)} placeholder="Create a password" style={INPUT_STYLE} />
                 </div>
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirm Password</label>
-                  <input value={form.confirmPassword} type="password" onChange={e => set("confirmPassword", e.target.value)} placeholder="Confirm password" style={INPUT_STYLE} />
+                  <input className="elig-input" value={form.confirmPassword} type="password" onChange={e => set("confirmPassword", e.target.value)} placeholder="Confirm password" style={INPUT_STYLE} />
                 </div>
               </div>
               <label style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 14, fontSize: 14, color: z.navy, lineHeight: 1.7, flexWrap: "wrap", rowGap: 10 }}>
                 <input checked={form.terms} onChange={e => set("terms", e.target.checked)} type="checkbox" style={{ marginTop: 4 }} />
                 <span>I agree to Terms &amp; Privacy Policy</span>
               </label>
-            </div>
+            </SectionCard>
 
             {error && (
               <div style={{ background: z.errorBg, border: `1px solid ${z.errorBorder}`, color: z.error, borderRadius: P.radius.sm, padding: "12px 14px", fontSize: 13 }}>{error}</div>

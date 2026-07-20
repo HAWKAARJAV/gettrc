@@ -35,11 +35,11 @@ export function getApplicationOperationalStage(application, fallbackState = "pen
   return normalizeApplicationState(application, fallbackState);
 }
 
-export function buildApplicationMeta({ applicantType, userId, country, applicationType, eligibilityRequestId }) {
+export function buildApplicationMeta({ applicantType, userId, applicationType, eligibilityRequestId }) {
   return {
     applicant_type: applicantType,
     user_id: userId,
-    country,
+    country: "AE",
     application_type: applicationType,
     eligibility_request_id: eligibilityRequestId,
   };

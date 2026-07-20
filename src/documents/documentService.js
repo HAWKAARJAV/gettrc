@@ -3,12 +3,12 @@ import * as workflowMutations from "../workflow/workflowMutationService";
 
 export const DOCUMENT_BUCKET = "trc-private-documents";
 
-export async function fetchDocumentRequirements({ country, applicantType }) {
+export async function fetchDocumentRequirements({ applicantType }) {
   try {
     const { data, error } = await supabase
       .from("document_requirements")
       .select("*")
-      .eq("country", country)
+      .eq("country", "AE")
       .eq("applicant_type", applicantType)
       .order("sort_order", { ascending: true });
 
@@ -19,18 +19,33 @@ export async function fetchDocumentRequirements({ country, applicantType }) {
   }
 }
 
+// Recursive evaluator for document_requirements.conditions. Supports:
+//   - { any: [node, node, ...] }   — true if ANY child node matches
+//   - { all: [node, node, ...] }   — true if ALL child nodes match
+//   - { field: "x", equals: "y" }  — single-field equality check
+//   - legacy flat shorthand: { key: "value", key2: "value2" } — implicit AND
+//     of equality checks (kept for backward compatibility with older rows).
+// Needed because real FTA document requirements include "either/or" logic
+// (e.g. the 90-day test needs employment proof OR residence proof, not both).
+function evalConditionNode(node, answers) {
+  if (!node || typeof node !== "object") return true;
+  if (Array.isArray(node.any)) return node.any.some((child) => evalConditionNode(child, answers));
+  if (Array.isArray(node.all)) return node.all.every((child) => evalConditionNode(child, answers));
+  if (node.field !== undefined) {
+    return String(answers[node.field]).toLowerCase() === String(node.equals).toLowerCase();
+  }
+  // Legacy flat shorthand — implicit AND of equality checks.
+  return Object.entries(node).every(([key, expected]) => String(answers[key]).toLowerCase() === String(expected).toLowerCase());
+}
+
 export function requirementMatchesAnswers(requirement, answers = {}) {
   const conditions = requirement?.conditions;
   if (!conditions || Object.keys(conditions).length === 0) return true;
-
-  return Object.entries(conditions).every(([key, expected]) => {
-    const actual = answers[key];
-    return String(actual).toLowerCase() === String(expected).toLowerCase();
-  });
+  return evalConditionNode(conditions, answers);
 }
 
-export async function fetchApplicableDocumentRequirements({ country, applicantType, answers = {} }) {
-  const requirements = await fetchDocumentRequirements({ country, applicantType });
+export async function fetchApplicableDocumentRequirements({ applicantType, answers = {} }) {
+  const requirements = await fetchDocumentRequirements({ applicantType });
   return requirements.filter((requirement) => requirementMatchesAnswers(requirement, answers));
 }
 

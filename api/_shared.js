@@ -41,6 +41,27 @@ export async function verifyAdminOrAdvisor(accessToken) {
   return { user, profile };
 }
 
+// Verifies the caller is the actual owner of the application (the retail
+// user_id, or the corporate company's user_id) — distinct from
+// verifyAdminOrAdvisor, which gates privileged staff actions. Used for
+// client-initiated actions like starting a payment or resubmitting
+// eligibility, where the caller must be the applicant themselves.
+export async function verifyApplicationOwner(accessToken, applicationId) {
+  if (!accessToken) throw { status: 401, message: "Missing access token" };
+  if (!applicationId) throw { status: 400, message: "applicationId required" };
+  const svc = getServiceClient();
+  const { data, error } = await svc.auth.getUser(accessToken);
+  if (error) throw { status: 401, message: "Invalid token" };
+  const user = data?.user || data;
+  if (!user || !user.id) throw { status: 401, message: "Unauthenticated" };
+
+  const { data: application } = await svc.from("applications").select("*").eq("id", applicationId).maybeSingle();
+  if (!application) throw { status: 404, message: "Application not found" };
+  if (application.user_id !== user.id) throw { status: 403, message: "Not the owner of this application" };
+
+  return { user, application };
+}
+
 export async function syncLegacyRequestFromApplication({ application, nextPatch = {}, notes = "", advisorLabel = null }) {
   if (!application?.id || !application?.applicant_type) return null;
 

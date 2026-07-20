@@ -22,7 +22,7 @@ export default function RetailResidencyTrackerPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
-  const [form, setForm] = useState({ country: "AE", entryDate: "", exitDate: "" });
+  const [form, setForm] = useState({ entryDate: "", exitDate: "" });
 
   const loadTrips = useCallback(async () => {
     if (!workspace.session?.user?.id) return;
@@ -64,12 +64,12 @@ export default function RetailResidencyTrackerPage() {
     try {
       const trip = await addTravelHistoryEntry({
         userId: workspace.session.user.id,
-        country: form.country,
+        country: "AE",
         entryDate: form.entryDate,
         exitDate: form.exitDate,
       });
       setTrips((prev) => [trip, ...prev]);
-      setForm({ country: "AE", entryDate: "", exitDate: "" });
+      setForm({ entryDate: "", exitDate: "" });
       setMessage("Travel period added.");
     } catch (error) {
       setMessage(error.message || "Unable to add travel period.");
@@ -101,11 +101,10 @@ export default function RetailResidencyTrackerPage() {
       </Card>
 
       <Card eyebrow="Travel entry" title="Add travel period">
+        <p style={{ color: C.muted, fontSize: 13, lineHeight: 1.7, marginTop: -6, marginBottom: 14 }}>
+          Log each period you were physically present in the UAE. Only UAE presence counts toward the residency thresholds above.
+        </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, alignItems: "end" }}>
-          <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Country</label>
-            <input value={form.country} onChange={(event) => setForm((prev) => ({ ...prev, country: event.target.value.toUpperCase() }))} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-          </div>
           <div>
             <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Entry date</label>
             <input type="date" value={form.entryDate} onChange={(event) => setForm((prev) => ({ ...prev, entryDate: event.target.value }))} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14, outline: "none", boxSizing: "border-box" }} />
@@ -129,8 +128,7 @@ export default function RetailResidencyTrackerPage() {
         ) : (
           <div style={{ display: "grid", gap: 10 }}>
             {trips.map((trip) => (
-              <div key={trip.id} style={{ display: "grid", gridTemplateColumns: "90px 1fr auto", gap: 14, alignItems: "center", background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
-                <div style={{ fontSize: 12, fontWeight: 800, color: C.gold }}>{trip.country}</div>
+              <div key={trip.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 800, color: C.navy }}>{trip.entry_date} to {trip.exit_date || "present"}</div>
                   <div style={{ height: 6, borderRadius: 999, background: C.offWhite2, marginTop: 8, overflow: "hidden" }}>

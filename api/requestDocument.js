@@ -1,4 +1,5 @@
 import { getServiceClient, verifyAdminOrAdvisor } from "./_shared.js";
+import { sendDocumentEmail } from "./_sendStatusEmail.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -41,6 +42,23 @@ export default async function handler(req, res) {
       created_at: new Date().toISOString(),
     }).select("*").maybeSingle();
     if (notifError) console.warn("notification insert warning", notifError);
+
+    try {
+      const { data: profile } = await svc.from("profiles").select("email,full_name").eq("id", application.user_id).maybeSingle();
+      if (profile?.email) {
+        await sendDocumentEmail({
+          email: profile.email,
+          name: profile.full_name || "",
+          kind: "requested",
+          documentType,
+          applicationId,
+          applicantType: application.applicant_type,
+          siteUrl: process.env.SITE_URL || "https://gettrc.com",
+        });
+      }
+    } catch (emailErr) {
+      console.warn("[requestDocument] Document email failed (non-fatal):", emailErr?.message || emailErr);
+    }
 
     return res.status(200).json({ success: true, data: { documentRequest: docRequest }, notification: notifRow || null, error: null });
   } catch (err) {

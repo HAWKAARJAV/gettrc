@@ -13,12 +13,14 @@ const DOCUMENT_BUCKET = "trc-private-documents";
 
 // Fallback list used when the document_requirements table has no entries for this applicant
 const FALLBACK_DOCS = [
-  { key: "passport",       label: "Passport Copy",              hint: "Clear scan of all pages (PDF or JPG)" },
-  { key: "emirates_id",    label: "Emirates ID",                hint: "Front and back (PDF or JPG)" },
-  { key: "residence_visa", label: "UAE Residence Visa",         hint: "Valid visa page from passport" },
-  { key: "bank_statement", label: "Bank Statement (6 months)",  hint: "Statement showing UAE transactions" },
-  { key: "salary_slip",    label: "Salary Slip / Income Proof", hint: "Latest 3 months" },
-  { key: "tenancy",        label: "Tenancy Contract / EJARI",   hint: "Current UAE address proof" },
+  { key: "passport_front",    label: "Passport — Front Page",      hint: "Photo page with your details (PDF or JPG)" },
+  { key: "passport_back",     label: "Passport — Back Page",       hint: "Back page / last page (PDF or JPG)" },
+  { key: "emirates_id_front", label: "Emirates ID — Front",        hint: "Front side of the card (PDF or JPG)" },
+  { key: "emirates_id_back",  label: "Emirates ID — Back",         hint: "Back side of the card (PDF or JPG)" },
+  { key: "residence_visa",    label: "UAE Residence Visa",         hint: "Valid visa page from passport" },
+  { key: "bank_statement",    label: "Bank Statement (6 months)",  hint: "Statement showing UAE transactions" },
+  { key: "salary_slip",       label: "Salary Slip / Income Proof", hint: "Latest 3 months" },
+  { key: "tenancy",           label: "Tenancy Contract / EJARI",   hint: "Current UAE address proof" },
 ];
 
 /** Map a document_requirements row → the {key, label, hint} shape DocRow expects */
@@ -129,7 +131,6 @@ export default function RetailDocumentsPage() {
   const navigate = useNavigate();
   const appId       = workspace.application?.id || null;
   const userId      = workspace.session?.user?.id || workspace.profile?.id;
-  const country     = workspace.application?.country || "";
   const appType     = workspace.application?.applicant_type || "retail";
 
   const [docs,           setDocs]           = useState([]);
@@ -144,7 +145,7 @@ export default function RetailDocumentsPage() {
     // Fetch uploaded docs, dynamic requirements, and pending advisor requests in parallel
     const [uploadedData, reqs, docRequests] = await Promise.all([
       fetchDocs(appId),
-      fetchApplicableDocumentRequirements({ country, applicantType: appType }),
+      fetchApplicableDocumentRequirements({ applicantType: appType }),
       fetchDocumentRequests(appId),
     ]);
 
@@ -242,7 +243,7 @@ export default function RetailDocumentsPage() {
             <div style={{ marginBottom: 12 }}>
               <EmptyState
                 title="No documents uploaded yet"
-                message="Start by uploading the most critical document (Passport copy). Use the upload buttons for each required document below."
+                message="Start by uploading your passport (front and back). Use the upload buttons for each required document below."
                 cta={{ label: 'Jump to upload', onClick: () => document.getElementById('documents-grid')?.scrollIntoView({ behavior: 'smooth' }) }}
               />
             </div>

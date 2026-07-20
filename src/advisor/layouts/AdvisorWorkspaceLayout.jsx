@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet, NavLink, useNavigate, useOutletContext } from "react-router-dom";
 import { logoutAdvisor } from "../../services/advisorAuth";
 import UnreadBadge from "../../components/UnreadBadge";
+import NotificationCenter from "../../components/NotificationCenter";
 
 const C = {
   navy: "#0F2557", navyDark: "#091A3D", sidebar: "#0A1F4E",
@@ -81,7 +82,7 @@ export default function AdvisorWorkspaceLayout() {
               {workspace.profile.full_name || workspace.advisor?.name || workspace.profile.email}
             </div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", marginTop: 2 }}>
-              {workspace.advisor?.country || "Advisor"}
+              Advisor
             </div>
           </div>
         )}
@@ -126,6 +127,7 @@ export default function AdvisorWorkspaceLayout() {
             <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".1em" }}>Advisor Dashboard</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <NotificationCenter />
             {workspace.unreadMessageCount > 0 && (
               <span style={{ background: "#FEF3C7", color: "#92400E", fontSize: 12, fontWeight: 700, padding: "4px 10px", borderRadius: 999 }}>
                 💬 {workspace.unreadMessageCount} unread

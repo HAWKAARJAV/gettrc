@@ -4,7 +4,6 @@ import * as ReactRouterDom from "react-router-dom";
 import AdminDashboard from "./AdminDashboard";
 import { SUPABASE_KEY, SUPABASE_URL } from "./supabaseClient";
 import RetailEligibilityPage from "./pages/RetailEligibilityPage";
-import VerifyRetailEmailPage from "./pages/VerifyRetailEmailPage";
 import RetailLoginPage from "./pages/RetailLoginPage";
 import RetailWorkspaceGuard from "./retail/guards/RetailWorkspaceGuard";
 import RetailWorkspaceLayout from "./retail/layouts/RetailWorkspaceLayout";
@@ -26,10 +25,18 @@ import {
   CorporateDashboardPage,
   CorporateDocumentsPage,
   CorporateEligibilityStatusPage,
-  CorporateFeatureWorkspacePage,
   CorporateProfilePage,
   CorporateSupportPage,
 } from "./corporate/pages/CorporateWorkspacePages";
+import CorporateChatPage from "./corporate/pages/CorporateChatPage";
+import {
+  CorporateApplicationsPage,
+  CorporateEmployeesPage,
+  CorporateComplianceCenterPage,
+  CorporateReportsPage,
+  CorporateBillingPage,
+  CorporateSettingsPage,
+} from "./corporate/pages/CorporateFeaturePages";
 import NotificationCenter from "./components/NotificationCenter";
 import ApplicationDetailPage from "./pages/ApplicationDetailPage";
 import WorkflowToastHost from "./components/WorkflowToastHost";
@@ -104,19 +111,6 @@ function SectionTitle({ children, light=false }) {
 
 
 
-const COUNTRIES = [
-  { code: "AE", name: "UAE", flag: "🇦🇪", slug: "uae" },
-  { code: "IN", name: "India", flag: "🇮🇳", slug: "india" },
-  { code: "GB", name: "United Kingdom", flag: "🇬🇧", slug: "uk" },
-  { code: "SG", name: "Singapore", flag: "🇸🇬", slug: "singapore" },
-  { code: "NL", name: "Netherlands", flag: "🇳🇱", slug: "netherlands" },
-  { code: "MT", name: "Malta", flag: "🇲🇹", slug: "malta" },
-  { code: "CY", name: "Cyprus", flag: "🇨🇾", slug: "cyprus" },
-  { code: "PT", name: "Portugal", flag: "🇵🇹", slug: "portugal" },
-  { code: "MU", name: "Mauritius", flag: "🇲🇺", slug: "mauritius" },
-  { code: "US", name: "United States", flag: "🇺🇸", slug: "usa" },
-];
-
 const ADVISORS = [
   {
     id: 1,
@@ -133,55 +127,9 @@ const ADVISORS = [
     verified: true,
     completions: 340,
   },
-  {
-    id: 2,
-    name: "Sebastian Hartmann",
-    title: "International Tax Advisor",
-    country: "Netherlands",
-    flag: "🇳🇱",
-    rating: 4.8,
-    reviews: 94,
-    specialties: ["EU Tax Residency", "30% Ruling", "OECD Compliance"],
-    turnaround: "5–7 days",
-    price: "From $349",
-    initials: "SH",
-    verified: true,
-    completions: 218,
-  },
-  {
-    id: 3,
-    name: "Priya Nair",
-    title: "Chartered Tax Practitioner",
-    country: "Singapore",
-    flag: "🇸🇬",
-    rating: 5.0,
-    reviews: 62,
-    specialties: ["IRAS Applications", "DTA Claims", "Expatriate Tax"],
-    turnaround: "2–4 days",
-    price: "From $279",
-    initials: "PN",
-    verified: true,
-    completions: 189,
-  },
-  {
-    id: 4,
-    name: "Marcus Vella",
-    title: "EU Residency Specialist",
-    country: "Malta",
-    flag: "🇲🇹",
-    rating: 4.7,
-    reviews: 88,
-    specialties: ["Malta TRC", "Global Residence Programme", "Nomad Residency"],
-    turnaround: "7–10 days",
-    price: "From $399",
-    initials: "MV",
-    verified: true,
-    completions: 156,
-  },
 ];
 
 const STATS = [
-  { value: "10", label: "Countries Covered", suffix: "+" },
   { value: "200", label: "Verified Advisors", suffix: "+" },
   { value: "8,400", label: "Certificates Issued", suffix: "+" },
   { value: "98", label: "Success Rate", suffix: "%" },
@@ -190,9 +138,9 @@ const STATS = [
 const STEPS = [
   {
     num: "01",
-    title: "Select Your Country",
-    desc: "Choose your target residency jurisdiction from our 10 Phase 1 countries. Our system matches you with specialists licensed in that specific territory.",
-    icon: "🌍",
+    title: "Check Your Eligibility",
+    desc: "Answer a short questionnaire about your UAE presence and income. Our system matches you with specialists licensed for your case type.",
+    icon: "✅",
   },
   {
     num: "02",
@@ -209,7 +157,6 @@ const STEPS = [
 ];
 
 const MARKETING_ROUTE_TARGETS = {
-  "/countries": "for-who",
   "/solutions": "solutions",
   "/pricing": "pricing",
   "/resources": "resources",
@@ -605,7 +552,7 @@ function HomePage() {
                 {[
                   { v: "4", l: "Role workspaces" },
                   { v: "6", l: "Workflow states" },
-                  { v: "10", l: "Phase 1 jurisdictions" },
+                  { v: "2", l: "Applicant types" },
                   { v: "1", l: "Unified case record" },
                 ].map((s, i) => (
                   <div key={s.l} style={{ flex: "1 1 auto", paddingRight: 20, paddingLeft: i > 0 ? 20 : 0, borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.1)" : "none" }}>
@@ -643,7 +590,6 @@ function HomePage() {
               { icon: "👤", text: "Role-based Access Control" },
               { icon: "📋", text: "Full Audit Trail" },
               { icon: "⚖", text: "Advisor-verified Only" },
-              { icon: "🌐", text: "Phase 1 · 10 Jurisdictions" },
             ].map((item, i) => (
               <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 7, padding: "8px 14px", borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.08)" : "none" }}>
                 <span style={{ fontSize: 13 }}>{item.icon}</span>
@@ -697,7 +643,7 @@ function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  FOR WHO — two clear paths                           ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="for-who" style={{ background: C.offWhite, padding: "80px 24px" }} data-nav="countries">
+      <section id="for-who" style={{ background: C.offWhite, padding: "80px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <SectionLabel>Two paths, one platform</SectionLabel>
@@ -982,16 +928,16 @@ function HomePage() {
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 42 }}>
             <SectionLabel>Resources</SectionLabel>
-            <SectionTitle>Compliance intelligence built into the workflow</SectionTitle>
+            <SectionTitle>Everything you need before you apply</SectionTitle>
             <p style={{ fontSize: 15, color: C.textMuted, marginTop: 12, maxWidth: 620, margin: "12px auto 0", lineHeight: 1.75 }}>
-              The resource layer should support a premium startup narrative: operational clarity, document readiness, and country-specific guidance without turning the product into generic content marketing.
+              Guidance on UAE eligibility rules, the documents advisors typically request, and how a case moves from application to certificate.
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 18 }} className="hero-grid">
             {[
-              { title: "Country playbooks", desc: "Jurisdiction-specific eligibility, document, and authority requirements for phase-one TRC markets.", action: "Explore Countries", target: "for-who" },
+              { title: "UAE eligibility guide", desc: "UAE-specific eligibility, document, and FTA authority requirements for TRC applicants.", action: "Check Eligibility", target: "for-who" },
               { title: "Document readiness", desc: "Structured checklists that convert advisor requirements into trackable client tasks and upload states.", action: "View Workflow", target: "workflow" },
-              { title: "TRC articles", desc: "SEO-ready education for cross-border income, DTAA benefits, and UAE TRC process questions.", action: "Read Blog", path: "/blog" },
+              { title: "TRC articles", desc: "Practical guides on cross-border income, double tax treaty benefits, and common UAE TRC questions.", action: "Read Blog", path: "/blog" },
             ].map((item) => (
               <div key={item.title} style={{ border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, background: C.offWhite, boxShadow: "0 8px 22px rgba(15,37,87,0.05)" }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 10 }}>{item.title}</div>
@@ -1013,20 +959,20 @@ function HomePage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }} className="hero-grid">
             <div>
               <SectionLabel>About TRC Connect</SectionLabel>
-              <SectionTitle>Built as compliance infrastructure for cross-border operators</SectionTitle>
+              <SectionTitle>A clearer way to get your UAE Tax Residency Certificate</SectionTitle>
               <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.85, marginTop: 16 }}>
-                The enterprise angle is the strongest one: TRC Connect should feel like an operating system for tax residency cases, with role-based workspaces for clients, companies, advisors, and admins.
+                TRC Connect pairs every applicant — individual or company — with a verified Chartered Accountant who reviews your eligibility, tells you exactly which documents are needed, and carries the case through to the Federal Tax Authority on your behalf.
               </p>
               <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.85, marginTop: 14 }}>
-                That means fewer brochure-style claims and more proof of control: workflow states, document ownership, advisor accountability, secure storage, and audit history.
+                No scattered email threads or WhatsApp attachments. Every request, upload, and status update lives in one workspace that you and your advisor both see.
               </p>
             </div>
             <div style={{ background: `linear-gradient(135deg, ${C.navyDark}, ${C.navy})`, borderRadius: 18, padding: 26, boxShadow: "0 24px 60px rgba(15,37,87,0.24)", color: C.white }}>
               {[
-                { k: "Product thesis", v: "Replace email-heavy advisory delivery with a shared compliance workspace." },
-                { k: "Buyer", v: "Individuals now, enterprise teams and founder-led groups as the expansion motion." },
-                { k: "Moat", v: "Structured case data, verified advisor network, repeatable country playbooks." },
-                { k: "Execution standard", v: "Every status, document, and request should be visible, permissioned, and auditable." },
+                { k: "Who reviews your case", v: "A qualified Chartered Accountant, not an automated checklist." },
+                { k: "How eligibility is decided", v: "Scored against the documents you actually provide, so you know where you stand before you apply." },
+                { k: "What you can see", v: "Every document request and status change, visible on your dashboard as it happens." },
+                { k: "Where it's filed", v: "Directly with the UAE Federal Tax Authority via EmaraTax." },
               ].map((row, i) => (
                 <div key={row.k} style={{ padding: "15px 0", borderBottom: i < 3 ? "1px solid rgba(255,255,255,0.1)" : "none" }}>
                   <div style={{ fontSize: 11, color: C.goldLight, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 5 }}>{row.k}</div>
@@ -1087,17 +1033,6 @@ function HomePage() {
               </p>
             </div>
             <div>
-              <h4 style={{ fontSize: 11, fontWeight: 700, color: C.white, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 16 }}>Jurisdictions</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "7px 28px" }}>
-                {COUNTRIES.map(c => (
-                  <a key={c.code} href="#" style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}
-                    onMouseEnter={e => e.target.style.color = C.gold}
-                    onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.45)"}
-                  >{c.flag} {c.name}</a>
-                ))}
-              </div>
-            </div>
-            <div>
               <h4 style={{ fontSize: 11, fontWeight: 700, color: C.white, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 16 }}>Platform</h4>
               <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                 {["How It Works", "Pricing", "Advisor Portal", "Dashboard"].map(item => (
@@ -1144,17 +1079,6 @@ function AppFooter() {
             <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", maxWidth: 220 }}>
               The trusted global platform connecting individuals with verified local tax residency specialists.
             </p>
-          </div>
-          <div>
-            <h4 style={{ fontSize: 12, fontWeight: 700, color: C.white, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 18 }}>Jurisdictions</h4>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 28px" }}>
-              {COUNTRIES.map(c => (
-                <a key={c.code} href="#" style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}
-                  onMouseEnter={e => e.target.style.color = C.gold}
-                  onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.5)"}
-                >{c.flag} {c.name}</a>
-              ))}
-            </div>
           </div>
           <div>
             <h4 style={{ fontSize: 12, fontWeight: 700, color: C.white, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 18 }}>Platform</h4>
@@ -2300,64 +2224,31 @@ const ALL_ADVISORS = [
     bio: "Former KPMG UAE partner with 14+ years specialising in UAE TRC and double-tax treaty applications for HNWIs and corporates.",
   },
   {
-    id: 2, name: "Priya Nair", initials: "PN", title: "Chartered Tax Practitioner · IRAS Accredited",
-    country: "Singapore", countryCode: "SG", flag: "🇸🇬", rating: 5.0, reviews: 62, completions: 189,
+    id: 2, name: "Rashid Al-Mansoori", initials: "RM", title: "Corporate Tax Advisor · FTA Registered",
+    country: "UAE", countryCode: "AE", flag: "🇦🇪", rating: 4.8, reviews: 94, completions: 218,
+    languages: ["English", "Arabic"], turnaround: 5, turnaroundLabel: "5–7 days",
+    feeAED: null, feeUSD: 349, feeLabel: "$349", specialties: ["Corporate TRC", "Free Zone Setup", "OECD Compliance"],
+    available: true, badge: null, verified: true,
+    bio: "Dubai-based tax advisor with a decade of FTA-registered practice advising corporates on UAE TRC and free zone structuring.",
+  },
+  {
+    id: 3, name: "Priya Nair", initials: "PN", title: "Chartered Tax Practitioner · UAE Registered",
+    country: "UAE", countryCode: "AE", flag: "🇦🇪", rating: 5.0, reviews: 62, completions: 189,
     languages: ["English", "Tamil", "Hindi"], turnaround: 2, turnaroundLabel: "2–4 days",
-    feeAED: null, feeUSD: 279, feeLabel: "$279", specialties: ["IRAS Applications", "DTA Claims", "Expatriate Tax"],
+    feeAED: null, feeUSD: 279, feeLabel: "$279", specialties: ["TRC Applications", "DTA Claims", "Expatriate Tax"],
     available: true, badge: "Fastest", verified: true,
-    bio: "Singapore-based CTA with deep expertise in IRAS TRC applications and cross-border individual tax planning across ASEAN.",
+    bio: "Dubai-based CTA with deep expertise in UAE TRC applications and cross-border individual tax planning.",
   },
   {
-    id: 3, name: "Sebastian Hartmann", initials: "SH", title: "International Tax Advisor · EU Specialist",
-    country: "Netherlands", countryCode: "NL", flag: "🇳🇱", rating: 4.8, reviews: 94, completions: 218,
-    languages: ["English", "Dutch", "German"], turnaround: 5, turnaroundLabel: "5–7 days",
-    feeAED: null, feeUSD: 349, feeLabel: "$349", specialties: ["EU Tax Residency", "30% Ruling", "Dutch TRC"],
-    available: true, badge: null, verified: true,
-    bio: "Amsterdam-based tax lawyer advising expatriates on Dutch TRC applications and the 30% ruling for incoming professionals.",
-  },
-  {
-    id: 4, name: "Marcus Vella", initials: "MV", title: "EU Residency Specialist · Malta Revenue Registered",
-    country: "Malta", countryCode: "MT", flag: "🇲🇹", rating: 4.7, reviews: 88, completions: 156,
-    languages: ["English", "Maltese", "Italian"], turnaround: 7, turnaroundLabel: "7–10 days",
-    feeAED: null, feeUSD: 399, feeLabel: "$399", specialties: ["Malta TRC", "Global Residence", "Nomad Residency"],
+    id: 4, name: "Marcus Vella", initials: "MV", title: "Tax Residency Specialist · UAE Registered",
+    country: "UAE", countryCode: "AE", flag: "🇦🇪", rating: 4.7, reviews: 88, completions: 156,
+    languages: ["English", "Italian"], turnaround: 7, turnaroundLabel: "7–10 days",
+    feeAED: null, feeUSD: 399, feeLabel: "$399", specialties: ["UAE TRC", "Free Zone TRC", "Nomad Residency"],
     available: true, badge: "Premium", verified: true,
-    bio: "Valletta-based practitioner with exclusive focus on Malta TRC and Global Residence Programme applications for EU and non-EU nationals.",
-  },
-  {
-    id: 5, name: "Rajesh Subramaniam", initials: "RS", title: "Tax Consultant · ICAI Member",
-    country: "India", countryCode: "IN", flag: "🇮🇳", rating: 4.6, reviews: 143, completions: 412,
-    languages: ["English", "Hindi", "Tamil"], turnaround: 5, turnaroundLabel: "5–8 days",
-    feeAED: null, feeUSD: 199, feeLabel: "$199", specialties: ["India TRC", "Form 10FA", "DTAA Relief"],
-    available: true, badge: "Best Value", verified: true,
-    bio: "Mumbai-based Chartered Accountant with 200+ Form 10FA filings. Specialises in TRC applications for NRIs and returning Indians.",
-  },
-  {
-    id: 6, name: "Charlotte Davies", initials: "CD", title: "Tax Advisor · ATT Qualified · UK HMRC",
-    country: "United Kingdom", countryCode: "GB", flag: "🇬🇧", rating: 4.8, reviews: 71, completions: 203,
-    languages: ["English", "French"], turnaround: 4, turnaroundLabel: "4–6 days",
-    feeAED: null, feeUSD: 329, feeLabel: "$329", specialties: ["UK TRC", "HMRC RES1", "Non-Dom Status"],
-    available: false, badge: null, verified: true,
-    bio: "London-based ATT-qualified advisor processing UK TRCs via HMRC's CAAT system, with expertise in non-domicile tax structuring.",
-  },
-  {
-    id: 7, name: "Sofia Almeida", initials: "SA", title: "Tax Specialist · AT Portal Registered",
-    country: "Portugal", countryCode: "PT", flag: "🇵🇹", rating: 4.9, reviews: 55, completions: 134,
-    languages: ["English", "Portuguese", "Spanish"], turnaround: 6, turnaroundLabel: "6–9 days",
-    feeAED: null, feeUSD: 289, feeLabel: "$289", specialties: ["Portugal TRC", "NHR Regime", "D7 Visa Tax"],
-    available: true, badge: null, verified: true,
-    bio: "Lisbon-based tax advisor specialising in Portuguese TRC and Non-Habitual Resident regime applications for digital nomads and retirees.",
-  },
-  {
-    id: 8, name: "Nikos Papadopoulos", initials: "NP", title: "Cyprus Tax Consultant · ICPAC Member",
-    country: "Cyprus", countryCode: "CY", flag: "🇨🇾", rating: 4.7, reviews: 49, completions: 98,
-    languages: ["English", "Greek", "Russian"], turnaround: 8, turnaroundLabel: "8–12 days",
-    feeAED: null, feeUSD: 375, feeLabel: "$375", specialties: ["Cyprus TRC", "Non-Dom Benefits", "IP Box"],
-    available: true, badge: null, verified: true,
-    bio: "Nicosia-based certified accountant handling Cyprus TRC applications and non-domicile status for international business owners.",
+    bio: "Abu Dhabi-based practitioner with exclusive focus on UAE TRC applications for both individual and corporate applicants.",
   },
 ];
 
-const COUNTRIES_LIST  = [...new Set(ALL_ADVISORS.map(a => a.country))].sort();
 const LANGUAGES_LIST  = [...new Set(ALL_ADVISORS.flatMap(a => a.languages))].sort();
 const SORT_OPTIONS    = [
   { key: "rating",     label: "Highest Rated" },
@@ -2830,7 +2721,6 @@ function QuoteModal({ advisor, onClose }) {
 function MarketplacePage() {
   // Filters state
   const [filters, setFilters] = useState({
-    countries: [],
     languages: [],
     priceRange: [0, 600],
     minRating: 0,
@@ -2841,15 +2731,11 @@ function MarketplacePage() {
   const [quoteAdvisor, setQuoteAdvisor] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false); // mobile
 
-  const toggleCountry = c => setFilters(f => ({
-    ...f, countries: f.countries.includes(c) ? f.countries.filter(x => x !== c) : [...f.countries, c],
-  }));
   const toggleLanguage = l => setFilters(f => ({
     ...f, languages: f.languages.includes(l) ? f.languages.filter(x => x !== l) : [...f.languages, l],
   }));
   const clearFilter = useCallback((type, val) => {
     setFilters(f => {
-      if (type === "country")    return { ...f, countries:  f.countries.filter(x => x !== val) };
       if (type === "language")   return { ...f, languages:  f.languages.filter(x => x !== val) };
       if (type === "rating")     return { ...f, minRating: 0 };
       if (type === "available")  return { ...f, availableOnly: false };
@@ -2861,7 +2747,6 @@ function MarketplacePage() {
   // Derived list
   const filtered = ALL_ADVISORS
     .filter(a => {
-      if (filters.countries.length && !filters.countries.includes(a.country)) return false;
       if (filters.languages.length && !filters.languages.some(l => a.languages.includes(l))) return false;
       if (a.feeUSD < filters.priceRange[0] || a.feeUSD > filters.priceRange[1]) return false;
       if (a.rating < filters.minRating) return false;
@@ -2878,14 +2763,13 @@ function MarketplacePage() {
 
   // Active filter tags
   const activeTags = [
-    ...filters.countries.map(c => ({ type: "country",   label: "Country",  value: c })),
     ...filters.languages.map(l => ({ type: "language",  label: "Language", value: l })),
     ...(filters.minRating > 0         ? [{ type: "rating",   label: "Rating",   value: `${filters.minRating}★+` }] : []),
     ...(filters.availableOnly          ? [{ type: "available",label: "Status",   value: "Available Only" }]       : []),
     ...((filters.priceRange[0] > 0 || filters.priceRange[1] < 600) ? [{ type: "price", label: "Price", value: `$${filters.priceRange[0]}–$${filters.priceRange[1]}` }] : []),
   ];
 
-  const clearAll = () => setFilters({ countries: [], languages: [], priceRange: [0, 600], minRating: 0, availableOnly: false });
+  const clearAll = () => setFilters({ languages: [], priceRange: [0, 600], minRating: 0, availableOnly: false });
 
   const Sidebar = () => (
     <div style={{
@@ -2908,37 +2792,6 @@ function MarketplacePage() {
           </button>
         )}
       </div>
-
-      {/* Country */}
-      <FilterSection title="Country">
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {COUNTRIES_LIST.map(c => {
-            const adv = ALL_ADVISORS.find(a => a.country === c);
-            const checked = filters.countries.includes(c);
-            return (
-              <label key={c} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 4px", cursor: "pointer", borderRadius: 8, transition: "background 0.15s" }}
-                onMouseEnter={e => e.currentTarget.style.background = C.offWhite}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                <div onClick={() => toggleCountry(c)}
-                  style={{
-                    width: 18, height: 18, borderRadius: 5, flexShrink: 0,
-                    border: `2px solid ${checked ? C.gold : C.border}`,
-                    background: checked ? C.gold : C.white,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "all 0.15s", cursor: "pointer",
-                  }}>
-                  {checked && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={C.white} strokeWidth="3.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                </div>
-                <span style={{ fontSize: 14 }}>{adv?.flag}</span>
-                <span style={{ fontSize: 13, color: C.navy, flex: 1 }}>{c}</span>
-                <span style={{ fontSize: 11, color: C.muted, background: C.offWhite, padding: "1px 7px", borderRadius: 10 }}>
-                  {ALL_ADVISORS.filter(a => a.country === c).length}
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      </FilterSection>
 
       {/* Language */}
       <FilterSection title="Language" defaultOpen={false}>
@@ -3053,7 +2906,7 @@ function MarketplacePage() {
                 Find Your <span style={{ color: C.gold, fontStyle: "italic" }}>TRC Advisor</span>
               </h1>
               <p style={{ fontSize: 16, color: "rgba(255,255,255,0.6)", maxWidth: 520, lineHeight: 1.7, fontWeight: 300 }}>
-                {ALL_ADVISORS.length} verified specialists across {new Set(ALL_ADVISORS.map(a => a.country)).size} countries. Transparent pricing, escrow-protected, real-time tracking.
+                {ALL_ADVISORS.length} verified UAE tax residency specialists. Transparent pricing, escrow-protected, real-time tracking.
               </p>
             </div>
 
@@ -3156,7 +3009,7 @@ function MarketplacePage() {
             <div style={{ textAlign: "center", padding: "80px 20px", background: C.white, borderRadius: 18, border: `1px solid ${C.border}` }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
               <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 700, color: C.navy, marginBottom: 10 }}>No advisors match your filters</h3>
-              <p style={{ fontSize: 15, color: C.muted, marginBottom: 24 }}>Try adjusting the price range, removing a country filter, or clearing all filters.</p>
+              <p style={{ fontSize: 15, color: C.muted, marginBottom: 24 }}>Try adjusting the price range, removing a language filter, or clearing all filters.</p>
               <button onClick={clearAll} style={{ background: C.navy, color: C.white, border: "none", borderRadius: 11, padding: "12px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Clear All Filters</button>
             </div>
           ) : (
@@ -3207,1029 +3060,6 @@ function MarketplacePage() {
 
 
 /* ─── TOKENS ─────────────────────────────────────────────────────── */
-/* ─── MOCK DATA ──────────────────────────────────────────────────── */
-const USER = {
-  name:"Alexandra Chen", initials:"AC", email:"a.chen@example.com",
-  phone:"+971 50 123 4567", nationality:"British", visaType:"Employment Visa",
-  plan:"Standard", memberSince:"March 2025",
-};
-
-const STAGES = [
-  { key:"submitted",    label:"Submitted",    icon:"📤", date:"12 May 2025", done:true  },
-  { key:"review",       label:"Under Review",  icon:"🔍", date:"14 May 2025", done:true  },
-  { key:"processing",   label:"Processing",    icon:"⚙️", date:null,          done:false, active:true },
-  { key:"approved",     label:"Approved",      icon:"✅", date:null,          done:false },
-  { key:"issued",       label:"TRC Issued",    icon:"📜", date:null,          done:false },
-];
-
-const APPLICATION = {
-  id:"TRC-AE-2025-0847", country:"UAE", flag:"🇦🇪", advisor:"Amira Al-Rashid",
-  advisorInitials:"AA", advisorTitle:"Senior Tax Consultant",
-  type:"Individual TRC", submitted:"12 May 2025", expectedBy:"26 May 2025",
-  govFee:"AED 2,000", advisorFee:"AED 1,299", totalFee:"AED 3,299",
-  treaty:"UAE–UK Double Tax Treaty", purpose:"Claim UAE tax residency for UK HMRC",
-  currentStage:2, daysElapsed:6, daysRemaining:8, progress:38,
-  notes:"FTA application submitted. Currently pending initial document review by the Federal Tax Authority. No action required from applicant at this time.",
-};
-
-const DOCUMENTS_DATA = [
-  { id:1, name:"Passport (all pages).pdf",           category:"Identity",   size:"2.4 MB", status:"approved",  uploaded:"10 May 2025", required:true  },
-  { id:2, name:"Emirates ID – Front & Back.jpg",     category:"Identity",   size:"0.8 MB", status:"approved",  uploaded:"10 May 2025", required:true  },
-  { id:3, name:"UAE Residency Visa.pdf",              category:"Residency",  size:"1.1 MB", status:"approved",  uploaded:"10 May 2025", required:true  },
-  { id:4, name:"Ejari Tenancy Contract.pdf",          category:"Residency",  size:"3.2 MB", status:"approved",  uploaded:"11 May 2025", required:true  },
-  { id:5, name:"GDRFA Travel History Report.pdf",    category:"Presence",   size:"0.5 MB", status:"approved",  uploaded:"11 May 2025", required:true  },
-  { id:6, name:"FTA Application Request Letter.pdf", category:"Government", size:"0.2 MB", status:"pending",   uploaded:"12 May 2025", required:true  },
-  { id:7, name:"Employment Contract.pdf",             category:"Income",     size:"1.8 MB", status:"approved",  uploaded:"11 May 2025", required:false },
-  { id:8, name:"Bank Statements – 12 months.pdf",    category:"Financial",  size:"4.7 MB", status:"rejected",  uploaded:"11 May 2025", required:false,
-    rejectionNote:"Statements appear to be from a non-UAE account. Please upload UAE bank statements only." },
-];
-
-const MESSAGES_DATA = [
-  { id:1, from:"advisor", text:"Hello Alexandra! I've received your documents and will begin the pre-submission review today. Everything looks well organised so far — thank you for being thorough.", time:"Mon 12 May, 10:14", read:true },
-  { id:2, from:"user",    text:"Thanks Amira! Let me know if you need anything else from my side. I'm available throughout this week.", time:"Mon 12 May, 11:02", read:true },
-  { id:3, from:"advisor", text:"Quick update — I've reviewed all your documents and I noticed the bank statements are from a UK account rather than UAE. Could you upload your UAE Emirates NBD or ADCB statements instead? This is a common issue and easy to fix.", time:"Tue 13 May, 09:45", read:true },
-  { id:4, from:"user",    text:"Of course — uploading them now. Should I upload all 12 months or just the last 3?", time:"Tue 13 May, 10:20", read:true },
-  { id:5, from:"advisor", text:"All 12 months is preferred as the FTA typically requests the full year. Once those are uploaded I'll repackage the application and submit to EmaraTax. Estimated submission by end of today.", time:"Tue 13 May, 10:35", read:true },
-  { id:6, from:"advisor", text:"Great news — the application has been submitted to the Federal Tax Authority via EmaraTax. Your reference number is FTA-TRC-2025-08847. You should receive a portal confirmation email shortly.", time:"Mon 12 May, 16:58", read:true },
-  { id:7, from:"user",    text:"Perfect — got the confirmation email. What's the typical processing time from here?", time:"Wed 14 May, 08:30", read:true },
-  { id:8, from:"advisor", text:"FTA typically takes 5–10 business days once submitted. We're now in the processing stage. I'll ping you the moment there's any update from their end. No action needed from you right now — just sit tight! 🎉", time:"Wed 14 May, 09:12", read:true },
-];
-
-const ACTIVITY = [
-  { icon:"📤", text:"Application submitted to FTA", time:"12 May, 16:58", color:C.gold },
-  { icon:"📎", text:"Bank statement flagged — needs UAE version", time:"13 May, 09:45", color:C.warn },
-  { icon:"✅", text:"6 of 7 required documents approved", time:"11 May, 14:20", color:C.success },
-  { icon:"💬", text:"New message from Amira Al-Rashid", time:"14 May, 09:12", color:C.info },
-  { icon:"🔍", text:"Application moved to Under Review", time:"14 May, 09:00", color:C.navyLight },
-];
-
-const SETTINGS_SECTIONS = ["Personal Details", "Security", "Notifications", "Preferences"];
-
-/* ─── HELPERS ────────────────────────────────────────────────────── */
-const statusStyle = s => ({
-  approved: { bg:C.successBg, color:C.success,  border:C.successBorder, label:"Approved"  },
-  pending:  { bg:C.warnBg,    color:C.warn,      border:C.warnBorder,    label:"Pending"   },
-  rejected: { bg:C.errorBg,   color:C.error,     border:C.errorBorder,   label:"Rejected"  },
-}[s] || { bg:C.offWhite, color:C.muted, border:C.border, label:s });
-
-const catColor = c => ({
-  Identity:   { bg:"#EEF2FF", color:"#3730A3" },
-  Residency:  { bg:C.successBg, color:C.success },
-  Government: { bg:C.warnBg, color:C.warn },
-  Income:     { bg:"#F5F3FF", color:"#5B21B6" },
-  Financial:  { bg:C.infoBg, color:C.info },
-  Presence:   { bg:"#FDF2F8", color:"#9D174D" },
-}[c] || { bg:C.offWhite, color:C.muted });
-
-function Avatar({ initials, size=38, bg=`linear-gradient(135deg, ${C.navy}, ${C.navyLight})` }) {
-  return (
-    <div style={{
-      width:size, height:size, borderRadius:"50%", flexShrink:0,
-      background:bg, display:"flex", alignItems:"center", justifyContent:"center",
-      fontSize:size*0.3, fontWeight:700, color:C.white, letterSpacing:"0.05em",
-    }}>{initials}</div>
-  );
-}
-
-function StatusBadge({ status }) {
-  const s = statusStyle(status);
-  return (
-    <span style={{ fontSize:11, fontWeight:700, padding:"3px 9px", borderRadius:20,
-      background:s.bg, color:s.color, border:`1px solid ${s.border}`, letterSpacing:"0.04em" }}>
-      {s.label}
-    </span>
-  );
-}
-
-function SectionHead({ label, title, action, onAction }) {
-  return (
-    <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", marginBottom:28, gap:12, flexWrap:"wrap" }}>
-      <div>
-        <span style={{ fontSize:11, fontWeight:700, color:C.gold, textTransform:"uppercase", letterSpacing:"0.12em", display:"block", marginBottom:6 }}>{label}</span>
-        <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(22px,2.8vw,32px)", fontWeight:700, color:C.navy, lineHeight:1.15, letterSpacing:"-0.01em" }}>{title}</h2>
-      </div>
-      {action && <button onClick={onAction} style={{ background:`linear-gradient(135deg,${C.gold},${C.goldDark})`, color:C.white, border:"none", borderRadius:10, padding:"10px 20px", fontSize:13, fontWeight:700, cursor:"pointer", letterSpacing:"0.02em", whiteSpace:"nowrap" }}>{action}</button>}
-    </div>
-  );
-}
-
-/* ─── STAGE TRACKER ──────────────────────────────────────────────── */
-function StageTracker({ currentStage }) {
-  return (
-    <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, padding:"32px 36px", boxShadow:"0 2px 12px rgba(15,37,87,0.05)" }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:28, flexWrap:"wrap", gap:10 }}>
-        <div>
-          <p style={{ fontSize:12, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:4 }}>Application Progress</p>
-          <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, fontWeight:700, color:C.navy }}>{APPLICATION.id}</p>
-        </div>
-        <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-          <div style={{ background:C.warnBg, border:`1px solid ${C.warnBorder}`, borderRadius:10, padding:"7px 14px", display:"flex", alignItems:"center", gap:6 }}>
-            <div style={{ width:7, height:7, borderRadius:"50%", background:C.warn }}/>
-            <span style={{ fontSize:12, fontWeight:700, color:C.warn }}>In Progress · Day {APPLICATION.daysElapsed}</span>
-          </div>
-          <div style={{ background:C.offWhite, border:`1px solid ${C.border}`, borderRadius:10, padding:"7px 14px" }}>
-            <span style={{ fontSize:12, fontWeight:600, color:C.muted }}>Est. completion <strong style={{ color:C.navy }}>{APPLICATION.expectedBy}</strong></span>
-          </div>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div style={{ marginBottom:32 }}>
-        <div style={{ height:6, background:C.offWhite2, borderRadius:999, overflow:"hidden", marginBottom:8 }}>
-          <div style={{ height:"100%", width:`${APPLICATION.progress}%`, background:`linear-gradient(90deg,${C.gold},${C.goldDark})`, borderRadius:999, transition:"width 1s ease" }}/>
-        </div>
-        <div style={{ display:"flex", justifyContent:"space-between" }}>
-          <span style={{ fontSize:11, color:C.muted }}>{APPLICATION.progress}% complete</span>
-          <span style={{ fontSize:11, color:C.muted }}>{APPLICATION.daysRemaining} days estimated remaining</span>
-        </div>
-      </div>
-
-      {/* Steps */}
-      <div style={{ display:"flex", alignItems:"flex-start", gap:0, position:"relative" }}>
-        {STAGES.map((stage, i) => {
-          const isDone   = i < currentStage;
-          const isActive = i === currentStage;
-          const isFuture = i > currentStage;
-          return (
-            <div key={stage.key} style={{ flex:1, position:"relative", display:"flex", flexDirection:"column", alignItems:"center" }}>
-              {/* Connector line */}
-              {i < STAGES.length - 1 && (
-                <div style={{
-                  position:"absolute", top:18, left:"50%", width:"100%", height:3, zIndex:0,
-                  background: isDone ? `linear-gradient(90deg,${C.gold},${C.goldLight})` : C.offWhite2,
-                  transition:"background 0.4s",
-                }}/>
-              )}
-
-              {/* Circle */}
-              <div style={{
-                width:38, height:38, borderRadius:"50%", zIndex:1, flexShrink:0,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                background: isDone ? `linear-gradient(135deg,${C.gold},${C.goldDark})` : isActive ? C.navy : C.white,
-                border: isFuture ? `2.5px solid ${C.border}` : isActive ? `3px solid ${C.gold}` : `2.5px solid ${C.gold}`,
-                boxShadow: isActive ? `0 0 0 5px ${C.gold}22` : isDone ? "0 3px 10px rgba(201,168,76,0.3)" : "none",
-                transition:"all 0.35s",
-              }}>
-                {isDone
-                  ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.white} strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  : isActive
-                    ? <div style={{ width:10, height:10, borderRadius:"50%", background:C.gold }}/>
-                    : <div style={{ width:8, height:8, borderRadius:"50%", background:C.border }}/>
-                }
-              </div>
-
-              {/* Label */}
-              <div style={{ marginTop:10, textAlign:"center", padding:"0 4px" }}>
-                <p style={{ fontSize:12, fontWeight: isActive ? 700 : isDone ? 600 : 400, color: isFuture ? C.muted : C.navy, lineHeight:1.3 }}>{stage.label}</p>
-                {stage.date && <p style={{ fontSize:10, color:C.gold, marginTop:3, fontWeight:600 }}>{stage.date}</p>}
-                {isActive && <p style={{ fontSize:10, color:C.warn, marginTop:3, fontWeight:700 }}>● Active</p>}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Notes */}
-      <div style={{ marginTop:28, background:C.infoBg, border:`1px solid ${C.infoBorder}`, borderRadius:12, padding:"14px 18px", display:"flex", gap:10 }}>
-        <span style={{ fontSize:16, flexShrink:0 }}>ℹ️</span>
-        <p style={{ fontSize:13, color:C.info, lineHeight:1.65 }}>{APPLICATION.notes}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── OVERVIEW TAB ───────────────────────────────────────────────── */
-function Overview({ onNav }) {
-  const docApproved = DOCUMENTS_DATA.filter(d=>d.status==="approved").length;
-  const docTotal    = DOCUMENTS_DATA.length;
-  const unread      = 0;
-
-  return (
-    <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-      <SectionHead label="Dashboard" title={`Welcome back, ${USER.name.split(" ")[0]} 👋`}/>
-
-      {/* Stats row */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:16 }}>
-        {[
-          { label:"Active Applications", value:"1", sub:"UAE TRC in progress", icon:"📋", color:C.gold },
-          { label:"Documents Uploaded",  value:`${docApproved}/${docTotal}`, sub:`${docTotal-docApproved} need attention`, icon:"📁", color:C.info },
-          { label:"Days Remaining",      value:APPLICATION.daysRemaining, sub:"Estimated completion", icon:"⏱", color:C.success },
-          { label:"Advisor Rating",      value:"4.9★", sub:"Amira Al-Rashid", icon:"⭐", color:C.warn },
-        ].map(s => (
-          <div key={s.label} style={{
-            background:C.white, borderRadius:16, border:`1px solid ${C.border}`,
-            padding:"22px 22px 20px", boxShadow:"0 2px 10px rgba(15,37,87,0.05)",
-            display:"flex", flexDirection:"column", gap:12,
-          }}>
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-              <span style={{ fontSize:22 }}>{s.icon}</span>
-              <span style={{ fontSize:10, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:"0.08em" }}>{s.label}</span>
-            </div>
-            <div>
-              <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:30, fontWeight:800, color:s.color, lineHeight:1 }}>{s.value}</p>
-              <p style={{ fontSize:12, color:C.muted, marginTop:5 }}>{s.sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Stage tracker */}
-      <StageTracker currentStage={APPLICATION.currentStage}/>
-
-      {/* Application details + activity */}
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 320px", gap:20 }}>
-
-        {/* Application details card */}
-        <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, padding:"28px 32px", boxShadow:"0 2px 12px rgba(15,37,87,0.05)" }}>
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22 }}>
-            <p style={{ fontSize:14, fontWeight:700, color:C.navy }}>Application Details</p>
-            <span style={{ fontSize:22 }}>{APPLICATION.flag}</span>
-          </div>
-          {[
-            { l:"Reference", v:APPLICATION.id },
-            { l:"Service Type", v:APPLICATION.type },
-            { l:"Jurisdiction", v:APPLICATION.country },
-            { l:"Treaty", v:APPLICATION.treaty },
-            { l:"Purpose", v:APPLICATION.purpose },
-            { l:"Submitted", v:APPLICATION.submitted },
-            { l:"Expected By", v:APPLICATION.expectedBy },
-            { l:"Government Fee", v:APPLICATION.govFee },
-            { l:"Advisor Fee", v:APPLICATION.advisorFee },
-          ].map((r,i) => (
-            <div key={r.l} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, padding:"11px 0", borderBottom: i<8 ? `1px solid ${C.border}` : "none" }}>
-              <span style={{ fontSize:13, color:C.muted, flexShrink:0 }}>{r.l}</span>
-              <span style={{ fontSize:13, fontWeight:600, color:C.navy, textAlign:"right" }}>{r.v}</span>
-            </div>
-          ))}
-
-          <div style={{ marginTop:20, display:"flex", gap:10 }}>
-            <button onClick={()=>onNav("messages")} style={{ flex:1, background:C.navy, color:C.white, border:"none", borderRadius:10, padding:"11px", fontSize:13, fontWeight:700, cursor:"pointer" }}>💬 Message Advisor</button>
-            <button onClick={()=>onNav("documents")} style={{ flex:1, background:"transparent", color:C.navy, border:`1.5px solid ${C.border}`, borderRadius:10, padding:"11px", fontSize:13, fontWeight:700, cursor:"pointer" }}>📁 View Documents</button>
-          </div>
-        </div>
-
-        {/* Activity feed */}
-        <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, padding:"28px 24px", boxShadow:"0 2px 12px rgba(15,37,87,0.05)" }}>
-          <p style={{ fontSize:14, fontWeight:700, color:C.navy, marginBottom:20 }}>Recent Activity</p>
-          <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
-            {ACTIVITY.map((a,i) => (
-              <div key={i} style={{ display:"flex", gap:12, paddingBottom:16, position:"relative" }}>
-                {i < ACTIVITY.length-1 && <div style={{ position:"absolute", left:15, top:28, bottom:0, width:1, background:C.border }}/>}
-                <div style={{ width:30, height:30, borderRadius:"50%", background:C.offWhite2, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, flexShrink:0, zIndex:1 }}>{a.icon}</div>
-                <div>
-                  <p style={{ fontSize:13, color:C.navy, lineHeight:1.4 }}>{a.text}</p>
-                  <p style={{ fontSize:11, color:C.muted, marginTop:3 }}>{a.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Advisor info strip */}
-      <div style={{ background:`linear-gradient(135deg,${C.navyDark},${C.navy})`, borderRadius:18, padding:"24px 32px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:20 }}>
-        <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-          <Avatar initials="AA" size={52} bg={`linear-gradient(135deg,rgba(255,255,255,0.15),rgba(255,255,255,0.05))`}/>
-          <div>
-            <p style={{ fontSize:13, color:"rgba(255,255,255,0.55)", marginBottom:3 }}>Your Assigned Advisor</p>
-            <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, fontWeight:700, color:C.white }}>{APPLICATION.advisor}</p>
-            <p style={{ fontSize:12, color:"rgba(255,255,255,0.5)", marginTop:2 }}>{APPLICATION.advisorTitle}</p>
-          </div>
-        </div>
-        <div style={{ display:"flex", gap:12 }}>
-          <button onClick={()=>onNav("messages")} style={{ background:`linear-gradient(135deg,${C.gold},${C.goldDark})`, color:C.white, border:"none", borderRadius:10, padding:"11px 22px", fontSize:13, fontWeight:700, cursor:"pointer" }}>Send Message →</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── MY APPLICATIONS TAB ────────────────────────────────────────── */
-function Applications() {
-  return (
-    <div>
-      <SectionHead label="Applications" title="My TRC Applications" action="+ New Application"/>
-      <StageTracker currentStage={APPLICATION.currentStage}/>
-
-      {/* Application card */}
-      <div style={{ marginTop:20, background:C.white, borderRadius:18, border:`1px solid ${C.border}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(15,37,87,0.05)" }}>
-        <div style={{ background:`linear-gradient(135deg,${C.navyDark},${C.navy})`, padding:"20px 28px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-            <span style={{ fontSize:36 }}>{APPLICATION.flag}</span>
-            <div>
-              <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, fontWeight:700, color:C.white }}>{APPLICATION.country} Tax Residency Certificate</p>
-              <p style={{ fontSize:12, color:"rgba(255,255,255,0.5)", marginTop:2 }}>Ref: {APPLICATION.id}</p>
-            </div>
-          </div>
-          <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-            <span style={{ background:C.warnBg, color:C.warn, fontSize:12, fontWeight:700, padding:"5px 12px", borderRadius:20, border:`1px solid ${C.warnBorder}` }}>● Processing</span>
-            <span style={{ background:"rgba(255,255,255,0.08)", color:"rgba(255,255,255,0.7)", fontSize:12, fontWeight:600, padding:"5px 12px", borderRadius:20 }}>Day {APPLICATION.daysElapsed} of ~{APPLICATION.daysElapsed+APPLICATION.daysRemaining}</span>
-          </div>
-        </div>
-
-        <div style={{ padding:"28px 28px", display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:24 }}>
-          {[
-            { l:"Treaty Purpose",     v:APPLICATION.treaty },
-            { l:"Submitted",          v:APPLICATION.submitted },
-            { l:"Expected Delivery",  v:APPLICATION.expectedBy },
-            { l:"Government Fee",     v:APPLICATION.govFee },
-            { l:"Advisor Fee",        v:APPLICATION.advisorFee },
-            { l:"Total Cost",         v:APPLICATION.totalFee },
-          ].map(r=>(
-            <div key={r.l}>
-              <p style={{ fontSize:11, color:C.muted, textTransform:"uppercase", letterSpacing:"0.07em", marginBottom:4 }}>{r.l}</p>
-              <p style={{ fontSize:14, fontWeight:700, color:C.navy }}>{r.v}</p>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ borderTop:`1px solid ${C.border}`, padding:"18px 28px", display:"flex", gap:10, flexWrap:"wrap" }}>
-          {[
-            { icon:"📁", label:"View Documents",    color:C.navy  },
-            { icon:"💬", label:"Message Advisor",   color:C.navy  },
-            { icon:"🖨",  label:"Download Summary",  color:C.muted },
-            { icon:"❌", label:"Cancel Application", color:C.error },
-          ].map(btn=>(
-            <button key={btn.label} style={{
-              background:"transparent", color:btn.color,
-              border:`1px solid ${btn.color==="red"?C.errorBorder:C.border}`, borderRadius:9,
-              padding:"9px 16px", fontSize:12, fontWeight:700, cursor:"pointer", display:"flex", gap:6, alignItems:"center",
-            }}>{btn.icon} {btn.label}</button>
-          ))}
-        </div>
-      </div>
-
-      {/* Timeline detail */}
-      <div style={{ marginTop:20, background:C.white, borderRadius:18, border:`1px solid ${C.border}`, padding:"28px 32px", boxShadow:"0 2px 12px rgba(15,37,87,0.05)" }}>
-        <p style={{ fontSize:14, fontWeight:700, color:C.navy, marginBottom:22 }}>Stage-by-Stage Breakdown</p>
-        {[
-          { stage:"Application Submitted",       date:"12 May 2025, 16:58", desc:"All documents compiled and application package submitted to UAE FTA via EmaraTax portal under advisor account.", done:true  },
-          { stage:"Under FTA Review",            date:"14 May 2025, 09:00", desc:"The Federal Tax Authority acknowledged receipt of the application and initiated their standard document review process.", done:true  },
-          { stage:"FTA Processing",              date:"In progress",        desc:"FTA is currently reviewing your residency proof and travel history. Our advisor is monitoring status daily.", active:true },
-          { stage:"Approval Notification",       date:"Pending",            desc:"Upon approval, FTA will issue a digital certificate via EmaraTax. Estimated within 5–10 business days of submission.", done:false },
-          { stage:"TRC Issued & Delivered",      date:"Pending",            desc:"Your TRC will be delivered digitally through your dashboard. Physical stamped copy can be arranged upon request.", done:false },
-        ].map((t,i)=>(
-          <div key={i} style={{ display:"flex", gap:16, paddingBottom: i<4?24:0, position:"relative" }}>
-            {i<4 && <div style={{ position:"absolute", left:14, top:30, bottom:0, width:1.5, background: t.done?`linear-gradient(${C.gold},${C.gold}44)`:C.border }}/>}
-            <div style={{ width:30, height:30, borderRadius:"50%", flexShrink:0, zIndex:1, display:"flex", alignItems:"center", justifyContent:"center",
-              background: t.done ? `linear-gradient(135deg,${C.gold},${C.goldDark})` : t.active ? C.navy : C.white,
-              border: t.active ? `2px solid ${C.gold}` : t.done ? "none" : `2px solid ${C.border}`,
-              boxShadow: t.active ? `0 0 0 4px ${C.gold}22` : "none",
-            }}>
-              {t.done ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.white} strokeWidth="3.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                : t.active ? <div style={{ width:8,height:8,borderRadius:"50%",background:C.gold }}/> 
-                : <div style={{ width:7,height:7,borderRadius:"50%",background:C.border }}/>}
-            </div>
-            <div style={{ paddingTop:4 }}>
-              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4, flexWrap:"wrap" }}>
-                <p style={{ fontSize:14, fontWeight:700, color: t.done||t.active?C.navy:C.muted }}>{t.stage}</p>
-                <span style={{ fontSize:11, color: t.active?C.warn:t.done?C.gold:C.muted, fontWeight:t.active?700:500 }}>{t.date}</span>
-                {t.active && <span style={{ fontSize:10, fontWeight:800, background:C.warnBg, color:C.warn, padding:"2px 7px", borderRadius:20, border:`1px solid ${C.warnBorder}` }}>IN PROGRESS</span>}
-              </div>
-              <p style={{ fontSize:13, color:C.muted, lineHeight:1.65, maxWidth:600 }}>{t.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── UAE_DOCUMENTS TAB ──────────────────────────────────────────────── */
-function Documents() {
-  const [docs, setDocs] = useState(DOCUMENTS_DATA);
-  const [dragging, setDragging] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const fileRef = useRef(null);
-
-  const categories = ["All", ...new Set(docs.map(d=>d.category))];
-  const displayed = activeCategory==="All" ? docs : docs.filter(d=>d.category===activeCategory);
-
-  const handleDrop = useCallback(e => {
-    e.preventDefault(); setDragging(false);
-    const files = Array.from(e.dataTransfer?.files||[]);
-    if (!files.length) return;
-    triggerUpload(files);
-  },[]);
-
-  const handleFileInput = e => {
-    const files = Array.from(e.target.files||[]);
-    if (!files.length) return;
-    triggerUpload(files);
-  };
-
-  const triggerUpload = files => {
-    setUploading(true);
-    setTimeout(() => {
-      const newDocs = files.map((f,i)=>({
-        id: docs.length+i+1, name:f.name, category:"Income",
-        size:`${(f.size/1048576).toFixed(1)} MB`,
-        status:"pending", uploaded:"18 May 2025", required:false,
-      }));
-      setDocs(d=>[...d,...newDocs]);
-      setUploading(false);
-    }, 1400);
-  };
-
-  const stats = {
-    total:   docs.length,
-    approved:docs.filter(d=>d.status==="approved").length,
-    pending: docs.filter(d=>d.status==="pending").length,
-    rejected:docs.filter(d=>d.status==="rejected").length,
-  };
-
-  return (
-    <div>
-      <SectionHead label="Documents" title="Document Management" action="Upload Files" onAction={()=>fileRef.current?.click()}/>
-      <input ref={fileRef} type="file" multiple onChange={handleFileInput} style={{ display:"none" }} accept=".pdf,.jpg,.jpeg,.png"/>
-
-      {/* Stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14, marginBottom:24 }}>
-        {[
-          { l:"Total",    v:stats.total,    color:C.navy,    bg:C.offWhite2 },
-          { l:"Approved", v:stats.approved, color:C.success, bg:C.successBg },
-          { l:"Pending",  v:stats.pending,  color:C.warn,    bg:C.warnBg    },
-          { l:"Rejected", v:stats.rejected, color:C.error,   bg:C.errorBg   },
-        ].map(s=>(
-          <div key={s.l} style={{ background:s.bg, borderRadius:14, padding:"16px 18px", border:`1px solid ${s.color}22` }}>
-            <p style={{ fontSize:11, color:s.color, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", opacity:0.7, marginBottom:6 }}>{s.l}</p>
-            <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:28, fontWeight:800, color:s.color }}>{s.v}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Drop zone */}
-      <div
-        onDragEnter={e=>{e.preventDefault();setDragging(true)}}
-        onDragLeave={e=>{e.preventDefault();setDragging(false)}}
-        onDragOver={e=>e.preventDefault()}
-        onDrop={handleDrop}
-        onClick={()=>!uploading&&fileRef.current?.click()}
-        style={{
-          border:`2px dashed ${dragging?C.gold:C.border}`,
-          borderRadius:16, padding:"36px 24px", textAlign:"center",
-          background: dragging?`${C.gold}08`:C.white,
-          cursor:"pointer", transition:"all 0.2s", marginBottom:24,
-          boxShadow: dragging?"0 0 0 4px rgba(201,168,76,0.12)":"none",
-        }}>
-        {uploading ? (
-          <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:12 }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2" style={{ animation:"spin 0.8s linear infinite" }}>
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-            </svg>
-            <p style={{ fontSize:14, fontWeight:600, color:C.gold }}>Uploading files…</p>
-          </div>
-        ):(
-          <>
-            <div style={{ fontSize:36, marginBottom:12 }}>{dragging?"📂":"📤"}</div>
-            <p style={{ fontSize:15, fontWeight:700, color: dragging?C.gold:C.navy, marginBottom:6 }}>
-              {dragging ? "Release to upload" : "Drag & drop files here"}
-            </p>
-            <p style={{ fontSize:13, color:C.muted, marginBottom:12 }}>PDF, JPG, PNG accepted · Max 25 MB per file</p>
-            <span style={{ fontSize:12, fontWeight:700, color:C.gold, background:`${C.gold}14`, border:`1px solid ${C.gold}44`, borderRadius:20, padding:"5px 16px" }}>
-              Browse Files
-            </span>
-          </>
-        )}
-      </div>
-
-      {/* Category tabs */}
-      <div style={{ display:"flex", gap:4, marginBottom:16, flexWrap:"wrap" }}>
-        {categories.map(cat=>(
-          <button key={cat} onClick={()=>setActiveCategory(cat)} style={{
-            padding:"7px 16px", borderRadius:9, fontSize:12, fontWeight:600, cursor:"pointer",
-            background: activeCategory===cat ? C.navy : C.offWhite,
-            color: activeCategory===cat ? C.white : C.muted,
-            border:`1px solid ${activeCategory===cat ? C.navy : C.border}`,
-            transition:"all 0.15s",
-          }}>{cat}</button>
-        ))}
-      </div>
-
-      {/* Document list */}
-      <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(15,37,87,0.05)" }}>
-        {/* Header */}
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 100px 90px 90px 70px", gap:16, padding:"12px 22px", background:C.offWhite2, borderBottom:`1px solid ${C.border}` }}>
-          {["Document","Category","Size","Uploaded","Status"].map(h=>(
-            <span key={h} style={{ fontSize:11, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:"0.07em" }}>{h}</span>
-          ))}
-        </div>
-
-        {displayed.map((doc,i) => {
-          const cc = catColor(doc.category);
-          return (
-            <div key={doc.id}>
-              <div style={{
-                display:"grid", gridTemplateColumns:"1fr 100px 90px 90px 70px",
-                gap:16, padding:"15px 22px", alignItems:"center",
-                borderBottom: i<displayed.length-1?`1px solid ${C.border}`:"none",
-                background:"white", transition:"background 0.15s",
-              }}
-                onMouseEnter={e=>e.currentTarget.style.background=C.offWhite}
-                onMouseLeave={e=>e.currentTarget.style.background=C.white}
-              >
-                <div style={{ display:"flex", alignItems:"center", gap:10, minWidth:0 }}>
-                  <div style={{ width:34,height:34,borderRadius:8,background:C.offWhite2,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0 }}>
-                    {doc.name.endsWith(".pdf")?"📄":"🖼"}
-                  </div>
-                  <div style={{ minWidth:0 }}>
-                    <p style={{ fontSize:13, fontWeight:600, color:C.navy, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{doc.name}</p>
-                    {doc.required && <span style={{ fontSize:10, color:C.error, fontWeight:700 }}>Required</span>}
-                  </div>
-                </div>
-                <span style={{ fontSize:11, fontWeight:700, padding:"2px 9px", borderRadius:20, background:cc.bg, color:cc.color, whiteSpace:"nowrap" }}>{doc.category}</span>
-                <span style={{ fontSize:12, color:C.muted }}>{doc.size}</span>
-                <span style={{ fontSize:12, color:C.muted }}>{doc.uploaded}</span>
-                <StatusBadge status={doc.status}/>
-              </div>
-              {doc.status==="rejected" && doc.rejectionNote && (
-                <div style={{ margin:"0 22px 14px", background:C.errorBg, border:`1px solid ${C.errorBorder}`, borderRadius:10, padding:"10px 14px", display:"flex", gap:8 }}>
-                  <span style={{ fontSize:14, flexShrink:0 }}>⚠️</span>
-                  <p style={{ fontSize:12, color:C.error, lineHeight:1.6 }}>{doc.rejectionNote}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/* ─── MESSAGES TAB ───────────────────────────────────────────────── */
-function Messages() {
-  const [messages, setMessages] = useState(MESSAGES_DATA);
-  const [input, setInput] = useState("");
-  const [typing, setTyping] = useState(false);
-  const bottomRef = useRef(null);
-  const inputRef  = useRef(null);
-
-  useEffect(()=>{ bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages]);
-
-  const send = () => {
-    const text = input.trim();
-    if (!text) return;
-    const newMsg = { id:messages.length+1, from:"user", text, time:"Now", read:false };
-    setMessages(m=>[...m,newMsg]);
-    setInput("");
-    setTyping(true);
-
-    setTimeout(()=>{
-      setTyping(false);
-      const replies = [
-        "Thanks for the update! I'll look into that right away and get back to you within the hour.",
-        "Noted — everything looks good from my end. The FTA application is progressing well.",
-        "Great question. I'll check with the FTA portal and confirm the status shortly.",
-        "Understood. No issues at all — we're on track for the expected delivery date.",
-      ];
-      setMessages(m=>[...m,{
-        id:m.length+2, from:"advisor",
-        text: replies[Math.floor(Math.random()*replies.length)],
-        time:"Just now", read:false,
-      }]);
-    }, 2200);
-  };
-
-  const formatDate = (msgs, i) => {
-    const dates = { "Mon 12 May":"Mon 12 May, 2025", "Tue 13 May":"Tue 13 May, 2025", "Wed 14 May":"Wed 14 May, 2025" };
-    const dateKey = Object.keys(dates).find(k=>msgs[i].time.startsWith(k));
-    if (!dateKey) return null;
-    if (i===0) return dates[dateKey];
-    const prevKey = Object.keys(dates).find(k=>msgs[i-1].time.startsWith(k));
-    return dateKey!==prevKey ? dates[dateKey] : null;
-  };
-
-  return (
-    <div>
-      <SectionHead label="Messages" title="Advisor Conversation"/>
-
-      <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, overflow:"hidden", boxShadow:"0 2px 20px rgba(15,37,87,0.07)", display:"flex", flexDirection:"column", height:680 }}>
-
-        {/* Thread header */}
-        <div style={{ padding:"18px 24px", borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"space-between", background:C.white, flexShrink:0 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:13 }}>
-            <div style={{ position:"relative" }}>
-              <Avatar initials="AA" size={44}/>
-              <div style={{ position:"absolute", bottom:1, right:1, width:11, height:11, borderRadius:"50%", background:C.success, border:`2px solid ${C.white}` }}/>
-            </div>
-            <div>
-              <p style={{ fontSize:15, fontWeight:700, color:C.navy, fontFamily:"'Cormorant Garamond',serif" }}>{APPLICATION.advisor}</p>
-              <p style={{ fontSize:12, color:C.success, fontWeight:600 }}>● Online · Typically replies within 2 hours</p>
-            </div>
-          </div>
-          <div style={{ display:"flex", gap:6 }}>
-            {[{ icon:"📞", tip:"Call" },{ icon:"📅", tip:"Schedule" },{ icon:"⋯", tip:"More" }].map(b=>(
-              <button key={b.tip} title={b.tip} style={{ width:36,height:36,borderRadius:10,background:C.offWhite,border:`1px solid ${C.border}`,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>{b.icon}</button>
-            ))}
-          </div>
-        </div>
-
-        {/* Application context bar */}
-        <div style={{ background:C.infoBg, borderBottom:`1px solid ${C.infoBorder}`, padding:"10px 24px", display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-          <span style={{ fontSize:16 }}>{APPLICATION.flag}</span>
-          <p style={{ fontSize:12, color:C.info, fontWeight:600 }}>Active Application: {APPLICATION.id} · <span style={{ fontWeight:400 }}>UAE TRC · Stage: Processing</span></p>
-        </div>
-
-        {/* Messages list */}
-        <div style={{ flex:1, overflowY:"auto", padding:"24px 24px 8px", display:"flex", flexDirection:"column", gap:4 }}>
-          {messages.map((msg,i) => {
-            const isUser    = msg.from==="user";
-            const dateLabel = formatDate(messages,i);
-            return (
-              <div key={msg.id}>
-                {dateLabel && (
-                  <div style={{ textAlign:"center", margin:"16px 0 12px" }}>
-                    <span style={{ fontSize:11, color:C.muted, fontWeight:600, background:C.offWhite2, padding:"3px 12px", borderRadius:20 }}>{dateLabel}</span>
-                  </div>
-                )}
-                <div style={{ display:"flex", justifyContent: isUser?"flex-end":"flex-start", marginBottom:10, gap:10, alignItems:"flex-end" }}>
-                  {!isUser && <Avatar initials="AA" size={30}/>}
-                  <div style={{ maxWidth:"68%", display:"flex", flexDirection:"column", alignItems: isUser?"flex-end":"flex-start", gap:3 }}>
-                    <div style={{
-                      background: isUser ? `linear-gradient(135deg,${C.navy},${C.navyLight})` : C.offWhite2,
-                      color: isUser ? C.white : C.navy,
-                      borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-                      padding:"12px 16px", fontSize:14, lineHeight:1.6,
-                      boxShadow: isUser?"0 4px 14px rgba(15,37,87,0.2)":"0 2px 8px rgba(15,37,87,0.06)",
-                    }}>
-                      {msg.text}
-                    </div>
-                    <div style={{ display:"flex", alignItems:"center", gap:5 }}>
-                      <p style={{ fontSize:11, color:C.muted }}>{msg.time}</p>
-                      {isUser && <span style={{ fontSize:11, color: msg.read?C.info:C.muted }}>{msg.read?"✓✓":"✓"}</span>}
-                    </div>
-                  </div>
-                  {isUser && <Avatar initials={USER.initials} size={30} bg={`linear-gradient(135deg,${C.gold},${C.goldDark})`}/>}
-                </div>
-              </div>
-            );
-          })}
-
-          {typing && (
-            <div style={{ display:"flex", gap:10, alignItems:"center", paddingBottom:8 }}>
-              <Avatar initials="AA" size={30}/>
-              <div style={{ background:C.offWhite2, borderRadius:"18px 18px 18px 4px", padding:"12px 16px" }}>
-                <div style={{ display:"flex", gap:5, alignItems:"center" }}>
-                  {[0,1,2].map(d=>(
-                    <div key={d} style={{ width:7,height:7,borderRadius:"50%",background:C.muted,animation:`bounce 1.2s ease ${d*0.2}s infinite` }}/>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={bottomRef}/>
-        </div>
-
-        {/* Composer */}
-        <div style={{ padding:"14px 20px", borderTop:`1px solid ${C.border}`, flexShrink:0, background:C.white }}>
-          <div style={{ display:"flex", alignItems:"flex-end", gap:10 }}>
-            <div style={{ display:"flex", gap:6, flexShrink:0 }}>
-              <button title="Attach file" style={{ width:36,height:36,borderRadius:10,background:C.offWhite,border:`1px solid ${C.border}`,fontSize:16,cursor:"pointer" }}>📎</button>
-              <button title="Add emoji" style={{ width:36,height:36,borderRadius:10,background:C.offWhite,border:`1px solid ${C.border}`,fontSize:16,cursor:"pointer" }}>😊</button>
-            </div>
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={e=>setInput(e.target.value)}
-              onKeyDown={e=>{ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();} }}
-              placeholder="Type a message… (Enter to send, Shift+Enter for new line)"
-              rows={1}
-              style={{
-                flex:1, padding:"11px 16px", borderRadius:12, fontFamily:"inherit",
-                border:`1.5px solid ${input?C.gold:C.border}`, fontSize:14, color:C.navy,
-                outline:"none", resize:"none", lineHeight:1.5,
-                transition:"border-color 0.2s, box-shadow 0.2s",
-                boxShadow: input?`0 0 0 3px ${C.gold}20`:"none",
-              }}
-            />
-            <button onClick={send} disabled={!input.trim()}
-              style={{
-                width:42, height:42, borderRadius:12, border:"none", cursor: input.trim()?"pointer":"not-allowed",
-                background: input.trim()?`linear-gradient(135deg,${C.gold},${C.goldDark})`:`${C.gold}44`,
-                display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:18,
-                transition:"all 0.2s", boxShadow: input.trim()?"0 4px 12px rgba(201,168,76,0.35)":"none",
-              }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.white} strokeWidth="2.5" strokeLinecap="round">
-                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
-            </button>
-          </div>
-          <p style={{ fontSize:11, color:C.muted, marginTop:8, paddingLeft:2 }}>Messages are encrypted · {APPLICATION.advisor} typically responds within 2 hours</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── SETTINGS TAB ───────────────────────────────────────────────── */
-function Settings() {
-  const [activeSection, setActiveSection] = useState("Personal Details");
-  const [saved, setSaved] = useState(false);
-  const [form, setForm] = useState({ name:USER.name, email:USER.email, phone:USER.phone, nationality:USER.nationality, visa:USER.visaType });
-  const [notifs, setNotifs] = useState({ email:true, sms:false, push:true, updates:true, marketing:false });
-
-  const handleSave = () => { setSaved(true); setTimeout(()=>setSaved(false),2500); };
-
-  const inp = (label, key, type="text") => (
-    <div>
-      <label style={{ fontSize:12,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:8 }}>{label}</label>
-      <input value={form[key]} type={type} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}
-        onFocus={e=>{e.target.style.borderColor=C.gold;e.target.style.boxShadow=`0 0 0 3px ${C.gold}20`}}
-        onBlur={e=>{e.target.style.borderColor=C.border;e.target.style.boxShadow="none"}}
-        style={{ width:"100%",padding:"12px 14px",borderRadius:10,fontFamily:"inherit",border:`1.5px solid ${C.border}`,fontSize:14,color:C.navy,outline:"none",transition:"all 0.2s" }}/>
-    </div>
-  );
-
-  return (
-    <div>
-      <SectionHead label="Settings" title="Account Settings"/>
-      <div style={{ display:"flex", gap:20 }}>
-
-        {/* Section tabs */}
-        <div style={{ width:200, flexShrink:0 }}>
-          <div style={{ background:C.white, borderRadius:14, border:`1px solid ${C.border}`, overflow:"hidden", boxShadow:"0 2px 10px rgba(15,37,87,0.05)" }}>
-            {SETTINGS_SECTIONS.map((s,i)=>(
-              <button key={s} onClick={()=>setActiveSection(s)} style={{
-                width:"100%", textAlign:"left", padding:"13px 18px",
-                background: activeSection===s ? C.offWhite2 : C.white,
-                color: activeSection===s ? C.navy : C.muted,
-                fontWeight: activeSection===s ? 700 : 500,
-                borderLeft: activeSection===s ? `3px solid ${C.gold}` : "3px solid transparent",
-                borderTop:"none", borderRight:"none",
-                borderBottom: i<SETTINGS_SECTIONS.length-1 ? `1px solid ${C.border}` : "none",
-                fontSize:13, cursor:"pointer", transition:"all 0.15s",
-              }}>{s}</button>
-            ))}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div style={{ flex:1 }}>
-          <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, padding:"32px 32px", boxShadow:"0 2px 12px rgba(15,37,87,0.05)" }}>
-
-            {activeSection==="Personal Details" && (
-              <>
-                <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:32, paddingBottom:28, borderBottom:`1px solid ${C.border}` }}>
-                  <div style={{ position:"relative" }}>
-                    <Avatar initials={USER.initials} size={64} bg={`linear-gradient(135deg,${C.gold},${C.goldDark})`}/>
-                    <button style={{ position:"absolute",bottom:0,right:0,width:22,height:22,borderRadius:"50%",background:C.navy,border:`2px solid ${C.white}`,color:C.white,fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>✎</button>
-                  </div>
-                  <div>
-                    <p style={{ fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy }}>{USER.name}</p>
-                    <p style={{ fontSize:12,color:C.muted,marginTop:2 }}>Member since {USER.memberSince} · {USER.plan} Plan</p>
-                  </div>
-                  <span style={{ marginLeft:"auto",background:`${C.gold}14`,color:C.goldDark,fontSize:12,fontWeight:700,padding:"5px 14px",borderRadius:20,border:`1px solid ${C.gold}44` }}>{USER.plan}</span>
-                </div>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18, marginBottom:28 }}>
-                  {inp("Full Name","name")}
-                  {inp("Email Address","email","email")}
-                  {inp("Phone Number","phone","tel")}
-                  {inp("Nationality","nationality")}
-                </div>
-                <div style={{ marginBottom:28 }}>
-                  <label style={{ fontSize:12,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:8 }}>Visa Type</label>
-                  <select value={form.visa} onChange={e=>setForm(f=>({...f,visa:e.target.value}))} style={{ width:"100%",padding:"12px 14px",borderRadius:10,fontFamily:"inherit",border:`1.5px solid ${C.border}`,fontSize:14,color:C.navy,outline:"none",appearance:"none" }}>
-                    <option>Employment Visa</option><option>Investor / Business Visa</option>
-                    <option>Golden Visa</option><option>Family / Dependent</option><option>Freelance Permit</option>
-                  </select>
-                </div>
-              </>
-            )}
-
-            {activeSection==="Notifications" && (
-              <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
-                <p style={{ fontSize:15,fontWeight:700,color:C.navy,marginBottom:20 }}>Notification Preferences</p>
-                {[
-                  { key:"email",     label:"Email Notifications",       sub:"Status updates and advisor messages via email"    },
-                  { key:"sms",       label:"SMS / WhatsApp Alerts",      sub:"Critical alerts and reminders via SMS"            },
-                  { key:"push",      label:"Browser Push Notifications", sub:"Real-time alerts in your browser"                },
-                  { key:"updates",   label:"Application Status Updates", sub:"Notify me on every stage change"                 },
-                  { key:"marketing", label:"Tips & Promotional Content", sub:"New country launches, tax planning resources"    },
-                ].map((n,i)=>(
-                  <div key={n.key} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",padding:"18px 0",borderBottom: i<4?`1px solid ${C.border}`:"none",gap:24 }}>
-                    <div>
-                      <p style={{ fontSize:14,fontWeight:600,color:C.navy }}>{n.label}</p>
-                      <p style={{ fontSize:12,color:C.muted,marginTop:3 }}>{n.sub}</p>
-                    </div>
-                    <div onClick={()=>setNotifs(prev=>({...prev,[n.key]:!prev[n.key]}))}
-                      style={{ width:44,height:24,borderRadius:12,background:notifs[n.key]?C.gold:C.border,position:"relative",transition:"background 0.2s",cursor:"pointer",flexShrink:0 }}>
-                      <div style={{ position:"absolute",top:3,left:notifs[n.key]?23:3,width:18,height:18,borderRadius:"50%",background:C.white,transition:"left 0.2s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)" }}/>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeSection==="Security" && (
-              <div>
-                <p style={{ fontSize:15,fontWeight:700,color:C.navy,marginBottom:20 }}>Security Settings</p>
-                {[
-                  { icon:"🔑", label:"Change Password",         sub:"Last changed 32 days ago",                action:"Update" },
-                  { icon:"📱", label:"Two-Factor Authentication",sub:"Currently disabled — strongly recommended", action:"Enable", warn:true },
-                  { icon:"📋", label:"Active Sessions",          sub:"1 active session (this device)",          action:"View" },
-                  { icon:"🗑", label:"Delete Account",           sub:"Permanently remove your account and data", action:"Delete", danger:true },
-                ].map((s,i)=>(
-                  <div key={s.label} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",padding:"18px 0",borderBottom: i<3?`1px solid ${C.border}`:"none",gap:16 }}>
-                    <div style={{ display:"flex",gap:14,alignItems:"center" }}>
-                      <div style={{ width:40,height:40,borderRadius:12,background:C.offWhite2,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18 }}>{s.icon}</div>
-                      <div>
-                        <p style={{ fontSize:14,fontWeight:600,color:C.navy }}>{s.label}</p>
-                        <p style={{ fontSize:12,color: s.warn?C.warn:C.muted,marginTop:2,fontWeight:s.warn?600:400 }}>{s.sub}</p>
-                      </div>
-                    </div>
-                    <button style={{ background:s.danger?C.errorBg:"transparent",color:s.danger?C.error:C.navy,border:`1px solid ${s.danger?C.errorBorder:C.border}`,borderRadius:9,padding:"8px 16px",fontSize:12,fontWeight:700,cursor:"pointer" }}>{s.action}</button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeSection==="Preferences" && (
-              <div>
-                <p style={{ fontSize:15,fontWeight:700,color:C.navy,marginBottom:20 }}>App Preferences</p>
-                {[
-                  { label:"Display Currency",   options:["USD","AED","GBP","EUR","SGD"], defaultVal:"USD" },
-                  { label:"Date Format",        options:["DD MMM YYYY","MM/DD/YYYY","YYYY-MM-DD"], defaultVal:"DD MMM YYYY" },
-                  { label:"Language",           options:["English","Arabic","French","Spanish"], defaultVal:"English" },
-                  { label:"Timezone",           options:["Asia/Dubai (UTC+4)","Europe/London (UTC+0)","Asia/Singapore (UTC+8)","America/New_York (UTC-5)"], defaultVal:"Asia/Dubai (UTC+4)" },
-                ].map((p,i)=>(
-                  <div key={p.label} style={{ paddingBottom:18,marginBottom:18,borderBottom: i<3?`1px solid ${C.border}`:"none" }}>
-                    <label style={{ fontSize:12,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:8 }}>{p.label}</label>
-                    <select defaultValue={p.defaultVal} style={{ width:"100%",padding:"12px 14px",borderRadius:10,fontFamily:"inherit",border:`1.5px solid ${C.border}`,fontSize:14,color:C.navy,outline:"none",appearance:"none",background:C.white }}>
-                      {p.options.map(o=><option key={o}>{o}</option>)}
-                    </select>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Save row */}
-            <div style={{ display:"flex",alignItems:"center",gap:12,paddingTop:24,borderTop:`1px solid ${C.border}`,marginTop:4 }}>
-              <button onClick={handleSave} style={{ background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,color:C.white,border:"none",borderRadius:11,padding:"12px 28px",fontSize:14,fontWeight:700,cursor:"pointer",boxShadow:"0 4px 14px rgba(201,168,76,0.35)" }}>
-                {saved?"✓ Saved!":"Save Changes"}
-              </button>
-              <button style={{ background:"transparent",color:C.muted,border:`1px solid ${C.border}`,borderRadius:11,padding:"12px 24px",fontSize:14,fontWeight:600,cursor:"pointer" }}>Cancel</button>
-              {saved && <span style={{ fontSize:13,color:C.success,fontWeight:600,animation:"fadeIn 0.3s ease" }}>✅ Your changes have been saved.</span>}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── SIDEBAR NAV ────────────────────────────────────────────────── */
-const NAV_ITEMS = [
-  { key:"overview",      label:"Overview",          icon:"◉" },
-  { key:"applications",  label:"My Applications",   icon:"📋" },
-  { key:"documents",     label:"Documents",         icon:"📁", badge: DOCUMENTS_DATA.filter(d=>d.status==="rejected").length||null },
-  { key:"messages",      label:"Messages",          icon:"💬", badge:1 },
-  { key:"settings",      label:"Settings",          icon:"⚙️" },
-];
-
-function Sidebar({ active, onNav }) {
-  return (
-    <aside style={{
-      width:248, flexShrink:0, background:C.sidebar,
-      borderRight:`1px solid rgba(255,255,255,0.07)`,
-      display:"flex", flexDirection:"column",
-      minHeight:"100vh", position:"sticky", top:0, alignSelf:"start", height:"100vh",
-    }}>
-      {/* Logo */}
-      <div style={{ padding:"22px 22px 18px", borderBottom:"1px solid rgba(255,255,255,0.07)" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-          <div style={{ width:32,height:32,background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16 }}>⚖</div>
-          <span style={{ fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.white }}>TRC<span style={{ color:C.goldLight,fontWeight:400 }}> Connect</span></span>
-        </div>
-        <div style={{ marginTop:14, display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:"rgba(255,255,255,0.05)", borderRadius:10 }}>
-          <Avatar initials={USER.initials} size={34} bg={`linear-gradient(135deg,${C.gold},${C.goldDark})`}/>
-          <div style={{ minWidth:0 }}>
-            <p style={{ fontSize:13,fontWeight:700,color:C.white,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{USER.name}</p>
-            <p style={{ fontSize:11,color:"rgba(255,255,255,0.4)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{USER.email}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Nav */}
-      <nav style={{ padding:"14px 14px", flex:1 }}>
-        <p style={{ fontSize:10,fontWeight:700,color:"rgba(255,255,255,0.25)",textTransform:"uppercase",letterSpacing:"0.1em",padding:"0 8px",marginBottom:8 }}>Navigation</p>
-        {NAV_ITEMS.map(item=>{
-          const isActive = active===item.key;
-          return (
-            <button key={item.key} onClick={()=>onNav(item.key)}
-              style={{
-                width:"100%",display:"flex",alignItems:"center",gap:11,
-                padding:"11px 12px",borderRadius:11,marginBottom:3,
-                background: isActive?"rgba(201,168,76,0.15)":"transparent",
-                border: isActive?`1px solid rgba(201,168,76,0.25)`:"1px solid transparent",
-                color: isActive?C.goldLight:"rgba(255,255,255,0.6)",
-                fontWeight: isActive?700:400,
-                fontSize:13,cursor:"pointer",textAlign:"left",
-                transition:"all 0.15s",
-              }}
-              onMouseEnter={e=>{ if(!isActive) e.currentTarget.style.background="rgba(255,255,255,0.05)"; }}
-              onMouseLeave={e=>{ if(!isActive) e.currentTarget.style.background="transparent"; }}
-            >
-              <span style={{ fontSize:15,flexShrink:0 }}>{item.icon}</span>
-              <span style={{ flex:1 }}>{item.label}</span>
-              {item.badge && (
-                <span style={{ background:C.error,color:C.white,fontSize:10,fontWeight:800,borderRadius:"50%",width:18,height:18,display:"flex",alignItems:"center",justifyContent:"center" }}>{item.badge}</span>
-              )}
-            </button>
-          );
-        })}
-
-        {/* Application quick card */}
-        <div style={{ margin:"18px 0 0", padding:"14px", background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12 }}>
-          <p style={{ fontSize:10,fontWeight:700,color:"rgba(255,255,255,0.35)",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10 }}>Active Application</p>
-          <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:8 }}>
-            <span style={{ fontSize:18 }}>🇦🇪</span>
-            <div>
-              <p style={{ fontSize:12,fontWeight:700,color:C.white }}>UAE TRC</p>
-              <p style={{ fontSize:10,color:"rgba(255,255,255,0.4)" }}>{APPLICATION.id}</p>
-            </div>
-          </div>
-          <div style={{ height:4,background:"rgba(255,255,255,0.08)",borderRadius:999,overflow:"hidden",marginBottom:6 }}>
-            <div style={{ height:"100%",width:`${APPLICATION.progress}%`,background:`linear-gradient(90deg,${C.gold},${C.goldDark})`,borderRadius:999 }}/>
-          </div>
-          <div style={{ display:"flex",justifyContent:"space-between" }}>
-            <span style={{ fontSize:10,color:C.warn,fontWeight:700 }}>Processing</span>
-            <span style={{ fontSize:10,color:"rgba(255,255,255,0.4)" }}>{APPLICATION.progress}%</span>
-          </div>
-        </div>
-      </nav>
-
-      {/* Bottom */}
-      <div style={{ padding:"14px 14px", borderTop:"1px solid rgba(255,255,255,0.07)" }}>
-        <button style={{ width:"100%",display:"flex",alignItems:"center",gap:10,padding:"11px 12px",borderRadius:11,background:"transparent",border:"1px solid transparent",color:"rgba(255,255,255,0.4)",fontSize:13,cursor:"pointer",textAlign:"left" }}
-          onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.05)"}
-          onMouseLeave={e=>e.currentTarget.style.background="transparent"}
-        >
-          <span>↩</span> Sign Out
-        </button>
-      </div>
-    </aside>
-  );
-}
-
-/* ─── TOPBAR ─────────────────────────────────────────────────────── */
-function Topbar({ active }) {
-  const tab = NAV_ITEMS.find(n=>n.key===active);
-  return (
-    <div style={{ height:64, background:C.white, borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", flexShrink:0, position:"sticky", top:0, zIndex:100, boxShadow:"0 1px 8px rgba(15,37,87,0.05)" }}>
-      <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-        <span style={{ fontSize:16 }}>{tab?.icon}</span>
-        <h1 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, fontWeight:700, color:C.navy }}>{tab?.label}</h1>
-      </div>
-      <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-        <button style={{ position:"relative", width:36,height:36,borderRadius:10,background:C.offWhite,border:`1px solid ${C.border}`,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>
-          🔔
-          <div style={{ position:"absolute",top:7,right:7,width:8,height:8,borderRadius:"50%",background:C.error,border:`1.5px solid ${C.white}` }}/>
-        </button>
-        <button style={{ width:36,height:36,borderRadius:10,background:C.offWhite,border:`1px solid ${C.border}`,fontSize:16,cursor:"pointer" }}>❓</button>
-        <div style={{ width:1,height:28,background:C.border }}/>
-        <Avatar initials={USER.initials} size={34} bg={`linear-gradient(135deg,${C.gold},${C.goldDark})`}/>
-      </div>
-    </div>
-  );
-}
-
-/* ─── ROOT ───────────────────────────────────────────────────────── */
-export function DashboardPage() {
-  const [activeTab, setActiveTab] = useState("overview");
-
-  const TABS = { overview:<Overview onNav={setActiveTab}/>, applications:<Applications/>, documents:<Documents/>, messages:<Messages/>, settings:<Settings/> };
-
-  return (
-    <div style={{ display:"flex", minHeight:"100vh", fontFamily:"'DM Sans',-apple-system,sans-serif", background:C.offWhite }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0;}
-        ::selection{background:${C.gold}33;}
-        @keyframes fadeIn  {from{opacity:0}to{opacity:1}}
-        @keyframes spin    {to{transform:rotate(360deg)}}
-        @keyframes bounce  {0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-        @keyframes tabIn   {from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-        ::-webkit-scrollbar{width:5px;height:5px}
-        ::-webkit-scrollbar-thumb{background:${C.border};border-radius:99px}
-        input::placeholder,textarea::placeholder{color:${C.muted}99}
-      `}</style>
-
-      <Sidebar active={activeTab} onNav={setActiveTab}/>
-
-      <div style={{ flex:1, display:"flex", flexDirection:"column", minWidth:0, overflowX:"hidden" }}>
-        <Topbar active={activeTab}/>
-        <main style={{ flex:1, padding:"32px 36px", animation:"tabIn 0.3s ease" }} key={activeTab}>
-          {TABS[activeTab]}
-        </main>
-      </div>
-    </div>
-  );
-}
-
-
-
-/* ─── TOKENS ─────────────────────────────────────────────────────── */
 /* ─── STATIC DATA ─────────────────────────────────────────────────── */
 const ALL_LANGUAGES = [
   "English","Arabic","French","German","Spanish","Dutch",
@@ -4261,13 +3091,13 @@ const REQUIRED_DOCS = [
 const INIT = {
   // Step 1
   firstName:"", lastName:"", email:"", phone:"",
-  country:"", firmName:"", firmWebsite:"", bio:"",
+  firmName:"", firmWebsite:"", bio:"",
   // Step 2
   licenseNumber:"", licenseAuthority:"", licenseExpiry:"",
   yearsExp:"", qualifications:"", uploadedDocs:[],
   linkedinUrl:"", backgroundCheck:false,
   // Step 3
-  countriesCovered:[], languages:[], specialties:[],
+  languages:[], specialties:[],
   tiers:[
     { name:"Standard", turnaround:"5–7 business days", price:"", currency:"USD", deliverables:"Digital TRC, document review, FTA/authority submission" },
     { name:"Express",  turnaround:"2–3 business days", price:"", currency:"USD", deliverables:"Priority handling, dedicated support, same-day prep" },
@@ -4425,25 +3255,6 @@ function TagPill({ label, selected, onClick }) {
   );
 }
 
-function CountryChip({ country, selected, onClick }) {
-  return (
-    <button onClick={onClick}
-      style={{
-        display:"flex", alignItems:"center", gap:7,
-        padding:"8px 14px", borderRadius:11, fontSize:13, fontWeight:600, cursor:"pointer",
-        background: selected ? `${C.navy}` : C.white,
-        color: selected ? C.white : C.navy,
-        border:`1.5px solid ${selected ? C.navy : C.border}`,
-        transition:"all 0.18s",
-        boxShadow: selected ? "0 4px 12px rgba(15,37,87,0.22)" : "none",
-      }}>
-      <span style={{ fontSize:17 }}>{country.flag}</span>
-      {country.name}
-      {selected && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.white} strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
-    </button>
-  );
-}
-
 /* ─── STEP PROGRESS ──────────────────────────────────────────────── */
 function StepProgress({ current }) {
   return (
@@ -4509,16 +3320,9 @@ function Step1({ form, setField, errors }) {
       </div>
 
       <SectionDivider title="Firm & Location" icon="🏢"/>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
-        <FieldWrap label="Country of Practice" required error={errors.country}>
-          <Select value={form.country} onChange={v=>setField("country",v)} error={errors.country}
-            placeholder="Select country…"
-            options={COUNTRIES.map(c=>({ value:c.name, label:`${c.flag}  ${c.name}` }))}/>
-        </FieldWrap>
-        <FieldWrap label="Firm / Practice Name" required error={errors.firmName}>
-          <Input value={form.firmName} onChange={v=>setField("firmName",v)} placeholder="Al-Rashid Tax Advisory DMCC" error={errors.firmName}/>
-        </FieldWrap>
-      </div>
+      <FieldWrap label="Firm / Practice Name" required error={errors.firmName}>
+        <Input value={form.firmName} onChange={v=>setField("firmName",v)} placeholder="Al-Rashid Tax Advisory DMCC" error={errors.firmName}/>
+      </FieldWrap>
       <FieldWrap label="Firm Website" hint="Optional — helps clients verify your practice">
         <Input value={form.firmWebsite} onChange={v=>setField("firmWebsite",v)} placeholder="https://www.yourfirm.com" type="url"/>
       </FieldWrap>
@@ -4705,17 +3509,6 @@ function Step3({ form, setField, errors }) {
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-      <SectionDivider title="Countries Covered" icon="🌍"/>
-      <p style={{ fontSize:13, color:C.muted, marginTop:-12 }}>Select all jurisdictions where you are licensed to handle TRC applications.</p>
-      {errors.countriesCovered && <p style={{ fontSize:11, color:C.error }}>⚠ {errors.countriesCovered}</p>}
-      <div style={{ display:"flex", flexWrap:"wrap", gap:10 }}>
-        {COUNTRIES.map(c=>(
-          <CountryChip key={c.code} country={c}
-            selected={(form.countriesCovered||[]).includes(c.name)}
-            onClick={()=>toggle("countriesCovered",c.name)}/>
-        ))}
-      </div>
-
       <SectionDivider title="Languages" icon="🗣"/>
       <p style={{ fontSize:13, color:C.muted, marginTop:-12 }}>Languages in which you can communicate with and advise clients.</p>
       {errors.languages && <p style={{ fontSize:11, color:C.error }}>⚠ {errors.languages}</p>}
@@ -4801,8 +3594,6 @@ function Step3({ form, setField, errors }) {
 
 /* ─── STEP 4: REVIEW ──────────────────────────────────────────────── */
 function Step4({ form, setField, errors, onEdit }) {
-  const country = COUNTRIES.find(c=>c.name===form.country);
-
   const ReviewBlock = ({ title, icon, step, children }) => (
     <div style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:16, overflow:"hidden", boxShadow:"0 2px 10px rgba(15,37,87,0.04)" }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px 22px", background:C.offWhite2, borderBottom:`1px solid ${C.border}` }}>
@@ -4836,7 +3627,6 @@ function Step4({ form, setField, errors, onEdit }) {
         <Row label="Full Name"    value={`${form.firstName} ${form.lastName}`}/>
         <Row label="Email"        value={form.email}/>
         <Row label="Phone"        value={form.phone}/>
-        <Row label="Country"      value={country ? `${country.flag} ${form.country}` : form.country}/>
         <Row label="Firm"         value={form.firmName}/>
         {form.firmWebsite && <Row label="Website" value={form.firmWebsite}/>}
         {form.bio && (
@@ -4861,15 +3651,6 @@ function Step4({ form, setField, errors, onEdit }) {
 
       {/* Services */}
       <ReviewBlock title="Services & Pricing" icon="💰" step={2}>
-        <div style={{ marginBottom:14 }}>
-          <p style={{ fontSize:12, color:C.muted, marginBottom:8, textTransform:"uppercase", letterSpacing:"0.07em", fontWeight:700 }}>Countries Covered</p>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-            {(form.countriesCovered||[]).map(c=>{
-              const co=COUNTRIES.find(x=>x.name===c);
-              return <span key={c} style={{ fontSize:12, fontWeight:600, padding:"3px 10px", borderRadius:20, background:C.offWhite2, color:C.navy, border:`1px solid ${C.border}` }}>{co?.flag} {c}</span>;
-            })}
-          </div>
-        </div>
         <div style={{ marginBottom:14 }}>
           <p style={{ fontSize:12, color:C.muted, marginBottom:8, textTransform:"uppercase", letterSpacing:"0.07em", fontWeight:700 }}>Languages</p>
           <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
@@ -4941,7 +3722,6 @@ function Step4({ form, setField, errors, onEdit }) {
 
 /* ─── SUCCESS SCREEN ─────────────────────────────────────────────── */
 function SuccessScreen({ form }) {
-  const country = COUNTRIES.find(c=>c.name===form.country);
   const ref = `ADV-${Date.now().toString(36).toUpperCase().slice(-7)}`;
   return (
     <div style={{ textAlign:"center", padding:"60px 24px 40px", maxWidth:580, margin:"0 auto" }}>
@@ -4959,7 +3739,7 @@ function SuccessScreen({ form }) {
         {[
           { l:"Reference",       v:ref },
           { l:"Name",            v:`${form.firstName} ${form.lastName}` },
-          { l:"Jurisdiction",    v:country?`${country.flag} ${form.country}`:form.country },
+          { l:"Jurisdiction",    v:"🇦🇪 UAE" },
           { l:"Firm",            v:form.firmName },
           { l:"Documents",       v:`${(form.uploadedDocs||[]).length} uploaded` },
           { l:"Review Timeline", v:"2–3 business days" },
@@ -4996,7 +3776,6 @@ function validate(step, form) {
     if (!form.lastName.trim())     e.lastName     = "Last name is required";
     if (!form.email.includes("@")) e.email        = "Valid email address required";
     if (!form.phone.trim())        e.phone        = "Phone number is required";
-    if (!form.country)             e.country      = "Select your country of practice";
     if (!form.firmName.trim())     e.firmName     = "Firm name is required";
     if (!form.bio.trim())          e.bio          = "A professional bio is required";
     if (form.bio.length > 400)     e.bio          = "Bio must be under 400 characters";
@@ -5010,7 +3789,6 @@ function validate(step, form) {
     if (!(form.uploadedDocs||[]).length) e.uploadedDocs = "Upload at least one credential document";
   }
   if (step === 2) {
-    if (!(form.countriesCovered||[]).length) e.countriesCovered = "Select at least one country";
     if (!(form.languages||[]).length)        e.languages        = "Select at least one language";
     const missingPrice = form.tiers.some(t=>!t.price);
     if (missingPrice) e.tiers = "Set a price for each service tier";
@@ -5253,7 +4031,6 @@ function _AppNavbarInner() {
   const lc = tp?'rgba(255,255,255,.85)':C.navy;
   // hash = smooth-scroll on homepage; to = hard navigate for Blog
   const NAV=[
-    { label: 'Countries', hash: 'for-who' },
     { label: 'Solutions', hash: 'solutions' },
     { label: 'Pricing',   hash: 'pricing'   },
     { label: 'Blog',      to:   '/blog'      },
@@ -5275,14 +4052,14 @@ function _AppNavbarInner() {
 
   const closeSelector = () => setActiveSelector(null);
 
-  const SelectorModal = ({ title, options }) => (
+  const SelectorModal = ({ eyebrow, title, subtitle, options }) => (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1200, background: 'rgba(9,26,61,.72)', backdropFilter: 'blur(5px)', display: 'grid', placeItems: 'center', padding: 24 }} onClick={closeSelector}>
       <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(100%, 760px)', background: C.white, borderRadius: 22, border: `1px solid ${C.border}`, boxShadow: '0 36px 90px rgba(0,0,0,.28)', overflow: 'hidden' }}>
         <div style={{ padding: 24, borderBottom: `1px solid ${C.border}`, background: `linear-gradient(135deg, ${C.offWhite} 0%, ${C.white} 100%)`, position: 'relative' }}>
           <button onClick={closeSelector} style={{ position: 'absolute', top: 18, right: 20, background: 'none', border: 'none', fontSize: 22, lineHeight: 1, color: C.muted, cursor: 'pointer', padding: '4px 8px', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Close">×</button>
-          <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: 'uppercase', letterSpacing: '.14em', marginBottom: 8 }}>Choose Your Workspace</div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: 'uppercase', letterSpacing: '.14em', marginBottom: 8 }}>{eyebrow}</div>
           <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 34, color: C.navy, marginBottom: 8 }}>{title}</h2>
-          <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8 }}>Select the compliance path that matches how you operate.</p>
+          <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8 }}>{subtitle}</p>
         </div>
         <div style={{ padding: 24, display: 'grid', gap: 14 }}>
           {options.map((option) => (
@@ -5355,7 +4132,9 @@ function _AppNavbarInner() {
       </div>
       {activeSelector === 'signin' && (
         <SelectorModal
+          eyebrow="Sign In"
           title="Choose Your Workspace"
+          subtitle="Select the compliance path that matches how you operate."
           options={[
             {
               label: 'Retail Client',
@@ -5386,7 +4165,9 @@ function _AppNavbarInner() {
       )}
       {activeSelector === 'eligibility' && (
         <SelectorModal
+          eyebrow="Get Started"
           title="Check Eligibility"
+          subtitle="Select the path that matches how you operate."
           options={[
             {
               label: 'Retail Eligibility',
@@ -5453,7 +4234,7 @@ export default function App() {
 
 function AppShell() {
   const { pathname } = ReactRouterDom.useLocation();
-  const hideGlobalNav = pathname.startsWith("/retail") || pathname.startsWith("/corporate") || pathname.startsWith("/advisor") || pathname.startsWith("/blog") || ["/check-eligibility", "/verify-email", "/login", "/dashboard", "/admin"].includes(pathname);
+  const hideGlobalNav = pathname.startsWith("/retail") || pathname.startsWith("/corporate") || pathname.startsWith("/advisor") || pathname.startsWith("/blog") || ["/check-eligibility", "/login", "/dashboard", "/admin"].includes(pathname);
 
   return (
     <>
@@ -5461,7 +4242,6 @@ function AppShell() {
       {!hideGlobalNav && <_AppNavbarInner />}
       <ReactRouterDom.Routes>
         <ReactRouterDom.Route path="/" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
-        <ReactRouterDom.Route path="/countries" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/solutions" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/pricing" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/resources" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
@@ -5472,7 +4252,6 @@ function AppShell() {
         <ReactRouterDom.Route path="/blog" element={<PageErrorBoundary name="Blog"><BlogListingPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/blog/:slug" element={<PageErrorBoundary name="Blog Post"><BlogPostPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/check-eligibility" element={<RetailEligibilityPage />} />
-        <ReactRouterDom.Route path="/verify-email" element={<VerifyRetailEmailPage />} />
         <ReactRouterDom.Route path="/reset-password" element={<RetailResetPasswordPage />} />
         <ReactRouterDom.Route path="/login" element={<RetailLoginPage />} />
         <ReactRouterDom.Route path="/retail/login" element={<RetailLoginPage />} />
@@ -5513,15 +4292,15 @@ function AppShell() {
             <ReactRouterDom.Route path="eligibility-status" element={<CorporateEligibilityStatusPage />} />
             <ReactRouterDom.Route path="profile" element={<CorporateProfilePage />} />
             <ReactRouterDom.Route path="support" element={<CorporateSupportPage />} />
-            <ReactRouterDom.Route path="applications" element={<CorporateFeatureWorkspacePage feature="applications" />} />
+            <ReactRouterDom.Route path="applications" element={<CorporateApplicationsPage />} />
             <ReactRouterDom.Route path="applications/:id" element={<ApplicationDetailPage />} />
-            <ReactRouterDom.Route path="employees" element={<CorporateFeatureWorkspacePage feature="employees" />} />
-            <ReactRouterDom.Route path="compliance-center" element={<CorporateFeatureWorkspacePage feature="compliance" />} />
+            <ReactRouterDom.Route path="employees" element={<CorporateEmployeesPage />} />
+            <ReactRouterDom.Route path="compliance-center" element={<CorporateComplianceCenterPage />} />
             <ReactRouterDom.Route path="documents" element={<CorporateDocumentsPage />} />
-            <ReactRouterDom.Route path="advisors" element={<CorporateFeatureWorkspacePage feature="advisors" />} />
-            <ReactRouterDom.Route path="reports" element={<CorporateFeatureWorkspacePage feature="reports" />} />
-            <ReactRouterDom.Route path="billing" element={<CorporateFeatureWorkspacePage feature="billing" />} />
-            <ReactRouterDom.Route path="settings" element={<CorporateFeatureWorkspacePage feature="settings" />} />
+            <ReactRouterDom.Route path="advisors" element={<CorporateChatPage />} />
+            <ReactRouterDom.Route path="reports" element={<CorporateReportsPage />} />
+            <ReactRouterDom.Route path="billing" element={<CorporateBillingPage />} />
+            <ReactRouterDom.Route path="settings" element={<CorporateSettingsPage />} />
           </ReactRouterDom.Route>
         </ReactRouterDom.Route>
         <ReactRouterDom.Route path="/admin" element={<AdminDashboard />} />

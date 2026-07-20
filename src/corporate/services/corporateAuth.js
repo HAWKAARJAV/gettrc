@@ -29,7 +29,8 @@ export async function registerCorporateApplicant(payload) {
         company_name: payload.companyName,
         business_email: email,
         phone: payload.phone,
-        registered_country: payload.registeredCountry,
+        // UAE-only platform: corporate applicants must be UAE-incorporated.
+        registered_country: "UAE",
         industry: payload.industry,
         website: payload.website || "",
         role: CORPORATE_ROLE,
@@ -38,6 +39,16 @@ export async function registerCorporateApplicant(payload) {
         annual_revenue: payload.annualRevenue,
         countries_of_operation: payload.countriesOfOperation,
         uae_presence: payload.uaePresence,
+        incorporation_date: payload.incorporationDate,
+        incorporation_location: payload.incorporationLocation,
+        has_corporate_tax_trn: payload.hasCorporateTaxTrn,
+        corporate_tax_trn: payload.corporateTaxTrn || "",
+        has_filed_corporate_tax_return: payload.hasFiledCorporateTaxReturn,
+        trc_purpose: payload.trcPurpose,
+        target_treaty_country: payload.targetTreatyCountry || "",
+        effective_management_statement: payload.effectiveManagementStatement || "",
+        board_meetings_in_uae: payload.boardMeetingsInUae || "",
+        key_decision_makers_in_uae: payload.keyDecisionMakersInUae || "",
         purpose: payload.purpose,
         target_jurisdiction: payload.targetJurisdiction,
         urgency: payload.urgency,
@@ -66,6 +77,9 @@ export async function registerCorporateApplicant(payload) {
 export async function loginCorporateUser(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({ email: normalizeEmail(email), password });
   if (error) throw error;
+  if (data?.user?.id || data?.session?.user?.id) {
+    localStorage.setItem("trc_user_id", data.user?.id || data.session.user?.id || "");
+  }
   return data;
 }
 
@@ -121,4 +135,5 @@ export function readCorporateCache() {
 
 export function clearCorporateCache() {
   localStorage.removeItem("trc_corporate_user");
+  localStorage.removeItem("trc_user_id");
 }

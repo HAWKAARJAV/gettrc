@@ -138,7 +138,7 @@ export default function AdvisorUpdatesPage() {
                 style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, outline: "none", color: C.navy, background: C.white, boxSizing: "border-box" }}>
                 <option value="">— None —</option>
                 {cases.map(c => (
-                  <option key={c.id} value={c.id}>{(c.profiles?.full_name || c.profiles?.email || c.id.slice(0,8))} ({c.country || "UAE"})</option>
+                  <option key={c.id} value={c.id}>{(c.profiles?.full_name || c.profiles?.email || c.id.slice(0,8))}</option>
                 ))}
               </select>
             </div>

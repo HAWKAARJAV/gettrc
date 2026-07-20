@@ -5,12 +5,12 @@ import { supabase } from "../supabaseClient";
  * Falls back to an empty array on error so the page can still render
  * with its hardcoded fallback questions.
  */
-export async function fetchAssessmentQuestions({ country = "AE", applicantType = "retail" } = {}) {
+export async function fetchAssessmentQuestions({ applicantType = "retail" } = {}) {
   try {
     const { data, error } = await supabase
       .from("assessment_questions")
       .select("*")
-      .eq("country", country)
+      .eq("country", "AE")
       .eq("applicant_type", applicantType)
       .eq("active", true)
       .order("section", { ascending: true })

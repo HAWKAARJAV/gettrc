@@ -450,7 +450,7 @@ export default function RetailDashboardPage() {
       <DocRequestsBanner count={pendingRequests} navigate={navigate} />
 
       {/* ── Quick facts strip ── */}
-      {(appliedDate || app?.country || app?.id) && (
+      {(appliedDate || app?.id) && (
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
@@ -462,8 +462,6 @@ export default function RetailDashboardPage() {
         }}>
           {[
             appliedDate && ["Applied on",      appliedDate],
-            app?.country && ["Country",         app.country],
-            app?.applicant_type && ["Type",     app.applicant_type === "retail" ? "Individual" : app.applicant_type],
             app?.id && ["Ref",                  app.id.slice(0, 8).toUpperCase()],
           ].filter(Boolean).map(([label, value]) => (
             <div key={label} style={{ background: C.white, padding: "14px 18px" }}>

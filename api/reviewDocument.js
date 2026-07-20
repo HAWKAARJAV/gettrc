@@ -1,5 +1,6 @@
 import { getServiceClient, verifyAdminOrAdvisor, normalizeActionUrl } from "./_shared.js";
 import { DOCUMENT_REVIEW_STATES } from "../src/workflow/workflowStates.js";
+import { sendDocumentEmail } from "./_sendStatusEmail.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -52,6 +53,26 @@ export default async function handler(req, res) {
       created_at: new Date().toISOString(),
     }).select("*").maybeSingle();
     if (notifError) console.warn("notification insert warning", notifError);
+
+    if (reviewStatus === "rejected") {
+      try {
+        const { data: profile } = await svc.from("profiles").select("email,full_name").eq("id", doc.uploaded_by).maybeSingle();
+        if (profile?.email) {
+          await sendDocumentEmail({
+            email: profile.email,
+            name: profile.full_name || "",
+            kind: "rejected",
+            documentType: doc.document_type,
+            notes: reviewerNotes,
+            applicationId: doc.application_id,
+            applicantType: application?.applicant_type,
+            siteUrl: process.env.SITE_URL || "https://gettrc.com",
+          });
+        }
+      } catch (emailErr) {
+        console.warn("[reviewDocument] Document email failed (non-fatal):", emailErr?.message || emailErr);
+      }
+    }
 
     return res.status(200).json({ success: true, data: { document: updatedDocs?.[0] || null }, historyEntry: historyRow || null, notifications: notifRow ? [notifRow] : [], error: null });
   } catch (err) {

@@ -9,6 +9,7 @@ import useWorkflowMutation from "./hooks/useWorkflowMutation";
 import ApplicationStatusStrip from "./components/ApplicationStatusStrip";
 import EmptyState from './components/EmptyState';
 import SkeletonCard from './components/SkeletonCard';
+import NotificationCenter from './components/NotificationCenter';
 
 const ADMIN_EMAIL = "hawkwilds09@gmail.com";
 
@@ -204,6 +205,7 @@ function LoginScreen({ onLogin }) {
       }
       localStorage.setItem("trc_token", data.access_token);
       localStorage.setItem("trc_email", email);
+      if (data.user?.id) localStorage.setItem("trc_user_id", data.user.id);
       onLogin({ email, token: data.access_token });
     } else {
       setError(data.error_description || "Invalid email or password");
@@ -403,7 +405,7 @@ function QueuesTab() {
   }, []);
 
   useEffect(() => {
-    dbGet('advisors', 'select=id,name,country,specialties&order=name.asc&limit=200').then((d) => setAdvisorsList(d || [])).catch(() => setAdvisorsList([]));
+    dbGet('advisors', 'select=id,name,specialties&order=name.asc&limit=200').then((d) => setAdvisorsList(d || [])).catch(() => setAdvisorsList([]));
   }, []);
 
   const takeAction = async (id, newState) => {
@@ -482,7 +484,7 @@ function QueuesTab() {
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <select disabled={mutationPending} defaultValue="" onChange={e => { const adv = e.target.value; if (!adv) return; takeAssign(a.id, adv); }} style={{ padding: 8, borderRadius: 8, border: `1px solid ${C.border}` }}>
                   <option value="">Assign...</option>
-                  {advisorsList.map(ad => <option key={ad.id} value={ad.id}>{ad.name} — {ad.country}</option>)}
+                  {advisorsList.map(ad => <option key={ad.id} value={ad.id}>{ad.name}</option>)}
                 </select>
                 <button disabled={mutationPending} onClick={() => takeAction(a.id, 'rejected')} style={{ padding: 10, borderRadius: 8, background: mutationPending ? '#9CA3AF' : '#EF4444', color: '#fff', border: 'none', cursor: mutationPending ? 'not-allowed' : 'pointer' }}>{mutationPending ? 'Working...' : 'Reject'}</button>
               </div>
@@ -566,7 +568,7 @@ function EligibilityRequestsTab() {
   }, []);
 
   useEffect(() => {
-    dbGet('advisors', 'select=id,name,country,user_id&order=name.asc&limit=200').then(d => setAdvisorsList(d || [])).catch(() => {});
+    dbGet('advisors', 'select=id,name,user_id&order=name.asc&limit=200').then(d => setAdvisorsList(d || [])).catch(() => {});
   }, []);
 
   // Reset advisor draft when selected changes
@@ -780,7 +782,7 @@ function EligibilityRequestsTab() {
                     <select value={advisorDraft} onChange={e=>setAdvisorDraft(e.target.value)} disabled={mutationPending||assigning}
                       style={{flex:1,minWidth:160,padding:"9px 12px",borderRadius:10,border:`1.5px solid ${C.gold}`,fontSize:13,fontFamily:"inherit",outline:"none",color:C.navy,background:"#fff"}}>
                       <option value="">— Select Advisor —</option>
-                      {advisorsList.map(ad=><option key={ad.id} value={ad.id}>{ad.name} ({ad.country||"UAE"})</option>)}
+                      {advisorsList.map(ad=><option key={ad.id} value={ad.id}>{ad.name}</option>)}
                     </select>
                     <button onClick={assignAdvisorToApplication} disabled={!advisorDraft||mutationPending||assigning}
                       style={{padding:"9px 16px",borderRadius:10,background:!advisorDraft||mutationPending||assigning?"#9CA3AF":`linear-gradient(135deg,${C.gold},${C.goldDark})`,color:"#fff",border:"none",fontSize:13,fontWeight:700,cursor:!advisorDraft||mutationPending||assigning?"not-allowed":"pointer"}}>
@@ -1175,7 +1177,7 @@ function AccountsTab() {
   useEffect(() => {
     Promise.all([
       dbGet("profiles", "select=id,full_name,email,role,created_at&order=role.asc,created_at.asc"),
-      dbGet("advisors", "select=id,user_id,name,country,available,verified,rating,reviews"),
+      dbGet("advisors", "select=id,user_id,name,available,verified,rating,reviews"),
     ]).then(([p, a]) => {
       setProfiles(p || []);
       setAdvisors(a || []);
@@ -1249,7 +1251,7 @@ function AccountsTab() {
                   {adv ? (
                     <div>
                       <div style={{ color: C.gold, fontWeight: 700 }}>★ {adv.rating || "—"} ({adv.reviews || 0})</div>
-                      <div>{adv.country || ""} · {adv.available ? "✅ Available" : "❌ Busy"}</div>
+                      <div>{adv.available ? "✅ Available" : "❌ Busy"}</div>
                     </div>
                   ) : p.role === "advisor" ? (
                     <span style={{ color: "#DC2626", fontSize: 11 }}>⚠ No advisor record</span>
@@ -1296,7 +1298,7 @@ function AdminAdvisorChatTab() {
 
   useEffect(() => {
     getAdminUserId().then(id => setAdminUserId(id));
-    dbGet("advisors","select=id,user_id,name,country&order=name.asc").then(d => {
+    dbGet("advisors","select=id,user_id,name&order=name.asc").then(d => {
       setAdvisors(d || []);
       setLoadingAdv(false);
       // seed first selection
@@ -1369,7 +1371,7 @@ function AdminAdvisorChatTab() {
             <EmptyState
               title="No advisors found"
               message="There are no advisors in the directory. Refresh to re-check advisor records."
-              cta={{ label: 'Refresh advisors', onClick: () => { setLoadingAdv(true); dbGet('advisors','select=id,user_id,name,country,available,verified,rating,reviews').then(d=>{setAdvisors(d||[]);setLoadingAdv(false)}).catch(()=>setLoadingAdv(false)); } }}
+              cta={{ label: 'Refresh advisors', onClick: () => { setLoadingAdv(true); dbGet('advisors','select=id,user_id,name,available,verified,rating,reviews').then(d=>{setAdvisors(d||[]);setLoadingAdv(false)}).catch(()=>setLoadingAdv(false)); } }}
             />
           </div>
         ) : advisors.map(adv => {
@@ -1384,7 +1386,6 @@ function AdminAdvisorChatTab() {
                 <div style={{ fontWeight:700, fontSize:13, color:C.navy, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{adv.name || adv.user_id.slice(0,8)}</div>
                 {unread > 0 && <span style={{ background:"#EF4444", color:"#fff", fontSize:10, fontWeight:800, minWidth:18, height:18, borderRadius:999, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 4px", flexShrink:0 }}>{unread}</span>}
               </div>
-              <div style={{ fontSize:11, color:C.muted, marginTop:2 }}>{adv.country || "UAE"}</div>
             </div>
           );
         })}
@@ -1402,7 +1403,6 @@ function AdminAdvisorChatTab() {
             </div>
             <div>
               <div style={{ fontWeight:700, fontSize:13, color:C.navy }}>{selectedAdvisor?.name || "Advisor"}</div>
-              <div style={{ fontSize:11, color:C.muted }}>{selectedAdvisor?.country || "UAE"}</div>
             </div>
           </div>
 
@@ -1502,7 +1502,7 @@ function AdminAdvisorUpdatesTab() {
         status: "resolved",
       });
       const updated = { ...selected, admin_reply: reply.trim(), admin_replied_at: new Date().toISOString(), status: "resolved" };
-      setTickets(prev => prev.map(t => t.id===selected.id ? updated : t));
+      setAllTickets(prev => prev.map(t => t.id===selected.id ? updated : t));
       setSelected(updated);
       setReply("");
     } catch(e) { console.error(e); }
@@ -1816,6 +1816,7 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     localStorage.removeItem("trc_token");
     localStorage.removeItem("trc_email");
+    localStorage.removeItem("trc_user_id");
     setUser(null);
   };
 
@@ -1905,10 +1906,13 @@ export default function AdminDashboard() {
           <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy}}>
             {NAV.find(n=>n.key===tab)?.label || "Admin"}
           </h1>
-          <a href="https://gettrc.com" target="_blank" rel="noreferrer"
-            style={{fontSize:13,color:C.gold,fontWeight:600,textDecoration:"none"}}>
-            ↗ View Live Site
-          </a>
+          <div style={{display:"flex",alignItems:"center",gap:18}}>
+            <NotificationCenter />
+            <a href="https://gettrc.com" target="_blank" rel="noreferrer"
+              style={{fontSize:13,color:C.gold,fontWeight:600,textDecoration:"none"}}>
+              ↗ View Live Site
+            </a>
+          </div>
         </div>
 
         <main style={{flex:1,padding:"28px 32px"}}>

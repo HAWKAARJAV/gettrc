@@ -30,9 +30,13 @@ export async function registerRetailApplicant(payload) {
 
   // Build metadata with snake_case keys matching the DB trigger expectations.
   // The trigger (handle_new_retail_user) reads these to populate profiles and
-  // eligibility_requests rows.  days_in_uae is sent as a numeric string so the
-  // trigger CASE guard (retail_days_text ~ '^[0-9]+$') accepts it.
-  const daysNum = Number(payload.daysInUae);
+  // eligibility_requests rows. days_in_uae is sent as a numeric string so the
+  // trigger CASE guard (retail_days_text ~ '^[0-9]+$') accepts it — now taken
+  // directly from the real day-count question rather than derived from a
+  // collapsed yes/no answer. meets_183_days is kept in sync for backward
+  // compatibility with older rows/UI that still read that boolean column.
+  const daysNum = Number(payload.daysInUaePeriod);
+  const daysNumValid = Number.isFinite(daysNum) && daysNum >= 0;
   const metadata = {
     full_name:       String(payload.fullName     || "").trim(),
     phone:           String(payload.phone        || "").trim(),
@@ -41,12 +45,20 @@ export async function registerRetailApplicant(payload) {
     current_country: String(payload.currentCountry || "").trim(),
     uae_visa:        String(payload.uaeVisa      || "").trim(),
     emirates_id:     String(payload.emiratesId   || "").trim(),
-    days_in_uae:     Number.isFinite(daysNum) ? String(daysNum) : "",
+    days_in_uae:     daysNumValid ? String(daysNum) : "",
     visa_type:       String(payload.visaType     || "").trim(),
     occupation:      String(payload.occupation   || "").trim(),
     income_source:   String(payload.incomeSource || "").trim(),
     purpose:         String(payload.purpose      || "").trim(),
     urgency:         String(payload.urgency      || "standard").trim(),
+    vat_registered:  String(payload.vatRegistered  || "").trim(),
+    trc_period_year: String(payload.trcPeriodYear  || "").trim(),
+    meets_183_days:  daysNumValid ? (daysNum >= 183 ? "yes" : "no") : "",
+    trc_purpose:     String(payload.trcPurpose     || "").trim(),
+    treaty_country:  String(payload.treatyCountry  || "").trim(),
+    has_permanent_residence:            String(payload.hasPermanentResidence            || "").trim(),
+    has_uae_employment_or_business:     String(payload.hasUaeEmploymentOrBusiness        || "").trim(),
+    is_centre_of_interests:             String(payload.isCentreOfFinancialPersonalInterests || "").trim(),
   };
 
   let signUpData = null;
@@ -134,12 +146,20 @@ export async function registerRetailApplicant(payload) {
         current_country: metadata.current_country,
         uae_visa:        metadata.uae_visa,
         emirates_id:     metadata.emirates_id,
-        days_in_uae:     Number.isFinite(daysNum) ? daysNum : null,
+        days_in_uae:     daysNumValid ? daysNum : null,
         visa_type:       metadata.visa_type,
         occupation:      metadata.occupation,
         income_source:   metadata.income_source,
         purpose:         metadata.purpose,
         urgency:         metadata.urgency,
+        vat_registered:  metadata.vat_registered,
+        trc_period_year: metadata.trc_period_year,
+        meets_183_days:  metadata.meets_183_days,
+        trc_purpose:     metadata.trc_purpose,
+        treaty_country:  metadata.treaty_country,
+        has_permanent_residence:        metadata.has_permanent_residence,
+        has_uae_employment_or_business: metadata.has_uae_employment_or_business,
+        is_centre_of_interests:         metadata.is_centre_of_interests,
         status:          "pending_review",
         review_notes:    "",
         payment_status:  "pending",
