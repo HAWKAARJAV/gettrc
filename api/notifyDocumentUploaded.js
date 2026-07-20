@@ -1,4 +1,5 @@
 import { getServiceClient, verifyApplicationOwner, syncLegacyRequestFromApplication } from "./_shared.js";
+import { sendAdvisorEmail } from "./_sendStatusEmail.js";
 
 // Called by the retail/corporate client immediately after they upload a
 // document. RLS prevents a client from writing a notification row targeted at
@@ -42,6 +43,18 @@ export default async function handler(req, res) {
         created_at: new Date().toISOString(),
       });
       if (notifError) console.warn("[notifyDocumentUploaded] advisor notification warning", notifError);
+
+      try {
+        const [{ data: clientProfile }, { data: advisorProfile }] = await Promise.all([
+          svc.from("profiles").select("full_name").eq("id", application.user_id).maybeSingle(),
+          svc.from("profiles").select("email,full_name").eq("id", application.advisor_id).maybeSingle(),
+        ]);
+        if (advisorProfile?.email) {
+          await sendAdvisorEmail({ email: advisorProfile.email, name: advisorProfile.full_name || "", kind: "document_uploaded", clientName: clientProfile?.full_name, documentType: label, applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
+        }
+      } catch (emailErr) {
+        console.warn("[notifyDocumentUploaded] Advisor email failed (non-fatal):", emailErr?.message || emailErr);
+      }
     }
 
     // 2. Advance the workflow into documents_under_review when the case was

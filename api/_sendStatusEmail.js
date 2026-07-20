@@ -163,6 +163,37 @@ export async function sendStatusEmail({ email, name, newState, applicationId, si
   await dispatchEmail({ email, subject: content.subject, html, logContext: `state: ${newState}` });
 }
 
+// Advisor-facing emails — distinct from the client-facing ones above.
+// Currently covers: a client's payment clearing, and a client uploading a
+// document. Kept as a single function (vs. one per event) since both are
+// simple "here's what happened, go look" nudges with the same shape.
+const ADVISOR_EMAIL_CONTENT = {
+  payment_received: ({ clientName }) => ({
+    subject: "Payment received — case ready to proceed",
+    emoji: "💳",
+    heading: "Payment confirmed",
+    body: `${clientName || "Your client"}'s payment has cleared. The case is now ready to proceed — you can begin requesting documents.`,
+    cta: { label: "Open Case", path: null },
+  }),
+  document_uploaded: ({ clientName, documentType }) => ({
+    subject: `Document uploaded: ${documentType || "a document"}`,
+    emoji: "📥",
+    heading: "New document uploaded",
+    body: `${clientName || "Your client"} uploaded <strong>${documentType || "a document"}</strong> — it's ready for your review.`,
+    cta: { label: "Review Document", path: null },
+  }),
+};
+
+export async function sendAdvisorEmail({ email, name, kind, clientName = "", documentType = "", applicationId, siteUrl = "https://gettrc.com" }) {
+  const builder = ADVISOR_EMAIL_CONTENT[kind];
+  if (!builder) return;
+  const content = builder({ clientName, documentType });
+  content.cta.path = `/advisor/cases/${applicationId}`;
+  const ctaUrl = `${siteUrl}${content.cta.path}`;
+  const html = buildEmailHtml({ content, name, applicationId, siteUrl, notes: "", ctaUrl });
+  await dispatchEmail({ email, subject: content.subject, html, logContext: `advisor ${kind}` });
+}
+
 export async function sendDocumentEmail({ email, name, kind, documentType, notes = "", applicationId, siteUrl = "https://gettrc.com", applicantType = "retail" }) {
   const basePath = applicantType === "corporate" ? "/corporate/documents" : "/retail/documents";
   const content =

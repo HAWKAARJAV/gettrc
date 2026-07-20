@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { getServiceClient, syncLegacyRequestFromApplication, normalizeActionUrl } from "./_shared.js";
-import { sendStatusEmail } from "./_sendStatusEmail.js";
+import { sendStatusEmail, sendAdvisorEmail } from "./_sendStatusEmail.js";
 
 // Stripe signature verification requires the raw, unparsed request body —
 // disable Vercel's default JSON body parsing for this route only.
@@ -120,6 +120,12 @@ export default async function handler(req, res) {
         const { data: profile } = await svc.from("profiles").select("email,full_name").eq("id", existing.user_id).maybeSingle();
         if (profile?.email) {
           await sendStatusEmail({ email: profile.email, name: profile.full_name || "", newState: "payment_completed", applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
+        }
+        if (existing.advisor_id) {
+          const { data: advisorProfile } = await svc.from("profiles").select("email,full_name").eq("id", existing.advisor_id).maybeSingle();
+          if (advisorProfile?.email) {
+            await sendAdvisorEmail({ email: advisorProfile.email, name: advisorProfile.full_name || "", kind: "payment_received", clientName: profile?.full_name, applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
+          }
         }
       } catch (emailErr) {
         console.warn("[stripeWebhook] Status email failed (non-fatal):", emailErr?.message || emailErr);

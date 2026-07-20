@@ -1,4 +1,5 @@
 import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor } from "./_shared.js";
+import { sendAdvisorEmail } from "./_sendStatusEmail.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -66,6 +67,20 @@ export default async function handler(req, res) {
     }
     const { data: notifRows, error: notifError } = await svc.from("notifications").insert(notificationsToInsert).select("*");
     if (notifError) console.warn("notification insert warning", notifError);
+
+    if (paymentState === "completed" && existing.advisor_id) {
+      try {
+        const [{ data: clientProfile }, { data: advisorProfile }] = await Promise.all([
+          svc.from("profiles").select("full_name").eq("id", existing.user_id).maybeSingle(),
+          svc.from("profiles").select("email,full_name").eq("id", existing.advisor_id).maybeSingle(),
+        ]);
+        if (advisorProfile?.email) {
+          await sendAdvisorEmail({ email: advisorProfile.email, name: advisorProfile.full_name || "", kind: "payment_received", clientName: clientProfile?.full_name, applicationId, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
+        }
+      } catch (emailErr) {
+        console.warn("[updatePaymentState] Advisor email failed (non-fatal):", emailErr?.message || emailErr);
+      }
+    }
 
     return res.status(200).json({ success: true, data: { application: updated }, historyEntry: historyRow || null, notifications: notifRows || [], error: null });
   } catch (err) {
