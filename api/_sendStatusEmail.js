@@ -135,7 +135,9 @@ function buildEmailHtml({ content, name, applicationId, siteUrl, notes, ctaUrl }
 </html>`.trim();
 }
 
-async function dispatchEmail({ email, subject, html, logContext }) {
+// Exported for callers that need to send a fully custom HTML email rather
+// than one of the templated ones below (e.g. the daily admin summary).
+export async function dispatchEmail({ email, subject, html, logContext }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.warn("[sendStatusEmail] RESEND_API_KEY not set — skipping email");

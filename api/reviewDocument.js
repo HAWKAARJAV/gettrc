@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   try {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
-    await verifyAdminOrAdvisor(auth);
+    const { user: reviewer } = await verifyAdminOrAdvisor(auth);
 
     const { documentId, action, reviewerNotes = "", resubmit = false } = req.body || {};
     if (!documentId || !action) return res.status(400).json({ error: "documentId and action required" });
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     if (!doc) return res.status(404).json({ error: "document not found" });
 
     const { data: application } = await svc.from("applications").select("id,applicant_type").eq("id", doc.application_id).maybeSingle();
-    const { data: updatedDocs, error: updateError } = await svc.from("documents").update({ review_status: reviewStatus, reviewer_notes: reviewerNotes }).eq("id", documentId).select("*");
+    const { data: updatedDocs, error: updateError } = await svc.from("documents").update({ review_status: reviewStatus, reviewer_notes: reviewerNotes, reviewed_by: reviewer.id, reviewed_at: new Date().toISOString() }).eq("id", documentId).select("*");
     if (updateError) throw updateError;
 
     const { data: historyRow, error: historyError } = await svc.from("application_status_history").insert({
