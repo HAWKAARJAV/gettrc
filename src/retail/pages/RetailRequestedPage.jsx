@@ -6,6 +6,7 @@ import {
 } from "../../documents/documentService";
 import SkeletonCard from '../../components/SkeletonCard';
 import { RETAIL_THEME } from "../../config/retailTheme";
+import DocumentTemplateButton from "../../documents/DocumentTemplateButton";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -169,6 +170,7 @@ export default function RetailRequestedPage() {
                       <div style={{ flex: 1, minWidth: 200 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
                           <div style={{ fontSize: 15, fontWeight: 800, color: C.navy }}>{req.document_type}</div>
+                          <DocumentTemplateButton documentName={req.document_type} size={24} />
                           <StatusPill status={req.status} />
                         </div>
                         {req.description && (

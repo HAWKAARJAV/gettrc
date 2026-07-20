@@ -4,6 +4,8 @@ import { RETAIL_FEATURES, isRetailWorkspaceUnlocked } from "../routes/retailWork
 import RetailLockedWorkspacePage from "./RetailLockedWorkspacePage";
 import { RETAIL_THEME } from "../../config/retailTheme";
 import { createSignedDocumentUrl, DOCUMENT_BUCKET, fetchApplicableDocumentRequirements, fetchApplicationDocuments, fetchDocumentRequests, uploadDocumentForRequest, summarizeDocumentReadiness, uploadApplicationDocument, notifyDocumentUploaded } from "../../documents/documentService";
+import DocumentTemplateButton from "../../documents/DocumentTemplateButton";
+import { withPeriodNote } from "../../documents/documentTemplates";
 import { fetchNotifications, markNotificationRead } from "../../notifications/notificationService";
 import EmptyState from '../../components/EmptyState';
 import SkeletonCard from '../../components/SkeletonCard';
@@ -208,16 +210,19 @@ function DocumentsWorkspace({ workspace, refresh }) {
             const relatedDocuments = documents.filter((document) => document.document_type === requirement.document_name);
             const latest = relatedDocuments[0];
             const isUploading = uploading === requirement.document_name;
+            const periodYear = workspace.request?.trc_period_year || "";
+            const description = withPeriodNote(requirement.description || requirement.category || "Compliance evidence required.", requirement.document_name, periodYear);
             return (
               <div key={requirement.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
                     <div style={{ fontSize: 15, fontWeight: 800, color: C.navy }}>{requirement.document_name}</div>
+                    <DocumentTemplateButton documentName={requirement.document_name} size={24} />
                     <StatusPill tone={latest?.review_status === "approved" ? "success" : latest ? "info" : "warning"}>
                       {latest?.review_status || "pending upload"}
                     </StatusPill>
                   </div>
-                  <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{requirement.description || requirement.category || "Compliance evidence required."}</div>
+                  <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{description}</div>
                   {latest?.reviewer_notes && (
                     <div style={{ fontSize: 12, color: C.warning, marginTop: 6, fontWeight: 700, background: C.warningBg, borderRadius: 8, padding: "5px 10px", display: "inline-block" }}>
                       💬 Advisor note: {latest.reviewer_notes}

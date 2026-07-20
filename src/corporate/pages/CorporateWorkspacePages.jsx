@@ -12,6 +12,7 @@ import {
   fetchDocumentRequests,
   uploadDocumentForRequest,
 } from "../../documents/documentService";
+import DocumentTemplateButton from "../../documents/DocumentTemplateButton";
 
 const C = RETAIL_THEME.colors;
 
@@ -539,6 +540,7 @@ export function CorporateDocumentsPage() {
                       <div style={{ flex: 1, minWidth: 200 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
                           <div style={{ fontSize: 15, fontWeight: 800, color: C.navy }}>{req.document_type}</div>
+                          <DocumentTemplateButton documentName={req.document_type} size={24} />
                           <DocStatusPill status={req.status} />
                         </div>
                         {req.description && (

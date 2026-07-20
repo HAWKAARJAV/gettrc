@@ -4,6 +4,8 @@ import EmptyState from '../../components/EmptyState';
 import { supabase } from "../../supabaseClient";
 import { RETAIL_THEME } from "../../config/retailTheme";
 import { fetchApplicableDocumentRequirements, fetchDocumentRequests, notifyDocumentUploaded } from "../../documents/documentService";
+import DocumentTemplateButton from "../../documents/DocumentTemplateButton";
+import { withPeriodNote } from "../../documents/documentTemplates";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -66,7 +68,7 @@ function StatusPill({ status }) {
   );
 }
 
-function DocRow({ doc, uploaded, onUpload }) {
+function DocRow({ doc, uploaded, onUpload, periodYear }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError]         = useState(null);
   const inputRef = useRef(null);
@@ -86,13 +88,17 @@ function DocRow({ doc, uploaded, onUpload }) {
   };
 
   const latestUpload = uploaded.find(u => u.document_type === doc.key);
+  const hint = withPeriodNote(doc.hint, doc.label, periodYear);
 
   return (
     <div style={{ background:C.white, borderRadius:14, border:`1px solid ${C.border}`, padding:"18px 20px", boxShadow:"0 1px 6px rgba(15,37,87,.04)" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:8 }}>
         <div style={{ flex:1 }}>
-          <div style={{ fontWeight:700, fontSize:14, color:C.navy, marginBottom:3 }}>{doc.label}</div>
-          <div style={{ fontSize:12, color:C.muted }}>{doc.hint}</div>
+          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
+            <div style={{ fontWeight:700, fontSize:14, color:C.navy }}>{doc.label}</div>
+            <DocumentTemplateButton documentName={doc.label} size={24} />
+          </div>
+          <div style={{ fontSize:12, color:C.muted }}>{hint}</div>
         </div>
         {latestUpload
           ? <StatusPill status={latestUpload.review_status} />
@@ -132,6 +138,7 @@ export default function RetailDocumentsPage() {
   const appId       = workspace.application?.id || null;
   const userId      = workspace.session?.user?.id || workspace.profile?.id;
   const appType     = workspace.application?.applicant_type || "retail";
+  const periodYear  = workspace.request?.trc_period_year || "";
 
   const [docs,           setDocs]           = useState([]);
   const [requiredDocs,   setRequiredDocs]   = useState([]);
@@ -254,7 +261,7 @@ export default function RetailDocumentsPage() {
 
           <div id="documents-grid" style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(320px,1fr))", gap:14 }}>
             {requiredDocs.map(doc => (
-              <DocRow key={doc.key} doc={doc} uploaded={uploaded} onUpload={handleUpload} />
+              <DocRow key={doc.key} doc={doc} uploaded={uploaded} onUpload={handleUpload} periodYear={periodYear} />
             ))}
           </div>
 
