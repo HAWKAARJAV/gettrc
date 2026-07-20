@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_KEY } from "../supabaseClient";
+import { useSEO, WEBSITE_JSONLD, breadcrumbJsonLd } from "../seo/useSEO";
 
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -19,32 +20,6 @@ const C = {
   card:      "#FFFFFF",
   surface:   "#FBFCFE",
 };
-
-// ── SEO head injection ────────────────────────────────────────────────────────
-function useSEO({ title, description, canonical }) {
-  useEffect(() => {
-    document.title = title;
-    const setMeta = (name, content, prop = false) => {
-      const attr = prop ? "property" : "name";
-      let el = document.querySelector(`meta[${attr}="${name}"]`);
-      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, name); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-    setMeta("description", description);
-    setMeta("og:title", title, true);
-    setMeta("og:description", description, true);
-    setMeta("og:type", "website", true);
-    setMeta("og:url", canonical, true);
-    setMeta("twitter:card", "summary_large_image");
-    setMeta("twitter:title", title);
-    setMeta("twitter:description", description);
-
-    // Canonical link
-    let link = document.querySelector('link[rel="canonical"]');
-    if (!link) { link = document.createElement("link"); link.rel = "canonical"; document.head.appendChild(link); }
-    link.href = canonical;
-  }, [title, description, canonical]);
-}
 
 // ── Category pill ─────────────────────────────────────────────────────────────
 const CATEGORY_COLORS = {
@@ -102,7 +77,7 @@ function PostCard({ post }) {
     >
       {/* Cover image or gradient placeholder */}
       {post.cover_image_url ? (
-        <img src={post.cover_image_url} alt={post.title}
+        <img src={post.cover_image_url} alt={post.title} loading="lazy" decoding="async"
           style={{ width:"100%", height:148, objectFit:"cover", display:"block" }} />
       ) : (
         <div style={{
@@ -185,12 +160,15 @@ export default function BlogListingPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("TRC Insights");
+  // "" means "All" — show every published post regardless of category.
+  const [activeCategory, setActiveCategory] = useState("");
 
   useSEO({
-    title: "TRC Blog — Tax Residency Certificate Guides, DTAA Tips & Expat Insights",
-    description: "Expert articles on Tax Residency Certificates, Double Taxation Avoidance, UAE expat tax planning, NRI tax obligations, and more. Free guides by TRC Connect.",
-    canonical: "https://gettrc.com/blog",
+    title: "TRC & UAE Tax Residency Guides",
+    description: "Guides on the UAE Tax Residency Certificate (TRC), Double Taxation Avoidance Agreements, and expat tax planning, written by TRC Connect's advisor network.",
+    path: "/blog",
+    type: "website",
+    jsonLd: [WEBSITE_JSONLD, breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }])],
   });
 
   useEffect(() => {
@@ -202,13 +180,12 @@ export default function BlogListingPage() {
   }, []);
 
   const categories = Array.from(new Set(posts.map(p => p.category))).filter(Boolean);
-  const defaultCategory = categories.includes("TRC Insights") ? "TRC Insights" : (categories[0] || "TRC Insights");
 
   useEffect(() => {
-    if (categories.length && !categories.includes(activeCategory)) {
-      setActiveCategory(defaultCategory);
+    if (activeCategory && categories.length && !categories.includes(activeCategory)) {
+      setActiveCategory("");
     }
-  }, [categories.join("|"), activeCategory, defaultCategory]);
+  }, [categories.join("|"), activeCategory]);
 
   const filtered = posts.filter(p => {
     const matchCat = !activeCategory || p.category === activeCategory;
@@ -297,6 +274,17 @@ export default function BlogListingPage() {
 
         {/* Category filter */}
         <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:18 }}>
+          <button onClick={() => setActiveCategory("")}
+            style={{
+              padding:"7px 12px", borderRadius:999, fontSize:11, fontWeight:700,
+              cursor:"pointer", transition:"all .15s",
+              background: activeCategory==="" ? C.navy : C.white,
+              color: activeCategory==="" ? C.white : C.muted,
+              border: activeCategory==="" ? "none" : `1px solid ${C.border}`,
+              boxShadow: activeCategory==="" ? "0 8px 18px rgba(15,37,87,.18)" : "0 4px 14px rgba(15,37,87,.05)",
+            }}>
+            All
+          </button>
           {categories.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
               style={{

@@ -10,6 +10,7 @@ import {
   RESIDENCY_QUESTIONS, PROFESSIONAL_QUESTIONS,
   resolveOccupation, resolvePurpose,
 } from "../eligibility/retailQuestionnaireData";
+import { useSEO, breadcrumbJsonLd } from "../seo/useSEO";
 
 const z = P.colors;
 const SERIF = P.fonts.serif;
@@ -48,6 +49,13 @@ function EligibilityShell({ children }) {
 const REQUIRED_FIELDS = ["fullName", "email", "phone", "nationality", "currentCountry", "vatRegistered", "trcPeriodYear", "daysInUaePeriod", "uaeVisa", "emiratesId", "visaType", "hasPermanentResidence", "hasUaeEmploymentOrBusiness", "isCentreOfFinancialPersonalInterests", "trcPurpose", "occupation", "incomeSource", "purpose", "urgency", "password", "confirmPassword"];
 
 export default function EligibilityRegistrationPage() {
+  useSEO({
+    title: "Check Your UAE Tax Residency Certificate Eligibility",
+    description: "Check your eligibility for a UAE Tax Residency Certificate in minutes. Answer a few questions about your residency and visa status and a TRC specialist reviews your case within 24-48 hours.",
+    path: "/check-eligibility",
+    jsonLd: breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Check Eligibility", path: "/check-eligibility" }]),
+  });
+
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");

@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useRetailWorkspace } from "../../hooks/useRetailWorkspace";
+import { useSEO } from "../../seo/useSEO";
 
 const SERIF = "'Cormorant Garamond', serif";
 const SANS  = "'DM Sans', -apple-system, sans-serif";
@@ -145,8 +146,16 @@ function UnderReviewScreen({ workspace }) {
 export default function RetailWorkspaceGuard() {
   const workspace = useRetailWorkspace();
   const location = useLocation();
+  const isLoginRoute = typeof location?.pathname === "string" && location.pathname.startsWith("/retail/login");
 
-  if (typeof location?.pathname === "string" && location.pathname.startsWith("/retail/login")) {
+  // Private workspace — every nested page inherits this noindex since none of
+  // them call useSEO themselves. Skip on the login sub-route: RetailLoginPage
+  // sets its own (indexable) SEO tags, and since child effects run before
+  // parent effects, calling this unconditionally would overwrite them back
+  // to noindex on every render.
+  useSEO(isLoginRoute ? {} : { title: "Retail Workspace", noindex: true });
+
+  if (isLoginRoute) {
     return <Outlet />;
   }
 

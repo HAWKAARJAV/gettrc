@@ -1,9 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAdvisorWorkspace } from "../../hooks/useAdvisorWorkspace";
+import { useSEO } from "../../seo/useSEO";
 
 export default function AdvisorWorkspaceGuard() {
   const workspace = useAdvisorWorkspace();
   const location = useLocation();
+  // Private workspace — every nested page inherits this noindex since none of
+  // them call useSEO themselves. (The /advisor/login page sets its own noindex.)
+  useSEO({ title: "Advisor Workspace", noindex: true });
 
   if (location.pathname.startsWith("/advisor/login")) return <Outlet />;
 

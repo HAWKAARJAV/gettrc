@@ -8,6 +8,7 @@ import { generateRequiredActions } from "./workflow/generateRequiredActions";
 import useWorkflowMutation from "./hooks/useWorkflowMutation";
 import ApplicationStatusStrip from "./components/ApplicationStatusStrip";
 import EmptyState from './components/EmptyState';
+import { useSEO } from "./seo/useSEO";
 import SkeletonCard from './components/SkeletonCard';
 import NotificationCenter from './components/NotificationCenter';
 
@@ -1784,6 +1785,7 @@ function AnalyticsTab() {
 }
 
 export default function AdminDashboard() {
+  useSEO({ title: "Admin", noindex: true });
   const [user,    setUser]    = useState(null);
   const [tab,     setTab]     = useState("overview");
   const [checking,setChecking]= useState(true);

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { loginRetailUser, sendRetailPasswordReset, resendVerificationEmail } from "../services/retailAuth";
 import { supabase } from "../supabaseClient";
 import { RETAIL_THEME } from "../config/retailTheme";
+import { useSEO, breadcrumbJsonLd } from "../seo/useSEO";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -196,6 +197,13 @@ function NewUserScreen({ name }) {
 // ─── main login form ─────────────────────────────────────────────────────────
 
 export default function RetailLoginPage() {
+  useSEO({
+    title: "Sign In | TRC Connect",
+    description: "Sign in to your TRC Connect account to track your UAE Tax Residency Certificate application, upload documents, and message your advisor in real time.",
+    path: "/retail/login",
+    jsonLd: breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Sign In", path: "/retail/login" }]),
+  });
+
   const [email, setEmail]           = useState("");
   const [password, setPassword]     = useState("");
   const [loading, setLoading]       = useState(false);

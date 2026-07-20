@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CorporateAuthShell from "../components/CorporateAuthShell";
 import { RETAIL_THEME } from "../../config/retailTheme";
 import { registerCorporateApplicant } from "../services/corporateAuth";
+import { useSEO, breadcrumbJsonLd } from "../../seo/useSEO";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -57,6 +58,13 @@ function SectionTitle({ children }) {
 }
 
 export default function CorporateEligibilityPage() {
+  useSEO({
+    title: "Check Corporate Tax UAE & TRC Eligibility",
+    description: "Check your company's eligibility for a UAE Tax Residency Certificate and Corporate Tax compliance. Submit your structure and a specialist reviews treaty pathways within 24-48 hours.",
+    path: "/corporate/check-eligibility",
+    jsonLd: breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Corporate Check Eligibility", path: "/corporate/check-eligibility" }]),
+  });
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

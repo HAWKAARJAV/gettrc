@@ -1,8 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useCorporateWorkspace } from "../hooks/useCorporateWorkspace";
+import { useSEO } from "../../seo/useSEO";
 
 export default function CorporateWorkspaceGuard() {
   const workspace = useCorporateWorkspace();
+  // Private workspace — every nested page inherits this noindex since none of
+  // them call useSEO themselves.
+  useSEO({ title: "Corporate Workspace", noindex: true });
 
   if (workspace.loading) {
     return (

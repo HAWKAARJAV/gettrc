@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CorporateAuthShell from "../components/CorporateAuthShell";
 import { RETAIL_THEME } from "../../config/retailTheme";
 import { fetchCorporateWorkspace, loginCorporateUser, saveCorporateCache, sendCorporatePasswordReset } from "../services/corporateAuth";
+import { useSEO, breadcrumbJsonLd } from "../../seo/useSEO";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -13,7 +14,7 @@ function AuthCard({ title, subtitle, children }) {
     <div style={{ width: "min(100%, 520px)", background: C.white, borderRadius: RETAIL_THEME.radius.lg, boxShadow: RETAIL_THEME.shadows.glass, border: `1px solid ${C.border}`, overflow: "hidden", boxSizing: "border-box" }}>
       <div style={{ padding: 24, borderBottom: `1px solid ${C.border}`, background: `linear-gradient(135deg, ${C.offWhite} 0%, ${C.white} 100%)` }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>Corporate Login</div>
-        <h1 style={{ fontFamily: SERIF, fontSize: 32, color: C.navy, marginBottom: 8 }}>{title}</h1>
+        <h2 style={{ fontFamily: SERIF, fontSize: 32, color: C.navy, marginBottom: 8 }}>{title}</h2>
         <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8 }}>{subtitle}</p>
       </div>
       <div style={{ padding: 24 }}>{children}</div>
@@ -22,6 +23,13 @@ function AuthCard({ title, subtitle, children }) {
 }
 
 export default function CorporateLoginPage() {
+  useSEO({
+    title: "Corporate Sign In | TRC Connect",
+    description: "Sign in to your corporate TRC Connect workspace to review your UAE Corporate Tax and Tax Residency Certificate application, payment status, and compliance modules.",
+    path: "/corporate/login",
+    jsonLd: breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Corporate Sign In", path: "/corporate/login" }]),
+  });
+
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

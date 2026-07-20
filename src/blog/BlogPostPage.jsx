@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_KEY } from "../supabaseClient";
+import { useSEO, SITE_URL, DEFAULT_OG_IMAGE, breadcrumbJsonLd, faqJsonLd } from "../seo/useSEO";
 
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -19,97 +20,6 @@ const C = {
   surface:   "#FBFCFE",
 };
 
-// ── SEO head injection ────────────────────────────────────────────────────────
-function useSEO(post) {
-  useEffect(() => {
-    if (!post) return;
-    const title = post.seo_title || post.title;
-    const desc  = post.seo_description || post.excerpt;
-    const url   = `https://gettrc.com/blog/${post.slug}`;
-
-    document.title = title + " | TRC Connect";
-
-    const setMeta = (name, content, prop = false) => {
-      const attr = prop ? "property" : "name";
-      let el = document.querySelector(`meta[${attr}="${name}"]`);
-      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, name); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-
-    setMeta("description", desc);
-    setMeta("og:title", title, true);
-    setMeta("og:description", desc, true);
-    setMeta("og:type", "article", true);
-    setMeta("og:url", url, true);
-    if (post.cover_image_url) setMeta("og:image", post.cover_image_url, true);
-    setMeta("article:published_time", post.published_at, true);
-    setMeta("article:author", post.author_name, true);
-    setMeta("twitter:card", "summary_large_image");
-    setMeta("twitter:title", title);
-    setMeta("twitter:description", desc);
-
-    // Canonical
-    let link = document.querySelector('link[rel="canonical"]');
-    if (!link) { link = document.createElement("link"); link.rel = "canonical"; document.head.appendChild(link); }
-    link.href = url;
-
-    // JSON-LD structured data (Article schema for Google rich results)
-    const existingLd = document.getElementById("blog-ld");
-    if (existingLd) existingLd.remove();
-    const existingFaqLd = document.getElementById("blog-faq-ld");
-    if (existingFaqLd) existingFaqLd.remove();
-
-    const script = document.createElement("script");
-    script.id = "blog-ld";
-    script.type = "application/ld+json";
-    script.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": post.title,
-      "description": post.excerpt,
-      "image": post.cover_image_url || "https://gettrc.com/og-default.png",
-      "author": { "@type": "Organization", "name": post.author_name },
-      "publisher": {
-        "@type": "Organization",
-        "name": "TRC Connect",
-        "logo": { "@type": "ImageObject", "url": "https://gettrc.com/logo.png" },
-      },
-      "datePublished": post.published_at,
-      "dateModified": post.updated_at || post.published_at,
-      "mainEntityOfPage": { "@type": "WebPage", "@id": url },
-      "keywords": (post.tags || []).join(", "),
-    });
-    document.head.appendChild(script);
-
-    const breadcrumbScript = document.createElement("script");
-    breadcrumbScript.id = "blog-breadcrumb-ld";
-    breadcrumbScript.type = "application/ld+json";
-    breadcrumbScript.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://gettrc.com/" },
-        { "@type": "ListItem", position: 2, name: "Blog", item: "https://gettrc.com/blog" },
-        { "@type": "ListItem", position: 3, name: title, item: url },
-      ],
-    });
-    document.head.appendChild(breadcrumbScript);
-
-    const faqScript = document.createElement("script");
-    faqScript.id = "blog-faq-ld";
-    faqScript.type = "application/ld+json";
-    faqScript.text = JSON.stringify(buildFaqSchema(post));
-    document.head.appendChild(faqScript);
-
-    return () => {
-      ["blog-ld", "blog-breadcrumb-ld", "blog-faq-ld"].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-      });
-    };
-  }, [post]);
-}
-
 // ── Minimal markdown renderer (no external deps) ─────────────────────────────
 function renderMarkdown(md) {
   if (!md) return "";
@@ -122,7 +32,9 @@ function renderMarkdown(md) {
     .replace(/^#{4}\s+(.+)$/gm, (_, text) => `<h4 class="md-h4" id="${slugifyText(text)}">${text}</h4>`)
     .replace(/^#{3}\s+(.+)$/gm, (_, text) => `<h3 class="md-h3" id="${slugifyText(text)}">${text}</h3>`)
     .replace(/^#{2}\s+(.+)$/gm, (_, text) => `<h2 class="md-h2" id="${slugifyText(text)}">${text}</h2>`)
-    .replace(/^#{1}\s+(.+)$/gm, '<h1 class="md-h1">$1</h1>')
+    // Note: content-authored `# heading` is rendered as an <h2> (styled like an h1 via
+    // the md-h1 class) so the page keeps a single true <h1> — the post title above.
+    .replace(/^#{1}\s+(.+)$/gm, (_, text) => `<h2 class="md-h1" id="${slugifyText(text)}">${text}</h2>`)
 
     // Bold + italic
     .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
@@ -262,32 +174,6 @@ function extractHeadings(md) {
     .filter(Boolean);
 }
 
-function buildFaqSchema(post) {
-  const faqItems = [
-    {
-      question: `How long does it take to get a TRC in ${post.category === "Country Guide" ? "this market" : "the UAE"}?`,
-      answer: "The timeline depends on residency status, document readiness, and the review queue. A complete submission is the fastest path to approval.",
-    },
-    {
-      question: "What documents improve TRC approval chances?",
-      answer: "Clear passport copies, visa/residency proof, travel evidence, tax records, and any supporting income or address documents help reduce back-and-forth.",
-    },
-  ];
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqItems.map(item => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
-}
-
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -297,7 +183,6 @@ export default function BlogPostPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  useSEO(post);
   const tocItems = extractHeadings(post?.content);
   const faqItems = post ? [
     {
@@ -309,6 +194,43 @@ export default function BlogPostPage() {
       answer: "Clear passport copies, visa/residency proof, travel evidence, tax records, and any supporting income or address documents help reduce back-and-forth.",
     },
   ] : [];
+
+  const articleLd = post ? {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": post.cover_image_url || DEFAULT_OG_IMAGE,
+    "author": { "@type": "Organization", "name": post.author_name },
+    "publisher": {
+      "@type": "Organization",
+      "name": "TRC Connect",
+      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/icon-512.png` },
+    },
+    "datePublished": post.published_at,
+    "dateModified": post.updated_at || post.published_at,
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `${SITE_URL}/blog/${post.slug}` },
+    "keywords": (post.tags || []).join(", "),
+  } : null;
+
+  // Keep JSON-LD breadcrumb consistent with the visible on-page breadcrumb,
+  // which uses post.category as the final segment (not the post title).
+  const breadcrumbLd = post ? breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.category, path: `/blog/${post.slug}` },
+  ]) : null;
+
+  const faqLd = faqItems.length > 0 ? faqJsonLd(faqItems) : null;
+
+  useSEO(post ? {
+    title: post.seo_title || post.title,
+    description: post.seo_description || post.excerpt,
+    path: `/blog/${post.slug}`,
+    image: post.cover_image_url || DEFAULT_OG_IMAGE,
+    type: "article",
+    jsonLd: [articleLd, breadcrumbLd, faqLd],
+  } : {});
 
   useEffect(() => {
     sb.from("blog_posts")

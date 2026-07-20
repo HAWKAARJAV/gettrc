@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+Disallow: /retail/
+Allow: /retail/login
+Disallow: /corporate/
+Allow: /corporate/login
+Allow: /corporate/check-eligibility
+Disallow: /advisor/
+Allow: /advisor/login
+Disallow: /admin
+Disallow: /verify-email
+Disallow: /reset-password
+
+Sitemap: https://gettrc.com/sitemap.xml

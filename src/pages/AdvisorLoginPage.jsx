@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { loginAdvisor } from "../services/advisorAuth";
 import { supabase } from "../supabaseClient";
 import { RETAIL_THEME } from "../config/retailTheme";
+import { useSEO } from "../seo/useSEO";
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -14,6 +15,13 @@ function isEmailNotConfirmed(err) {
 }
 
 export default function AdvisorLoginPage() {
+  useSEO({
+    title: "Advisor Sign In | TRC Connect",
+    description: "Sign in to the TRC Connect advisor portal to manage assigned UAE Tax Residency Certificate cases, message clients, and track application status.",
+    path: "/advisor/login",
+    noindex: true,
+  });
+
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading]   = useState(false);
