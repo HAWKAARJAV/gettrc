@@ -12,6 +12,11 @@ export async function assignAdvisor({ applicationId, advisorId, notes = "" }) {
   return normalizeResponse(res);
 }
 
+export async function createAdvisor({ name, email }) {
+  const res = await adminApi.createAdvisor({ name, email });
+  return normalizeResponse(res);
+}
+
 export async function updateWorkflowState({ applicationId, newState, notes = "", patch = {} }) {
   const res = await adminApi.updateWorkflowState({ applicationId, newState, notes, patch });
   return normalizeResponse(res);
@@ -41,6 +46,7 @@ export async function createNotification({ userId, title, body, level = 'info', 
 
 export default {
   assignAdvisor,
+  createAdvisor,
   updateWorkflowState,
   reviewDocument,
   updatePaymentState,

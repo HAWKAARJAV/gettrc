@@ -5,7 +5,7 @@ import AdminBlogTab from "./blog/AdminBlogTab";
 import { APPLICATION_STATES, getApplicationStateMeta, mapLegacyRequestStatusToWorkflowState } from "./workflow/applicationWorkflow";
 import { buildApplicationPatchFromRequest, getLegacyRequestKey, getLegacyRequestTable } from "./workflow/legacyRequestSync";
 import { generateRequiredActions } from "./workflow/generateRequiredActions";
-import useWorkflowMutation from "./hooks/useWorkflowMutation";
+import useWorkflowMutation, { emitToast } from "./hooks/useWorkflowMutation";
 import ApplicationStatusStrip from "./components/ApplicationStatusStrip";
 import EmptyState from './components/EmptyState';
 import { useSEO } from "./seo/useSEO";
@@ -1187,14 +1187,66 @@ function RoleBadge({ role }) {
   );
 }
 
+function AddAdvisorModal({ onClose, onCreated }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const submit = async () => {
+    if (!name.trim() || !email.trim()) { setError("Name and email are required."); return; }
+    setSubmitting(true);
+    setError("");
+    try {
+      const { createAdvisor } = await import('./workflow/workflowMutationService');
+      const res = await createAdvisor({ name: name.trim(), email: email.trim() });
+      if (res?.success === false) throw new Error(res.error || "Failed to create advisor");
+      emitToast({ type: "success", message: `Advisor account created — a welcome email was sent to ${email.trim()}.` });
+      onCreated();
+      onClose();
+    } catch (e) {
+      setError(e.message || "Failed to create advisor.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(9,26,61,.55)", display: "grid", placeItems: "center", padding: 24 }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{ width: "min(100%, 440px)", background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, boxShadow: "0 30px 70px rgba(0,0,0,.25)", padding: 24 }}>
+        <h3 style={{ margin: "0 0 4px", fontFamily: "'Cormorant Garamond',serif", fontSize: 22, color: C.navy }}>Add Advisor</h3>
+        <p style={{ margin: "0 0 18px", fontSize: 13, color: C.muted }}>Creates the account and emails them a temporary password.</p>
+
+        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>Full name</label>
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="Advisor's full name"
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: C.navy, marginBottom: 14, boxSizing: "border-box" }} />
+
+        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>Email</label>
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="advisor@example.com" type="email"
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: C.navy, marginBottom: 14, boxSizing: "border-box" }} />
+
+        {error && <div style={{ background: C.errorBg, border: `1px solid ${C.errorBorder}`, color: C.error, borderRadius: 10, padding: "10px 12px", fontSize: 13, marginBottom: 14 }}>{error}</div>}
+
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={onClose} disabled={submitting} style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, background: C.white, color: C.navy, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+          <button onClick={submit} disabled={submitting} style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "none", background: submitting ? C.offWhite2 : C.navy, color: submitting ? C.muted : "#fff", fontWeight: 700, fontSize: 13, cursor: submitting ? "not-allowed" : "pointer" }}>
+            {submitting ? "Creating…" : "Create Advisor"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AccountsTab() {
   const [profiles, setProfiles] = useState([]);
   const [advisors, setAdvisors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [showAddAdvisor, setShowAddAdvisor] = useState(false);
 
-  useEffect(() => {
+  const loadAccounts = () => {
     Promise.all([
       dbGet("profiles", "select=id,full_name,email,role,created_at&order=role.asc,created_at.asc"),
       dbGet("advisors", "select=id,user_id,name,available,verified,rating,reviews"),
@@ -1203,7 +1255,9 @@ function AccountsTab() {
       setAdvisors(a || []);
       setLoading(false);
     }).catch(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { loadAccounts(); }, []);
 
   const advisorMap = Object.fromEntries((advisors || []).map(a => [a.user_id, a]));
 
@@ -1221,7 +1275,13 @@ function AccountsTab() {
           <h2 style={{ margin: 0, fontFamily: "'Cormorant Garamond',serif", fontSize: 26, color: C.navy }}>All Accounts</h2>
           <p style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>Every registered user with their role. Advisors show extra info.</p>
         </div>
+        <button onClick={() => setShowAddAdvisor(true)}
+          style={{ padding: "10px 18px", borderRadius: 10, border: "none", background: `linear-gradient(135deg,${C.gold},${C.goldDark})`, color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "0 4px 14px rgba(201,168,76,.35)" }}>
+          + Add Advisor
+        </button>
       </div>
+
+      {showAddAdvisor && <AddAdvisorModal onClose={() => setShowAddAdvisor(false)} onCreated={loadAccounts} />}
 
       <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
         <input value={search} onChange={e => setSearch(e.target.value)}

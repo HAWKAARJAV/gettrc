@@ -112,7 +112,7 @@ function buildEmailHtml({ content, name, applicationId, siteUrl, notes, ctaUrl }
       </div>
       <div style="font-size:48px;margin-bottom:12px">${content.emoji}</div>
       <h1 style="font-family:Georgia,serif;font-size:26px;font-weight:700;color:#fff;margin:0 0 8px;line-height:1.3">${content.heading}</h1>
-      <p style="font-size:13px;color:rgba(255,255,255,.55);margin:0">Ref: ${refId}</p>
+      ${refId ? `<p style="font-size:13px;color:rgba(255,255,255,.55);margin:0">Ref: ${refId}</p>` : ""}
     </div>
     <div style="padding:36px 40px">
       <p style="font-size:16px;color:#0F2557;margin:0 0 16px">Hi ${firstName},</p>
@@ -194,6 +194,22 @@ export async function sendAdvisorEmail({ email, name, kind, clientName = "", doc
   const ctaUrl = `${siteUrl}${content.cta.path}`;
   const html = buildEmailHtml({ content, name, applicationId, siteUrl, notes: "", ctaUrl });
   await dispatchEmail({ email, subject: content.subject, html, logContext: `advisor ${kind}` });
+}
+
+// Sent once, when an admin creates a new advisor account — distinct from
+// sendAdvisorEmail above, which is for ongoing case-activity nudges to an
+// advisor who already has an account.
+export async function sendAdvisorWelcomeEmail({ email, name, tempPassword, siteUrl = "https://gettrc.com" }) {
+  const content = {
+    subject: "You've been added as a TRC Connect advisor",
+    emoji: "⚖️",
+    heading: "Welcome to the TRC Connect advisor portal",
+    body: `An account has been created for you to review and manage TRC applications. Sign in with the temporary password below, then update it from your profile.<br/><br/><strong>Email:</strong> ${email}<br/><strong>Temporary password:</strong> ${tempPassword}`,
+    cta: { label: "Sign In to Advisor Portal", path: "/advisor/login" },
+  };
+  const ctaUrl = `${siteUrl}${content.cta.path}`;
+  const html = buildEmailHtml({ content, name, applicationId: "", siteUrl, notes: "", ctaUrl });
+  await dispatchEmail({ email, subject: content.subject, html, logContext: "advisor welcome" });
 }
 
 export async function sendDocumentEmail({ email, name, kind, documentType, notes = "", applicationId, siteUrl = "https://gettrc.com", applicantType = "retail" }) {

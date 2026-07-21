@@ -11,6 +11,13 @@ export async function assignAdvisor({ applicationId, advisorId, notes = "" }) {
   return json;
 }
 
+export async function createAdvisor({ name, email }) {
+  const res = await fetch(`${ADMIN_API_PREFIX}/assignAdvisor`, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify({ action: "createAdvisor", name, email }) });
+  const json = await res.json();
+  if (!res.ok || json?.error) throw new Error(json?.error || "Failed to create advisor");
+  return json;
+}
+
 export async function updateWorkflowState({ applicationId, newState, notes = "", patch = {} }) {
   const res = await fetch(`${ADMIN_API_PREFIX}/updateApplicationState`, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify({ type: "workflow", applicationId, newState, notes, patch }) });
   const json = await res.json();
