@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { registerRetailApplicant } from "../services/retailAuth";
 import { shouldRenderQuestion } from "../services/assessmentService";
 import { RETAIL_THEME as P } from "../config/retailTheme";
-import { SectionLabel, SectionCard, QuestionField } from "../eligibility/retailQuestionnaire";
+import { SectionLabel, SectionCard, QuestionField, FieldCard } from "../eligibility/retailQuestionnaire";
 import {
   INPUT_STYLE, dedupeQuestions,
   RESIDENCY_QUESTIONS, PROFESSIONAL_QUESTIONS,
@@ -229,11 +229,11 @@ export default function EligibilityRegistrationPage() {
             <SectionCard number={1} title="Basic Details" description="Your personal identification information.">
               <div className="eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
                 {[["Full Name", "fullName", "Your legal name", "Must match your passport exactly."], ["Email Address", "email", "you@example.com"], ["Phone Number", "phone", "+971 ..."], ["Nationality", "nationality", "Your nationality"]].map(([label, field, ph, note]) => (
-                  <div key={field} style={{ gridColumn: "span 1" }}>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</label>
+                  <FieldCard key={field}>
+                    <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: z.navy, lineHeight: 1.4, marginBottom: 10 }}>{label}</label>
                     <input className="elig-input" value={form[field]} onChange={e => set(field, e.target.value)} placeholder={ph} style={INPUT_STYLE} />
-                    {note && <div style={{ fontSize: 11, color: z.muted, marginTop: 6, lineHeight: 1.5 }}>{note}</div>}
-                  </div>
+                    {note && <div style={{ fontSize: 12, color: z.muted, marginTop: 8, lineHeight: 1.55 }}>{note}</div>}
+                  </FieldCard>
                 ))}
               </div>
             </SectionCard>
@@ -262,15 +262,15 @@ export default function EligibilityRegistrationPage() {
 
             <SectionCard number={4} title="Account Setup" description="Create your login to track this application.">
               <div className="eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Password</label>
+                <FieldCard>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: z.navy, lineHeight: 1.4, marginBottom: 10 }}>Password</label>
                   <input className="elig-input" value={form.password} type="password" onChange={e => set("password", e.target.value)} placeholder="Create a password" style={INPUT_STYLE} />
-                  <div style={{ fontSize: 11, color: z.muted, marginTop: 6, lineHeight: 1.5 }}>At least 8 characters, with uppercase, lowercase, a number, and a special character.</div>
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirm Password</label>
+                  <div style={{ fontSize: 12, color: z.muted, marginTop: 8, lineHeight: 1.55 }}>At least 8 characters, with uppercase, lowercase, a number, and a special character.</div>
+                </FieldCard>
+                <FieldCard>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: z.navy, lineHeight: 1.4, marginBottom: 10 }}>Confirm Password</label>
                   <input className="elig-input" value={form.confirmPassword} type="password" onChange={e => set("confirmPassword", e.target.value)} placeholder="Confirm password" style={INPUT_STYLE} />
-                </div>
+                </FieldCard>
               </div>
               <label style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 14, fontSize: 14, color: z.navy, lineHeight: 1.7, flexWrap: "wrap", rowGap: 10 }}>
                 <input checked={form.terms} onChange={e => set("terms", e.target.checked)} type="checkbox" style={{ marginTop: 4 }} />

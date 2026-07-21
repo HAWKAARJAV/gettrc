@@ -272,12 +272,12 @@ export default function CorporateEligibilityPage() {
                   ["Company Website", "website", "Optional website"],
                 ].map(([label, key, placeholder]) => (
                   <div key={key}>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</label>
+                    <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>{label}</label>
                     <input value={form[key]} onChange={(e) => update(key, e.target.value)} placeholder={placeholder} style={INPUT_STYLE} />
                   </div>
                 ))}
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Registered Country</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Registered Country</label>
                   <div style={{ ...INPUT_STYLE, display: "flex", alignItems: "center", gap: 8, background: C.offWhite, color: C.muted, cursor: "not-allowed" }}>
                     🇦🇪 United Arab Emirates
                   </div>
@@ -289,26 +289,26 @@ export default function CorporateEligibilityPage() {
               <SectionTitle>Business Structure</SectionTitle>
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Type of Entity</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Type of Entity</label>
                   <input value={form.entityType} onChange={(e) => update("entityType", e.target.value)} placeholder="LLC / Free Zone / Holding Company / Startup / Agency / Other" style={INPUT_STYLE} />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Number of Employees</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Number of Employees</label>
                   <input value={form.employeeCount} onChange={(e) => update("employeeCount", e.target.value)} type="number" placeholder="e.g. 25" style={INPUT_STYLE} />
                 </div>
               </div>
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Annual Revenue Range</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Annual Revenue Range</label>
                   <input value={form.annualRevenue} onChange={(e) => update("annualRevenue", e.target.value)} placeholder="e.g. USD 1M - 5M" style={INPUT_STYLE} />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Countries of Operation</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Countries of Operation</label>
                   <input value={form.countriesOfOperation} onChange={(e) => update("countriesOfOperation", e.target.value)} placeholder="List primary markets" style={INPUT_STYLE} />
                 </div>
               </div>
               <div style={{ marginTop: 14 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Existing UAE Presence?</label>
+                <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Existing UAE Presence?</label>
                 <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", rowGap: 10 }}>
                   <SelectPill label="Yes" value="yes" active={form.uaePresence === "yes"} onClick={(value) => update("uaePresence", value)} />
                   <SelectPill label="No" value="no" active={form.uaePresence === "no"} onClick={(value) => update("uaePresence", value)} />
@@ -320,11 +320,11 @@ export default function CorporateEligibilityPage() {
               <SectionTitle>Incorporation & Tax Status</SectionTitle>
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Date of Incorporation</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Date of Incorporation</label>
                   <input value={form.incorporationDate} onChange={(e) => update("incorporationDate", e.target.value)} type="date" style={INPUT_STYLE} />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Place of Incorporation</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Place of Incorporation</label>
                   <select value={form.incorporationLocation} onChange={(e) => update("incorporationLocation", e.target.value)} style={SELECT_STYLE}>
                     <option value="">Select an option</option>
                     {INCORPORATION_LOCATION_OPTIONS.map(([label, value]) => (
@@ -336,7 +336,7 @@ export default function CorporateEligibilityPage() {
 
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Do you hold a Corporate Tax TRN?</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Do you hold a Corporate Tax TRN?</label>
                   <select value={form.hasCorporateTaxTrn} onChange={(e) => update("hasCorporateTaxTrn", e.target.value)} style={SELECT_STYLE}>
                     <option value="">Select an option</option>
                     <option value="yes">Yes</option>
@@ -345,7 +345,7 @@ export default function CorporateEligibilityPage() {
                 </div>
                 {form.hasCorporateTaxTrn === "yes" && (
                   <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Corporate Tax TRN</label>
+                    <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Corporate Tax TRN</label>
                     <input value={form.corporateTaxTrn} onChange={(e) => update("corporateTaxTrn", e.target.value)} placeholder="Corporate Tax registration number" style={INPUT_STYLE} />
                   </div>
                 )}
@@ -355,7 +355,7 @@ export default function CorporateEligibilityPage() {
               </p>
 
               <div style={{ marginTop: 14 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Have you filed a Corporate Tax Return?</label>
+                <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Have you filed a Corporate Tax Return?</label>
                 <select value={form.hasFiledCorporateTaxReturn} onChange={(e) => update("hasFiledCorporateTaxReturn", e.target.value)} style={SELECT_STYLE}>
                   <option value="">Select an option</option>
                   <option value="yes">Yes</option>
@@ -368,7 +368,7 @@ export default function CorporateEligibilityPage() {
 
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Do you require TRC under a Tax Treaty, or issued under UAE Domestic law?</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Do you require TRC under a Tax Treaty, or issued under UAE Domestic law?</label>
                   <select value={form.trcPurpose} onChange={(e) => update("trcPurpose", e.target.value)} style={SELECT_STYLE}>
                     <option value="">Select an option</option>
                     <option value="domestic">UAE Domestic Law</option>
@@ -380,7 +380,7 @@ export default function CorporateEligibilityPage() {
                 </div>
                 {form.trcPurpose === "treaty" && (
                   <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Which country's tax treaty is this TRC for?</label>
+                    <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Which country's tax treaty is this TRC for?</label>
                     <select value={form.targetTreatyCountry} onChange={(e) => update("targetTreatyCountry", e.target.value)} style={SELECT_STYLE}>
                       <option value="">Select a country</option>
                       {TREATY_COUNTRY_OPTIONS.map(([label, value]) => (
@@ -395,12 +395,12 @@ export default function CorporateEligibilityPage() {
                 <div style={{ marginTop: 14, background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 12 }}>Effective Management &amp; Control in the UAE</div>
                   <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Describe how effective management and control of the company is exercised in the UAE</label>
+                    <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Describe how effective management and control of the company is exercised in the UAE</label>
                     <textarea value={form.effectiveManagementStatement} onChange={(e) => update("effectiveManagementStatement", e.target.value)} placeholder="Where board decisions are made, delegation of authority, shareholder activity, etc." rows={4} style={{ ...INPUT_STYLE, resize: "vertical", fontFamily: SANS }} />
                   </div>
                   <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
                     <div>
-                      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Are board meetings held in the UAE?</label>
+                      <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Are board meetings held in the UAE?</label>
                       <select value={form.boardMeetingsInUae} onChange={(e) => update("boardMeetingsInUae", e.target.value)} style={SELECT_STYLE}>
                         <option value="">Select an option</option>
                         <option value="yes">Yes</option>
@@ -408,7 +408,7 @@ export default function CorporateEligibilityPage() {
                       </select>
                     </div>
                     <div>
-                      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Are key decision makers based in the UAE?</label>
+                      <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Are key decision makers based in the UAE?</label>
                       <select value={form.keyDecisionMakersInUae} onChange={(e) => update("keyDecisionMakersInUae", e.target.value)} style={SELECT_STYLE}>
                         <option value="">Select an option</option>
                         <option value="yes">Yes</option>
@@ -424,17 +424,17 @@ export default function CorporateEligibilityPage() {
               <SectionTitle>TRC Requirements</SectionTitle>
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Purpose of Corporate TRC</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Purpose of Corporate TRC</label>
                   <input value={form.purpose} onChange={(e) => update("purpose", e.target.value)} placeholder="Treaty access, banking, procurement, etc." style={INPUT_STYLE} />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Target Jurisdiction</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Target Jurisdiction</label>
                   <input value={form.targetJurisdiction} onChange={(e) => update("targetJurisdiction", e.target.value)} placeholder="Jurisdiction to support" style={INPUT_STYLE} />
                 </div>
               </div>
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14, marginTop: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Compliance Urgency</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Compliance Urgency</label>
                   <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", rowGap: 10 }}>
                     {["standard", "urgent", "high"].map((value) => (
                       <SelectPill key={value} label={value === "high" ? "High Priority" : value.charAt(0).toUpperCase() + value.slice(1)} value={value} active={form.urgency === value} onClick={(val) => update("urgency", val)} />
@@ -442,12 +442,12 @@ export default function CorporateEligibilityPage() {
                   </div>
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Current Tax Structure</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Current Tax Structure</label>
                   <input value={form.taxStructure} onChange={(e) => update("taxStructure", e.target.value)} placeholder="Current tax framework or entity setup" style={INPUT_STYLE} />
                 </div>
               </div>
               <div style={{ marginTop: 14 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Expected Use Case</label>
+                <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Expected Use Case</label>
                 <input value={form.useCase} onChange={(e) => update("useCase", e.target.value)} placeholder="Banking, procurement, restructuring, treaty support, etc." style={INPUT_STYLE} />
               </div>
             </div>
@@ -456,12 +456,12 @@ export default function CorporateEligibilityPage() {
               <SectionTitle>Account Setup</SectionTitle>
               <div className="corp-eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Password</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Password</label>
                   <input value={form.password} type="password" onChange={(e) => update("password", e.target.value)} placeholder="Create a password" style={INPUT_STYLE} />
                   <div style={{ fontSize: 11, color: C.muted, marginTop: 6, lineHeight: 1.5 }}>At least 8 characters, with uppercase, lowercase, a number, and a special character.</div>
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirm Password</label>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Confirm Password</label>
                   <input value={form.confirmPassword} type="password" onChange={(e) => update("confirmPassword", e.target.value)} placeholder="Confirm password" style={INPUT_STYLE} />
                 </div>
               </div>
