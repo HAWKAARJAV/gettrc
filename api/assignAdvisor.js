@@ -47,13 +47,16 @@ async function handleCreateAdvisor(req, res, callerProfile) {
   }, { onConflict: "id" });
   if (profileErr) console.warn("advisor profile upsert warning", profileErr);
 
-  const { data: advisorRow, error: advisorErr } = await svc.from("advisors").upsert({
+  // advisors.user_id has no unique constraint, so ON CONFLICT upsert isn't
+  // possible — but this is always a brand-new account (existingProfile was
+  // already checked above), so a plain insert is correct here anyway.
+  const { data: advisorRow, error: advisorErr } = await svc.from("advisors").insert({
     user_id: userId,
     country: "AE",
     available: true,
     verified: true,
-  }, { onConflict: "user_id" }).select("*").maybeSingle();
-  if (advisorErr) console.warn("advisors row upsert warning", advisorErr);
+  }).select("*").maybeSingle();
+  if (advisorErr) console.warn("advisors row insert warning", advisorErr);
 
   try {
     await sendAdvisorWelcomeEmail({ email: normalizedEmail, name: trimmedName, tempPassword, siteUrl: process.env.SITE_URL || "https://gettrc.com" });
