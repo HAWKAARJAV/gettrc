@@ -11,6 +11,7 @@ import {
   resolveOccupation, resolvePurpose,
 } from "../eligibility/retailQuestionnaireData";
 import { useSEO, breadcrumbJsonLd } from "../seo/useSEO";
+import { validatePasswordStrength, findFirstMissingField } from "../services/formValidation";
 
 const z = P.colors;
 const SERIF = P.fonts.serif;
@@ -48,6 +49,15 @@ function EligibilityShell({ children }) {
 
 const REQUIRED_FIELDS = ["fullName", "email", "phone", "nationality", "currentCountry", "vatRegistered", "trcPeriodYear", "daysInUaePeriod", "uaeVisa", "emiratesId", "visaType", "hasPermanentResidence", "hasUaeEmploymentOrBusiness", "isCentreOfFinancialPersonalInterests", "trcPurpose", "occupation", "incomeSource", "purpose", "urgency", "password", "confirmPassword"];
 
+// Human-readable labels for the "which field is missing" error message —
+// merges the manually-entered fields with the question text already defined
+// for the dynamic residency/professional questions, so both stay in sync.
+const FIELD_LABELS = {
+  fullName: "Full Name", email: "Email", phone: "Phone Number", nationality: "Nationality",
+  password: "Password", confirmPassword: "Confirm Password",
+  ...Object.fromEntries([...RESIDENCY_QUESTIONS, ...PROFESSIONAL_QUESTIONS].map(q => [q.field_key, q.question])),
+};
+
 export default function EligibilityRegistrationPage() {
   useSEO({
     title: "Check Your UAE Tax Residency Certificate Eligibility",
@@ -76,9 +86,10 @@ export default function EligibilityRegistrationPage() {
   const professionalQs = PROFESSIONAL_QUESTIONS;
 
   const handleSubmit = async () => {
-    // Validate all required fields
-    const missing = REQUIRED_FIELDS.find(f => !String(form[f] || "").trim());
-    if (missing) { setError("Please complete every field before submitting."); return; }
+    // Validate all required fields, naming the first one that's missing
+    // rather than a generic "complete everything" message.
+    const missing = findFirstMissingField(form, REQUIRED_FIELDS, FIELD_LABELS);
+    if (missing) { setError(`Please fill in: ${missing.label}.`); return; }
     if (form.trcPurpose === "treaty" && !String(form.treatyCountry || "").trim()) {
       setError("Please select the treaty country."); return;
     }
@@ -89,6 +100,8 @@ export default function EligibilityRegistrationPage() {
       setError("Please specify the purpose of your TRC."); return;
     }
     if (!form.terms) { setError("Please agree to the Terms & Privacy Policy."); return; }
+    const pwCheck = validatePasswordStrength(form.password);
+    if (!pwCheck.valid) { setError(pwCheck.message); return; }
     if (form.password !== form.confirmPassword) { setError("Passwords do not match."); return; }
 
     setSubmitting(true);
@@ -252,6 +265,7 @@ export default function EligibilityRegistrationPage() {
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Password</label>
                   <input className="elig-input" value={form.password} type="password" onChange={e => set("password", e.target.value)} placeholder="Create a password" style={INPUT_STYLE} />
+                  <div style={{ fontSize: 11, color: z.muted, marginTop: 6, lineHeight: 1.5 }}>At least 8 characters, with uppercase, lowercase, a number, and a special character.</div>
                 </div>
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: z.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirm Password</label>

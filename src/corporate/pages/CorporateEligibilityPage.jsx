@@ -4,6 +4,19 @@ import CorporateAuthShell from "../components/CorporateAuthShell";
 import { RETAIL_THEME } from "../../config/retailTheme";
 import { registerCorporateApplicant } from "../services/corporateAuth";
 import { useSEO, breadcrumbJsonLd } from "../../seo/useSEO";
+import { validatePasswordStrength, findFirstMissingField } from "../../services/formValidation";
+
+const CORPORATE_FIELD_LABELS = {
+  companyName: "Company Name", email: "Official Business Email", phone: "Contact Number",
+  industry: "Industry Type", entityType: "Type of Entity", employeeCount: "Number of Employees",
+  annualRevenue: "Annual Revenue Range", countriesOfOperation: "Countries of Operation",
+  uaePresence: "Existing UAE Presence", incorporationDate: "Date of Incorporation",
+  incorporationLocation: "Place of Incorporation", hasCorporateTaxTrn: "Corporate Tax TRN status",
+  hasFiledCorporateTaxReturn: "Filed Corporate Tax Return", trcPurpose: "Purpose of Corporate TRC",
+  purpose: "Purpose of Corporate TRC", targetJurisdiction: "Target Jurisdiction",
+  urgency: "Compliance Urgency", taxStructure: "Current Tax Structure", useCase: "Expected Use Case",
+  password: "Password", confirmPassword: "Confirm Password",
+};
 
 const C = RETAIL_THEME.colors;
 const SERIF = RETAIL_THEME.fonts.serif;
@@ -103,9 +116,13 @@ export default function CorporateEligibilityPage() {
 
   const handleSubmit = async () => {
     const required = ["companyName", "email", "phone", "industry", "entityType", "employeeCount", "annualRevenue", "countriesOfOperation", "uaePresence", "incorporationDate", "incorporationLocation", "hasCorporateTaxTrn", "hasFiledCorporateTaxReturn", "trcPurpose", "purpose", "targetJurisdiction", "urgency", "taxStructure", "useCase", "password", "confirmPassword"];
-    const missing = required.find((field) => !String(form[field] || "").trim()) || (!form.terms ? "terms" : "");
-    if (missing) {
-      setError(missing === "terms" ? "Please agree to the Terms & Privacy Policy." : "Please complete every field before submitting.");
+    const missingField = findFirstMissingField(form, required, CORPORATE_FIELD_LABELS);
+    if (missingField) {
+      setError(`Please fill in: ${missingField.label}.`);
+      return;
+    }
+    if (!form.terms) {
+      setError("Please agree to the Terms & Privacy Policy.");
       return;
     }
     if (form.hasCorporateTaxTrn === "yes" && !String(form.corporateTaxTrn || "").trim()) {
@@ -123,6 +140,11 @@ export default function CorporateEligibilityPage() {
         setError("Please complete the effective management and control details for foreign-incorporated entities.");
         return;
       }
+    }
+    const pwCheck = validatePasswordStrength(form.password);
+    if (!pwCheck.valid) {
+      setError(pwCheck.message);
+      return;
     }
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
@@ -436,6 +458,7 @@ export default function CorporateEligibilityPage() {
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Password</label>
                   <input value={form.password} type="password" onChange={(e) => update("password", e.target.value)} placeholder="Create a password" style={INPUT_STYLE} />
+                  <div style={{ fontSize: 11, color: C.muted, marginTop: 6, lineHeight: 1.5 }}>At least 8 characters, with uppercase, lowercase, a number, and a special character.</div>
                 </div>
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirm Password</label>
