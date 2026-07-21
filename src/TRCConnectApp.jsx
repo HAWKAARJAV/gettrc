@@ -330,6 +330,13 @@ function _AppNavbarInner() {
 
   const closeSelector = () => setActiveSelector(null);
 
+  React.useEffect(() => {
+    if (!activeSelector) return;
+    const onKeyDown = (e) => { if (e.key === 'Escape') closeSelector(); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [activeSelector]);
+
   const SelectorModal = ({ eyebrow, title, subtitle, options }) => (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1200, background: 'rgba(9,26,61,.72)', backdropFilter: 'blur(5px)', display: 'grid', placeItems: 'center', padding: 24 }} onClick={closeSelector}>
       <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(100%, 760px)', background: C.white, borderRadius: 22, border: `1px solid ${C.border}`, boxShadow: '0 36px 90px rgba(0,0,0,.28)', overflow: 'hidden' }}>
