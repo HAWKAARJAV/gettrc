@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
 import * as ReactRouterDom from "react-router-dom";
 import { C } from "./theme/marketingColors";
-import NotificationCenter from "./components/NotificationCenter";
 import WorkflowToastHost from "./components/WorkflowToastHost";
 
 // ─── Lazy-loaded routes ─────────────────────────────────────────────────────
@@ -402,7 +401,6 @@ function _AppNavbarInner() {
           ))}
         </div>
         <div className="marketing-actions" style={{display:'flex',alignItems:'center',gap:10}}>
-          <NotificationCenter />
           <button className="marketing-secondary-action" onClick={() => setActiveSelector('signin')} style={{background:'transparent',border:'none',color:lc,fontSize:14,fontWeight:500,padding:'9px 14px',textDecoration:'none',cursor:'pointer'}}>
             Sign In
           </button>

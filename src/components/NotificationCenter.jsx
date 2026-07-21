@@ -4,6 +4,7 @@ import SkeletonCard from './SkeletonCard';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchNotifications, markNotificationRead } from '../notifications/notificationService';
 import { subscribeToApplicationRefresh } from '../workflow/refreshApplication';
+import { supabase } from '../supabaseClient';
 
 const NOTIF_POLL_MS = 20_000; // keep in sync with workspace polling interval
 
@@ -20,6 +21,17 @@ export default function NotificationCenter() {
       if (showSpinner) setLoading(true);
       const userId = localStorage.getItem('trc_user_id');
       if (!userId) { setNotifications([]); return; }
+
+      // A cached trc_user_id can outlive the actual session it belongs to
+      // (stale browser storage from a past login, a different account signed
+      // in since, etc.) — verify there's a real live session for this exact
+      // user before ever fetching or displaying their notifications.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id || session.user.id !== userId) {
+        setNotifications([]);
+        return;
+      }
+
       const notes = await fetchNotifications(userId);
       if (!mountedRef.current) return;
       setNotifications(notes || []);
