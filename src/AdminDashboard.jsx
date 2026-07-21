@@ -629,21 +629,40 @@ function EligibilityRequestsTab() {
   const updateRequest = async (id, patch) => {
     const applicationId = String(id).startsWith("app-") ? String(id).split("app-")[1] : selected?.application_id;
     const result = await executeMutation(async () => {
+      // Route through the real mutation API instead of a raw dbPatch — a
+      // direct PATCH from the browser skips the sendStatusEmail() call
+      // entirely, so the client's "you're eligible" / "payment confirmed"
+      // emails silently never sent. The API also keeps the legacy
+      // eligibility_requests row in sync itself (syncLegacyRequestFromApplication),
+      // so no separate dbPatch on that table is needed either.
+      const { updateWorkflowState, updatePaymentState } = await import('./workflow/workflowMutationService');
+
       if (String(id).startsWith("app-")) {
         const appId = String(id).split("app-")[1];
-        const appWorkflowState = deriveWorkflowState(patch.status || patch.review_state || patch.workflow_state);
-        const appPatch = {
-          workflow_state: appWorkflowState,
-          review_state: patch.status || patch.review_state || appWorkflowState,
-          payment_state: patch.payment_status || patch.payment_state || (appWorkflowState === "payment_completed" ? "completed" : "pending"),
-          completed_at: appWorkflowState === "payment_completed" || appWorkflowState === "completed" ? new Date().toISOString() : null,
-        };
-        await dbPatch("applications", appId, appPatch);
+        if (patch.payment_status === "completed") {
+          await updatePaymentState({ applicationId: appId, paymentState: "completed" });
+        } else {
+          const newState = deriveWorkflowState(patch.status || patch.review_state || patch.workflow_state);
+          if (newState) await updateWorkflowState({ applicationId: appId, newState, notes: "Updated via admin UI" });
+        }
         return { success: true, applicationId: appId };
       }
 
-      await dbPatch("eligibility_requests", id, patch);
-      const syncedApplicationId = await syncApplicationForRequest(id, patch, "retail");
+      const targetStatus = patch.status || patch.workflow_state;
+      const syncedApplicationId = applicationId || await syncApplicationForRequest(id, patch, "retail");
+      if (syncedApplicationId && patch.payment_status === "completed") {
+        await updatePaymentState({ applicationId: syncedApplicationId, paymentState: "completed" });
+      } else if (syncedApplicationId && targetStatus) {
+        // Pass known-valid workflow states straight through; only remap
+        // legacy-only statuses (e.g. "needs_more_info") that aren't real
+        // applications.workflow_state values.
+        const newState = APPLICATION_STATES.includes(targetStatus) ? targetStatus : deriveWorkflowState(targetStatus);
+        await updateWorkflowState({ applicationId: syncedApplicationId, newState, notes: "Updated via admin UI" });
+      } else {
+        // No application resolved yet — fall back to the legacy direct patch
+        // so the action isn't silently a no-op.
+        await dbPatch("eligibility_requests", id, patch);
+      }
       return { success: true, applicationId: syncedApplicationId };
     }, { applicationId }, {
       applicationId,
