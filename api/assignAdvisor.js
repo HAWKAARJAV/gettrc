@@ -52,6 +52,7 @@ async function handleCreateAdvisor(req, res, callerProfile) {
   // already checked above), so a plain insert is correct here anyway.
   const { data: advisorRow, error: advisorErr } = await svc.from("advisors").insert({
     user_id: userId,
+    name: trimmedName,
     country: "AE",
     available: true,
     verified: true,
