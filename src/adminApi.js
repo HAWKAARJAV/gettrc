@@ -12,7 +12,7 @@ export async function assignAdvisor({ applicationId, advisorId, notes = "" }) {
 }
 
 export async function updateWorkflowState({ applicationId, newState, notes = "", patch = {} }) {
-  const res = await fetch(`${ADMIN_API_PREFIX}/updateWorkflowState`, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify({ applicationId, newState, notes, patch }) });
+  const res = await fetch(`${ADMIN_API_PREFIX}/updateApplicationState`, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify({ type: "workflow", applicationId, newState, notes, patch }) });
   const json = await res.json();
   return json;
 }
@@ -24,7 +24,7 @@ export async function reviewDocument({ documentId, action, reviewerNotes = "", r
 }
 
 export async function updatePaymentState({ applicationId, paymentState, details = {} }) {
-  const res = await fetch(`${ADMIN_API_PREFIX}/updatePaymentState`, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify({ applicationId, paymentState, details }) });
+  const res = await fetch(`${ADMIN_API_PREFIX}/updateApplicationState`, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify({ type: "payment", applicationId, paymentState, details }) });
   const json = await res.json();
   return json;
 }
