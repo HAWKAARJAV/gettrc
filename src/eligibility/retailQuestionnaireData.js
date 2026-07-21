@@ -50,10 +50,11 @@ const TREATY_COUNTRIES = [
 ];
 export const TREATY_COUNTRY_OPTIONS = TREATY_COUNTRIES.map(c => [c, c]);
 
-// Gregorian calendar years selectable for the TRC period — the FTA only
-// accepts full completed calendar years, never the current (incomplete) year
-// or a future one.
-const TRC_PERIOD_YEARS = Array.from({ length: 4 }, (_, i) => String(new Date().getFullYear() - 1 - i));
+// Gregorian calendar years selectable for the TRC period. Per the FTA's
+// October 2024 TPGTR1 guide update, individuals can now apply mid-period —
+// i.e. for the current, still-ongoing year — not just fully completed past
+// years. A future year (one that hasn't started yet) is still never valid.
+const TRC_PERIOD_YEARS = Array.from({ length: 4 }, (_, i) => String(new Date().getFullYear() - i));
 export const TRC_PERIOD_YEAR_OPTIONS = TRC_PERIOD_YEARS.map(y => [y, y]);
 
 // ─── Eligibility questionnaire — the single source of truth for these
@@ -71,7 +72,7 @@ export const TRC_PERIOD_YEAR_OPTIONS = TRC_PERIOD_YEARS.map(y => [y, y]);
 export const RESIDENCY_QUESTIONS = [
   { id: "currentCountry", field_key: "currentCountry", question: "Current country of residence", field_type: "text", placeholder: "Current residence" },
   { id: "vatRegistered", field_key: "vatRegistered", question: "Do you have a VAT Registration Number in the UAE?", field_type: "select" },
-  { id: "trcPeriodYear", field_key: "trcPeriodYear", question: "Period for which the TRC is to be applied for", field_type: "dropdown", options: TRC_PERIOD_YEAR_OPTIONS, placeholder: "Select a year", helpText: "Must align with a full Gregorian calendar year. A TRC cannot be issued for the current or a future year." },
+  { id: "trcPeriodYear", field_key: "trcPeriodYear", question: "Period for which the TRC is to be applied for", field_type: "dropdown", options: TRC_PERIOD_YEAR_OPTIONS, placeholder: "Select a year", helpText: "Must align with a full Gregorian calendar year. Mid-period (current year) applications are allowed — a future year is not." },
   { id: "daysInUaePeriod", field_key: "daysInUaePeriod", question: "Approximately how many days were you physically present in the UAE during that period?", field_type: "number", placeholder: "e.g. 183" },
   { id: "uaeVisa", field_key: "uaeVisa", question: "UAE residence visa?", field_type: "select" },
   { id: "emiratesId", field_key: "emiratesId", question: "Emirates ID available?", field_type: "select" },
