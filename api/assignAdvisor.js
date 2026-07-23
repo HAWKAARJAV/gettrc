@@ -1,4 +1,4 @@
-import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor } from "./_shared.js";
+import { getServiceClient, verifyAdminOrAdvisor, assignAdvisorToApplication } from "./_shared.js";
 import { sendAdvisorWelcomeEmail } from "./_sendStatusEmail.js";
 
 function generateTempPassword() {
@@ -91,40 +91,11 @@ export default async function handler(req, res) {
     const { data: advisorProfile } = await svc.from("profiles").select("full_name,email").eq("id", resolvedAdvisorUserId).maybeSingle();
     const advisorLabel = advisorProfile?.full_name || advisorProfile?.email || resolvedAdvisorUserId;
 
-    const nextPatch = {
-      advisor_id: resolvedAdvisorUserId,
-      advisor_assigned_at: new Date().toISOString(),
-      workflow_state: "advisor_assigned",
-      // review_state is a legacy mirror of workflow_state read by the admin
-      // queue — keep the two in lock-step here (as updateWorkflowState does)
-      // so a case never shows a different state to admin vs advisor/client.
-      review_state: "advisor_assigned",
-    };
+    const { application: updated, historyEntry, notifications } = await assignAdvisorToApplication({
+      svc, existing, advisorUserId: resolvedAdvisorUserId, advisorLabel, notes,
+    });
 
-    const { data: updated, error: updateError } = await svc.from("applications").update(nextPatch).eq("id", applicationId).select("*").maybeSingle();
-    if (updateError) throw updateError;
-
-    await syncLegacyRequestFromApplication({ application: updated || existing, nextPatch, notes, advisorLabel });
-
-    const { data: historyRows, error: historyError } = await svc.from("application_status_history").insert({
-      application_id: applicationId,
-      previous_state: existing.workflow_state,
-      new_state: nextPatch.workflow_state,
-      updated_by: "system",
-      notes,
-    }).select("*").maybeSingle();
-    if (historyError) console.warn("history insert warning", historyError);
-
-    const notifs = [
-      { user_id: existing.user_id, application_id: applicationId, notification_type: "workflow", title: "Advisor assigned", body: `An advisor has been assigned to your application (${applicationId.slice(0, 8)}).`, action_url: `/${existing.applicant_type || "retail"}/dashboard`, level: "info", created_at: new Date().toISOString() },
-    ];
-    if (resolvedAdvisorUserId && resolvedAdvisorUserId !== existing.user_id) {
-      notifs.push({ user_id: resolvedAdvisorUserId, application_id: applicationId, notification_type: "workflow", title: "Case assigned to you", body: `Application ${applicationId.slice(0, 8)} has been assigned to you.`, action_url: `/advisor/cases/${applicationId}`, level: "info", created_at: new Date().toISOString() });
-    }
-    const { data: notifRows, error: notifError } = await svc.from("notifications").insert(notifs).select("*");
-    if (notifError) console.warn("notification insert warning", notifError);
-
-    return res.status(200).json({ success: true, data: { application: updated }, historyEntry: historyRows || null, notifications: notifRows || [], error: null });
+    return res.status(200).json({ success: true, data: { application: updated }, historyEntry, notifications, error: null });
   } catch (err) {
     console.error("assignAdvisor error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });

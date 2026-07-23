@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { getServiceClient, syncLegacyRequestFromApplication, normalizeActionUrl } from "./_shared.js";
+import { getServiceClient, syncLegacyRequestFromApplication, normalizeActionUrl, autoAssignSoleAdvisor } from "./_shared.js";
 import { sendStatusEmail, sendAdvisorEmail } from "./_sendStatusEmail.js";
 
 // Stripe signature verification requires the raw, unparsed request body —
@@ -129,6 +129,10 @@ export default async function handler(req, res) {
         }
       } catch (emailErr) {
         console.warn("[stripeWebhook] Status email failed (non-fatal):", emailErr?.message || emailErr);
+      }
+
+      if (!existing.advisor_id) {
+        await autoAssignSoleAdvisor(svc, updated || existing);
       }
     }
 

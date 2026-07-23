@@ -1,7 +1,7 @@
 // Merged from the former api/updateWorkflowState.js and api/updatePaymentState.js
 // (each unchanged in behavior) to stay within the Vercel Hobby plan's
 // 12-serverless-function cap. Dispatches on `type` in the request body.
-import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor, normalizeActionUrl } from "./_shared.js";
+import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor, normalizeActionUrl, autoAssignSoleAdvisor } from "./_shared.js";
 import { WORKFLOW_STATES } from "../src/workflow/workflowStates.js";
 import { sendAdvisorEmail, sendStatusEmail } from "./_sendStatusEmail.js";
 
@@ -141,7 +141,13 @@ async function handlePaymentState(req, res, svc) {
     }
   }
 
-  return res.status(200).json({ success: true, data: { application: updated }, historyEntry: historyRow || null, notifications: notifRows || [], error: null });
+  let finalApplication = updated;
+  if (paymentState === "completed" && !existing.advisor_id) {
+    const autoAssigned = await autoAssignSoleAdvisor(svc, updated || existing);
+    if (autoAssigned?.application) finalApplication = autoAssigned.application;
+  }
+
+  return res.status(200).json({ success: true, data: { application: finalApplication }, historyEntry: historyRow || null, notifications: notifRows || [], error: null });
 }
 
 export default async function handler(req, res) {
