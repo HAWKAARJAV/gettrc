@@ -57,11 +57,10 @@ const BlogListingPage             = lazy(() => import("./blog/BlogListingPage"))
 const BlogPostPage                = lazy(() => import("./blog/BlogPostPage"));
 
 // Marketing homepage + orphan/dead-linked legacy pages (no live nav link
-// points to /uae, /marketplace, or /onboarding — still lazy-loaded so
-// they never bloat the homepage's initial bundle.
+// points to /uae or /onboarding — still lazy-loaded so they never bloat
+// the homepage's initial bundle.
 const HomePage                    = lazy(() => import("./pages/HomePage"));
 const UAEPage                     = lazy(() => import("./pages/UAEPage"));
-const MarketplacePage             = lazy(() => import("./pages/MarketplacePage"));
 const OnboardingPage              = lazy(() => import("./pages/OnboardingPage"));
 
 function RouteLoadingFallback() {
@@ -531,8 +530,7 @@ function AppShell() {
         <ReactRouterDom.Route path="/resources" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/about" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/uae" element={<PageErrorBoundary name="UAE Page"><UAEPage/></PageErrorBoundary>} />
-        <ReactRouterDom.Route path="/marketplace" element={<PageErrorBoundary name="Marketplace"><MarketplacePage/></PageErrorBoundary>} />
-        <ReactRouterDom.Route path="/onboarding" element={<PageErrorBoundary name="Onboarding"><OnboardingPage/></PageErrorBoundary>} />
+        <ReactRouterDom.Route path="/marketplace" element={<ReactRouterDom.Navigate to="/" replace />} />        <ReactRouterDom.Route path="/onboarding" element={<PageErrorBoundary name="Onboarding"><OnboardingPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/blog" element={<PageErrorBoundary name="Blog"><BlogListingPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/blog/:slug" element={<PageErrorBoundary name="Blog Post"><BlogPostPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/check-eligibility" element={<RetailEligibilityPage />} />
