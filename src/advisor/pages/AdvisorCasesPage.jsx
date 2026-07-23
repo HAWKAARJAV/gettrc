@@ -95,7 +95,7 @@ export default function AdvisorCasesPage() {
         ) : (
           <>
             {/* Table header */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 140px 110px 100px 80px", gap: 0, padding: "10px 20px", borderBottom: `1px solid ${C.border}`, background: C.offWhite }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 130px 170px 90px 170px", gap: 12, padding: "10px 20px", borderBottom: `1px solid ${C.border}`, background: C.offWhite }}>
               {["Client", "Country / Type", "Status", "Date", "Actions"].map(h => (
                 <div key={h} style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>{h}</div>
               ))}
@@ -104,7 +104,7 @@ export default function AdvisorCasesPage() {
               const client = c.profiles || {};
               return (
                 <div key={c.id}
-                  style={{ display: "grid", gridTemplateColumns: "1fr 140px 110px 100px 80px", gap: 0, padding: "14px 20px", borderBottom: `1px solid ${C.border}`, alignItems: "center", transition: "background .15s", cursor: "pointer" }}
+                  style={{ display: "grid", gridTemplateColumns: "1fr 130px 170px 90px 170px", gap: 12, padding: "14px 20px", borderBottom: `1px solid ${C.border}`, alignItems: "center", transition: "background .15s", cursor: "pointer" }}
                   onClick={() => navigate(`/advisor/cases/${c.id}`)}
                   onMouseEnter={e => e.currentTarget.style.background = C.offWhite}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}
