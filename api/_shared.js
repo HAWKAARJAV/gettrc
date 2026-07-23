@@ -128,15 +128,20 @@ export async function assignAdvisorToApplication({ svc, existing, advisorUserId,
   return { application: updated, historyEntry: historyRow || null, notifications: notifRows || [] };
 }
 
-// Auto-assigns the sole configured advisor to a case right after payment
-// completes, so admin never has to manually click "Assign Advisor" — there's
-// currently exactly one advisor account, so every paid case should reach
-// them by default. Only acts when the case has no advisor yet and exactly
-// one available+verified advisor exists; if that ever changes (a second
-// advisor is added), this intentionally backs off and leaves assignment to
-// the manual admin flow rather than guessing which advisor should get it.
+const ADVISOR_ASSIGNED_OR_LATER = new Set(["advisor_assigned", "processing", "submitted_to_authority", "completed"]);
+
+// Moves a case into the 'advisor_assigned' workflow state right after
+// payment completes, so admin never has to manually click "Assign Advisor".
+// The sole advisor is actually attached to the case much earlier now (at
+// creation, via create_application_from_request()'s auto-assign block in
+// migrations), so this only needs to check whether the workflow_state
+// transition itself has already happened — advisor_id being pre-set here is
+// expected and fine, not a signal to skip. Only acts when exactly one
+// available+verified advisor exists; if that ever changes (a second advisor
+// is added), this intentionally backs off and leaves it to the manual admin
+// flow rather than guessing which advisor should get it.
 export async function autoAssignSoleAdvisor(svc, existing) {
-  if (existing.advisor_id) return null;
+  if (ADVISOR_ASSIGNED_OR_LATER.has(existing.workflow_state)) return null;
 
   const { data: advisors } = await svc.from("advisors").select("id,user_id,name").eq("available", true).eq("verified", true);
   if (!advisors || advisors.length !== 1) return null;

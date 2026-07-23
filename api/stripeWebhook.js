@@ -131,9 +131,7 @@ export default async function handler(req, res) {
         console.warn("[stripeWebhook] Status email failed (non-fatal):", emailErr?.message || emailErr);
       }
 
-      if (!existing.advisor_id) {
-        await autoAssignSoleAdvisor(svc, updated || existing);
-      }
+      await autoAssignSoleAdvisor(svc, updated || existing);
     }
 
     return res.status(200).json({ received: true });

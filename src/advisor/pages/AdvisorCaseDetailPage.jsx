@@ -11,7 +11,7 @@ import {
   createSignedDocumentUrl,
   DOCUMENT_BUCKET,
 } from "../../documents/documentService";
-import { reviewDocument, updateWorkflowState } from "../../adminApi";
+import { reviewDocument, updateWorkflowState, updatePaymentState } from "../../adminApi";
 import { fetchTravelHistory, calculatePresenceSummary } from "../../residency/travelHistoryService";
 import {
   computeRetailEligibilitySignal,
@@ -277,6 +277,61 @@ function MarkAsFiledCard({ caseData, onFiled }) {
   );
 }
 
+// Payment is not yet accepted through Stripe, so until that's live, the
+// advisor confirms payment received off-platform (bank transfer etc.)
+// here — mirrors the admin "Mark Payment Done" control, since the advisor
+// now drives the whole case end to end.
+const PAYMENT_PENDING_STATES = ["pending_review", "eligible", "payment_pending"];
+
+function MarkPaymentReceivedCard({ caseData, onUpdated }) {
+  const [submitting, setSubmitting] = useState(false);
+  const [err, setErr] = useState("");
+
+  const alreadyPaid = caseData.payment_state === "completed";
+  const canMark = !alreadyPaid && PAYMENT_PENDING_STATES.includes(caseData.workflow_state);
+
+  if (!alreadyPaid && !canMark) return null;
+
+  const submit = async () => {
+    setSubmitting(true); setErr("");
+    try {
+      const res = await updatePaymentState({ applicationId: caseData.id, paymentState: "completed" });
+      if (res?.error) throw new Error(res.error);
+      const updatedApp = res?.data?.application;
+      onUpdated({
+        payment_state: "completed",
+        workflow_state: updatedApp?.workflow_state || "payment_completed",
+        advisor_id: updatedApp?.advisor_id ?? caseData.advisor_id,
+        advisor_assigned_at: updatedApp?.advisor_assigned_at ?? caseData.advisor_assigned_at,
+      });
+    } catch (e) {
+      setErr(e.message || "Failed to mark payment as received.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Payment</div>
+      {alreadyPaid ? (
+        <div style={{ fontSize: 13, color: C.success, fontWeight: 700 }}>✓ Payment received.</div>
+      ) : (
+        <>
+          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, marginBottom: 12 }}>
+            Online payment isn't live yet — once you've confirmed the client's payment off-platform, mark it here to unlock their document workspace.
+          </div>
+          {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{err}</div>}
+          <button onClick={submit} disabled={submitting}
+            style={{ padding: "10px 20px", borderRadius: 10, background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, color: "#fff", border: "none", fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer", fontFamily: SANS, opacity: submitting ? 0.6 : 1 }}>
+            {submitting ? "Saving…" : "Mark Payment Received →"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 function OverviewTab({ caseData, advisorUserId, onCaseUpdate }) {
   const client = caseData.profiles || {};
   const elig   = caseData.eligibility_requests || {};
@@ -392,6 +447,8 @@ function OverviewTab({ caseData, advisorUserId, onCaseUpdate }) {
         defaultBasis={signal && signal.confidence !== "does_not_clearly_qualify" ? signal.basis : ""}
         onDetermined={handleDetermined}
       />
+
+      <MarkPaymentReceivedCard caseData={caseData} onUpdated={handleDetermined} />
 
       <MarkAsFiledCard caseData={caseData} onFiled={handleDetermined} />
     </div>

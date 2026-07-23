@@ -142,7 +142,7 @@ async function handlePaymentState(req, res, svc) {
   }
 
   let finalApplication = updated;
-  if (paymentState === "completed" && !existing.advisor_id) {
+  if (paymentState === "completed") {
     const autoAssigned = await autoAssignSoleAdvisor(svc, updated || existing);
     if (autoAssigned?.application) finalApplication = autoAssigned.application;
   }
