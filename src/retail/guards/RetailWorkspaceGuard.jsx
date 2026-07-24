@@ -44,8 +44,13 @@ const STEPS = [
   { num: 3, label: "Workspace Unlocked" },
 ];
 
-// Stages that show "under review" screen instead of full dashboard
-const LOCKED_STAGES = new Set(["pending_review", "eligible", "payment_pending", "needs_more_info", "rejected"]);
+// Stages that show a static "under review" screen instead of the real
+// workspace. 'eligible' and 'rejected' are deliberately NOT included here —
+// RetailEligibilityStatusPage renders live self-service actions for both
+// (the "Pay Now" button and the "correct & resubmit" flow, respectively),
+// and this outer guard was blocking the Outlet before either could ever
+// render, making both actions permanently unreachable in production.
+const LOCKED_STAGES = new Set(["pending_review", "payment_pending", "needs_more_info"]);
 
 function UnderReviewScreen({ workspace }) {
   const stage = workspace.stage || "pending_review";
