@@ -274,7 +274,12 @@ export default function EligibilityRegistrationPage() {
               </div>
               <label style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 14, fontSize: 14, color: z.navy, lineHeight: 1.7, flexWrap: "wrap", rowGap: 10 }}>
                 <input checked={form.terms} onChange={e => set("terms", e.target.checked)} type="checkbox" style={{ marginTop: 4 }} />
-                <span>I agree to Terms &amp; Privacy Policy</span>
+                <span>
+                  I agree to{" "}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: z.gold, fontWeight: 700 }}>Terms</a>
+                  {" "}&amp;{" "}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: z.gold, fontWeight: 700 }}>Privacy Policy</a>
+                </span>
               </label>
             </SectionCard>
 

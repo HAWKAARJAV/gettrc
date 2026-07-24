@@ -351,7 +351,7 @@ export default function CorporateEligibilityPage() {
                 )}
               </div>
               <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7, marginTop: 8 }}>
-                Informational only — the corporate TRC service fee is AED 2,300, payable securely through this platform once your eligibility is confirmed.
+                Informational only — the corporate TRC service fee is AED 2,300. Your advisor will confirm this with you once your eligibility is approved.
               </p>
 
               <div style={{ marginTop: 14 }}>
@@ -468,7 +468,12 @@ export default function CorporateEligibilityPage() {
 
               <label style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 14, fontSize: 14, color: C.navy, lineHeight: 1.7, flexWrap: "wrap", rowGap: 10 }}>
                 <input checked={form.terms} onChange={(e) => update("terms", e.target.checked)} type="checkbox" style={{ marginTop: 4 }} />
-                <span>I agree to Terms &amp; Privacy Policy</span>
+                <span>
+                  I agree to{" "}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: C.gold, fontWeight: 700 }}>Terms</a>
+                  {" "}&amp;{" "}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: C.gold, fontWeight: 700 }}>Privacy Policy</a>
+                </span>
               </label>
             </div>
 

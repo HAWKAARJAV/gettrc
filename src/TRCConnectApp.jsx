@@ -62,6 +62,8 @@ const BlogPostPage                = lazy(() => import("./blog/BlogPostPage"));
 // the homepage's initial bundle.
 const HomePage                    = lazy(() => import("./pages/HomePage"));
 const UAEPage                     = lazy(() => import("./pages/UAEPage"));
+const TermsPage                   = lazy(() => import("./pages/TermsPage"));
+const PrivacyPage                 = lazy(() => import("./pages/PrivacyPage"));
 const OnboardingPage              = lazy(() => import("./pages/OnboardingPage"));
 
 function RouteLoadingFallback() {
@@ -534,6 +536,8 @@ function AppShell() {
         <ReactRouterDom.Route path="/resources" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/about" element={<PageErrorBoundary name="Home"><HomePage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/uae" element={<PageErrorBoundary name="UAE Page"><UAEPage/></PageErrorBoundary>} />
+        <ReactRouterDom.Route path="/terms" element={<PageErrorBoundary name="Terms"><TermsPage/></PageErrorBoundary>} />
+        <ReactRouterDom.Route path="/privacy" element={<PageErrorBoundary name="Privacy"><PrivacyPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/marketplace" element={<ReactRouterDom.Navigate to="/" replace />} />        <ReactRouterDom.Route path="/onboarding" element={<PageErrorBoundary name="Onboarding"><OnboardingPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/blog" element={<PageErrorBoundary name="Blog"><BlogListingPage/></PageErrorBoundary>} />
         <ReactRouterDom.Route path="/blog/:slug" element={<PageErrorBoundary name="Blog Post"><BlogPostPage/></PageErrorBoundary>} />

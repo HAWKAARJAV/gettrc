@@ -168,6 +168,9 @@ export default function HomePage() {
         .nav-link-dark:hover { color: ${C.gold}; }
         .country-option:hover { background: ${C.offWhite}; }
         .advisor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .hero-stat-item { position: relative; padding-left: 0; }
+        .hero-stat-item:nth-child(even) { padding-left: 20px; }
+        .hero-stat-item:nth-child(even)::before { content: ""; position: absolute; left: 0; top: 2px; bottom: 2px; width: 1px; background: rgba(255,255,255,0.1); }
         @media (max-width: 768px) {
           .hero-grid { display: flex !important; flex-direction: column !important; }
           .advisor-grid { grid-template-columns: 1fr !important; }
@@ -238,14 +241,14 @@ export default function HomePage() {
               </div>
 
               {/* real stats — no fake numbers */}
-              <div style={{ display: "flex", gap: 0, borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 24, flexWrap: "wrap" }}>
+              <div className="hero-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", rowGap: 22, columnGap: 20, borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 24 }}>
                 {[
                   { v: "4", l: "Role workspaces" },
                   { v: "6", l: "Workflow states" },
                   { v: "2", l: "Applicant types" },
                   { v: "1", l: "Unified case record" },
-                ].map((s, i) => (
-                  <div key={s.l} style={{ flex: "1 1 auto", paddingRight: 20, paddingLeft: i > 0 ? 20 : 0, borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.1)" : "none" }}>
+                ].map((s) => (
+                  <div key={s.l} className="hero-stat-item">
                     <div style={{ fontSize: 24, fontWeight: 800, color: C.gold, fontFamily: "'Cormorant Garamond', serif", lineHeight: 1 }}>{s.v}</div>
                     <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.07em", marginTop: 5, lineHeight: 1.3 }}>{s.l}</div>
                   </div>
@@ -736,8 +739,8 @@ export default function HomePage() {
             <div>
               <h4 style={{ fontSize: 11, fontWeight: 700, color: C.white, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 16 }}>Legal</h4>
               <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-                {["Privacy Policy", "Terms of Service", "GDPR", "Compliance"].map(item => (
-                  <a key={item} href="#" style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", textDecoration: "none" }}
+                {[["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]].map(([item, href]) => (
+                  <a key={item} href={href} style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", textDecoration: "none" }}
                     onMouseEnter={e => e.target.style.color = C.gold}
                     onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.45)"}
                   >{item}</a>
