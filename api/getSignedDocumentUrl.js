@@ -1,4 +1,5 @@
 import { getServiceClient, verifyAdminOrAdvisor } from "./_shared.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -8,10 +9,17 @@ export default async function handler(req, res) {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
     const { user, profile } = await verifyAdminOrAdvisor(auth);
 
+    const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `signed-url:${user.id}`,
+      limit: 60,
+      windowSeconds: 60,
+      message: "Too many requests. Please slow down.",
+    });
+    if (!allowed) return;
+
     const { bucket, path, expires = 300 } = req.body || {};
     if (!bucket || !path) return res.status(400).json({ error: "bucket and path required" });
-
-    const svc = getServiceClient();
 
     // This handler uses the service-role client, which bypasses the
     // storage.objects RLS policy that normally restricts a client's own

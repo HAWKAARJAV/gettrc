@@ -1,5 +1,6 @@
 import { getServiceClient, verifyAdminOrAdvisor } from "./_shared.js";
 import { sendDocumentEmail } from "./_sendStatusEmail.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -9,10 +10,17 @@ export default async function handler(req, res) {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
     const { user } = await verifyAdminOrAdvisor(auth);
 
+    const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `request-doc:${user.id}`,
+      limit: 60,
+      windowSeconds: 60,
+      message: "Too many requests. Please slow down.",
+    });
+    if (!allowed) return;
+
     const { applicationId, documentType, description = "" } = req.body || {};
     if (!applicationId || !documentType) return res.status(400).json({ error: "applicationId and documentType are required" });
-
-    const svc = getServiceClient();
 
     const { data: application } = await svc.from("applications").select("id,user_id,applicant_type,advisor_id").eq("id", applicationId).maybeSingle();
     if (!application) return res.status(404).json({ error: "Application not found" });

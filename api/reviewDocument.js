@@ -1,6 +1,7 @@
 import { getServiceClient, verifyAdminOrAdvisor, normalizeActionUrl } from "./_shared.js";
 import { DOCUMENT_REVIEW_STATES } from "../src/workflow/workflowStates.js";
 import { sendDocumentEmail } from "./_sendStatusEmail.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -10,10 +11,17 @@ export default async function handler(req, res) {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
     const { user: reviewer, profile: reviewerProfile } = await verifyAdminOrAdvisor(auth);
 
+    const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `review-doc:${reviewer.id}`,
+      limit: 60,
+      windowSeconds: 60,
+      message: "Too many requests. Please slow down.",
+    });
+    if (!allowed) return;
+
     const { documentId, action, reviewerNotes = "", resubmit = false } = req.body || {};
     if (!documentId || !action) return res.status(400).json({ error: "documentId and action required" });
-
-    const svc = getServiceClient();
 
     if (!DOCUMENT_REVIEW_STATES.includes(action) && !["approve", "reject", "resubmit"].includes(action)) {
       return res.status(400).json({ error: "Invalid review action" });

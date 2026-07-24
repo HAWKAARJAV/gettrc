@@ -1,5 +1,6 @@
 import { getServiceClient, verifyApplicationOwner, syncLegacyRequestFromApplication } from "./_shared.js";
 import { sendStatusEmail } from "./_sendStatusEmail.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -24,6 +25,15 @@ export default async function handler(req, res) {
 
     const { user, application } = await verifyApplicationOwner(auth, applicationId);
 
+    const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `resubmit:${user.id}`,
+      limit: 5,
+      windowSeconds: 3600,
+      message: "Too many resubmission attempts. Please try again later or contact support.",
+    });
+    if (!allowed) return;
+
     if (application.applicant_type !== "retail") {
       return res.status(400).json({ error: "Resubmission is currently only supported for retail applications" });
     }
@@ -41,8 +51,6 @@ export default async function handler(req, res) {
     if (Object.keys(patch).length === 0) {
       return res.status(400).json({ error: "No valid fields to update" });
     }
-
-    const svc = getServiceClient();
 
     const { error: eligUpdateError } = await svc.from("eligibility_requests").update(patch).eq("id", application.eligibility_request_id);
     if (eligUpdateError) throw eligUpdateError;

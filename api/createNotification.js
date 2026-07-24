@@ -1,4 +1,5 @@
 import { getServiceClient, verifyAdminOrAdvisor, normalizeActionUrl } from "./_shared.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -6,12 +7,19 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   try {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
-    await verifyAdminOrAdvisor(auth);
+    const { user } = await verifyAdminOrAdvisor(auth);
+
+    const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `create-notif:${user.id}`,
+      limit: 60,
+      windowSeconds: 60,
+      message: "Too many requests. Please slow down.",
+    });
+    if (!allowed) return;
 
     const { userId, title, body: msg, level = "info", applicationId = null, actionUrl = null, notificationType = "workflow" } = req.body || {};
     if (!userId || !title || !msg) return res.status(400).json({ success: false, error: "userId, title and body required" });
-
-    const svc = getServiceClient();
     const finalAction = normalizeActionUrl(actionUrl, applicationId, null);
     const { data, error } = await svc.from("notifications").insert({
       user_id: userId,

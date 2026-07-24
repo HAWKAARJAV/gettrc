@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { getServiceClient, verifyApplicationOwner } from "./_shared.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -49,11 +50,19 @@ export default async function handler(req, res) {
 
     const { user, application } = await verifyApplicationOwner(auth, applicationId);
 
+    const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `checkout:${user.id}`,
+      limit: 10,
+      windowSeconds: 600,
+      message: "Too many payment attempts. Please try again in a few minutes or contact support.",
+    });
+    if (!allowed) return;
+
     if (application.workflow_state !== "eligible") {
       return res.status(400).json({ error: `Payment can only be started once your application is marked eligible (current state: ${application.workflow_state}).` });
     }
 
-    const svc = getServiceClient();
     const feeAed = await getFeeAedForApplication(application, svc);
     if (feeAed === null) {
       return res.status(503).json({ error: "The service fee has not been configured yet. Please contact support to proceed with payment." });

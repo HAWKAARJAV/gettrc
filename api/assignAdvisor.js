@@ -1,5 +1,6 @@
 import { getServiceClient, verifyAdminOrAdvisor, assignAdvisorToApplication } from "./_shared.js";
 import { sendAdvisorWelcomeEmail } from "./_sendStatusEmail.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -74,16 +75,24 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   try {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
-    const { profile: callerProfile } = await verifyAdminOrAdvisor(auth);
+    const { user, profile: callerProfile } = await verifyAdminOrAdvisor(auth);
 
-    if (req.body?.action === "createAdvisor") {
+    const svc = getServiceClient();
+    const isCreateAdvisor = req.body?.action === "createAdvisor";
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: isCreateAdvisor ? `create-advisor:${user.id}` : `assign-advisor:${user.id}`,
+      limit: isCreateAdvisor ? 10 : 60,
+      windowSeconds: isCreateAdvisor ? 3600 : 60,
+      message: "Too many requests. Please slow down.",
+    });
+    if (!allowed) return;
+
+    if (isCreateAdvisor) {
       return await handleCreateAdvisor(req, res, callerProfile);
     }
 
     const { applicationId, advisorId, notes = "" } = req.body || {};
     if (!applicationId || !advisorId) return res.status(400).json({ error: "applicationId and advisorId required" });
-
-    const svc = getServiceClient();
 
     const { data: existing } = await svc.from("applications").select("id,workflow_state,user_id,advisor_id,applicant_type").eq("id", applicationId).maybeSingle();
     if (!existing) return res.status(404).json({ error: "application not found" });

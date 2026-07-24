@@ -4,6 +4,7 @@
 import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor, normalizeActionUrl, autoAssignSoleAdvisor } from "./_shared.js";
 import { WORKFLOW_STATES } from "../src/workflow/workflowStates.js";
 import { sendAdvisorEmail, sendStatusEmail } from "./_sendStatusEmail.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -156,9 +157,17 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   try {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
-    await verifyAdminOrAdvisor(auth);
+    const { user } = await verifyAdminOrAdvisor(auth);
 
     const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `update-state:${user.id}`,
+      limit: 60,
+      windowSeconds: 60,
+      message: "Too many requests. Please slow down.",
+    });
+    if (!allowed) return;
+
     const type = req.body?.type;
     if (type === "payment") return await handlePaymentState(req, res, svc);
     if (type === "workflow") return await handleWorkflowState(req, res, svc);

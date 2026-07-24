@@ -1,5 +1,6 @@
 import { getServiceClient, verifyApplicationOwner, syncLegacyRequestFromApplication } from "./_shared.js";
 import { sendAdvisorEmail } from "./_sendStatusEmail.js";
+import { enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
@@ -27,9 +28,16 @@ export default async function handler(req, res) {
     if (!applicationId) return res.status(400).json({ error: "applicationId required" });
 
     // Authorise the caller as the owner of this application.
-    const { application } = await verifyApplicationOwner(auth, applicationId);
+    const { user, application } = await verifyApplicationOwner(auth, applicationId);
 
     const svc = getServiceClient();
+    const allowed = await enforceRateLimit(req, res, svc, {
+      key: `notify-doc:${user.id}`,
+      limit: 30,
+      windowSeconds: 60,
+      message: "Too many requests. Please slow down.",
+    });
+    if (!allowed) return;
     const label = String(documentType || "a document").trim() || "a document";
 
     // 1. Notify the assigned advisor, if one exists.
