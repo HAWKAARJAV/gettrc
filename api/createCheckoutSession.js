@@ -1,20 +1,27 @@
 import Stripe from "stripe";
 import { getServiceClient, verifyApplicationOwner } from "./_shared.js";
 
-// Fee amounts are intentionally NOT hardcoded and read from env vars, so this
+// Fee amounts live in public.platform_settings (editable without a
+// redeploy — see supabase/migrations/20260724144400_platform_settings_pricing.sql),
+// with the Vercel env vars as a fallback if a setting is ever missing. This
 // endpoint refuses to create a checkout session rather than charging an
 // arbitrary placeholder amount if pricing isn't configured. Total payable
 // = the FTA's published government fee for the applicant's tier + our flat
 // service fee on top:
 //   - Retail, already a registered taxpayer (vat_registered = "yes"): govt
-//     AED 550 -> STRIPE_RETAIL_REGISTERED_FEE_AED (govt + our fee)
-//   - Retail, not registered:                     govt AED 1,050 -> STRIPE_RETAIL_UNREGISTERED_FEE_AED
-//   - Corporate:                                   govt AED 1,800 -> STRIPE_CORPORATE_FEE_AED
+//     AED 550 -> stripe_retail_registered_fee_aed (govt + our fee)
+//   - Retail, not registered:                     govt AED 1,050 -> stripe_retail_unregistered_fee_aed
+//   - Corporate:                                   govt AED 1,800 -> stripe_corporate_fee_aed
+async function getSetting(svc, key, envFallback) {
+  const { data } = await svc.from("platform_settings").select("value").eq("key", key).maybeSingle();
+  const raw = data?.value ?? envFallback;
+  const amount = Number(raw);
+  return (raw === undefined || raw === null || !Number.isFinite(amount) || amount <= 0) ? null : amount;
+}
+
 async function getFeeAedForApplication(application, svc) {
   if (application.applicant_type === "corporate") {
-    const raw = process.env.STRIPE_CORPORATE_FEE_AED;
-    const amount = Number(raw);
-    return (!raw || !Number.isFinite(amount) || amount <= 0) ? null : amount;
+    return getSetting(svc, "stripe_corporate_fee_aed", process.env.STRIPE_CORPORATE_FEE_AED);
   }
 
   let vatRegistered = "no";
@@ -22,9 +29,9 @@ async function getFeeAedForApplication(application, svc) {
     const { data: elig } = await svc.from("eligibility_requests").select("vat_registered").eq("id", application.eligibility_request_id).maybeSingle();
     vatRegistered = String(elig?.vat_registered || "no").trim().toLowerCase();
   }
-  const raw = vatRegistered === "yes" ? process.env.STRIPE_RETAIL_REGISTERED_FEE_AED : process.env.STRIPE_RETAIL_UNREGISTERED_FEE_AED;
-  const amount = Number(raw);
-  return (!raw || !Number.isFinite(amount) || amount <= 0) ? null : amount;
+  return vatRegistered === "yes"
+    ? getSetting(svc, "stripe_retail_registered_fee_aed", process.env.STRIPE_RETAIL_REGISTERED_FEE_AED)
+    : getSetting(svc, "stripe_retail_unregistered_fee_aed", process.env.STRIPE_RETAIL_UNREGISTERED_FEE_AED);
 }
 
 export default async function handler(req, res) {
