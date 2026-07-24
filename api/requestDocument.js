@@ -1,5 +1,7 @@
 import { getServiceClient, verifyAdminOrAdvisor } from "./_shared.js";
 import { sendDocumentEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -62,7 +64,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { documentRequest: docRequest }, notification: notifRow || null, error: null });
   } catch (err) {
-    console.error("requestDocument error", err);
+    captureError("requestDocument error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }

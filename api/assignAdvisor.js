@@ -1,5 +1,7 @@
 import { getServiceClient, verifyAdminOrAdvisor, assignAdvisorToApplication } from "./_shared.js";
 import { sendAdvisorWelcomeEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 function generateTempPassword() {
   // Not shown anywhere in the UI — only ever sent via the welcome email —
@@ -97,7 +99,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { application: updated }, historyEntry, notifications, error: null });
   } catch (err) {
-    console.error("assignAdvisor error", err);
+    captureError("assignAdvisor error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }

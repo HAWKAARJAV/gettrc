@@ -1,5 +1,7 @@
 import { getServiceClient } from "./_shared.js";
 import { dispatchEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 // Runs once a day via Vercel Cron (see vercel.json) and emails the admin a
 // summary of the previous UAE calendar day: new signups, eligibility calls,
@@ -156,7 +158,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, date: label, error: null });
   } catch (err) {
-    console.error("dailyAdminSummary error", err);
+    captureError("dailyAdminSummary error", err);
     return res.status(500).json({ error: err?.message || String(err) });
   }
 }

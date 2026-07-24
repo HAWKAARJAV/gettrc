@@ -4,6 +4,8 @@
 import { getServiceClient, syncLegacyRequestFromApplication, verifyAdminOrAdvisor, normalizeActionUrl, autoAssignSoleAdvisor } from "./_shared.js";
 import { WORKFLOW_STATES } from "../src/workflow/workflowStates.js";
 import { sendAdvisorEmail, sendStatusEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 async function handleWorkflowState(req, res, svc) {
   const { applicationId, newState, notes = "", patch = {} } = req.body || {};
@@ -162,7 +164,7 @@ export default async function handler(req, res) {
     if (type === "workflow") return await handleWorkflowState(req, res, svc);
     return res.status(400).json({ error: "type must be 'workflow' or 'payment'" });
   } catch (err) {
-    console.error("updateApplicationState error", err);
+    captureError("updateApplicationState error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }

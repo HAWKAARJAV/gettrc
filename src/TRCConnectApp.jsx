@@ -1,6 +1,7 @@
 // TRCConnectApp.jsx — TRC Connect · React + React Router
 import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
 import * as ReactRouterDom from "react-router-dom";
+import * as Sentry from "@sentry/react";
 import { C } from "./theme/marketingColors";
 import WorkflowToastHost from "./components/WorkflowToastHost";
 
@@ -487,6 +488,9 @@ function ScrollToTop() {
 class PageErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { error: null }; }
   static getDerivedStateFromError(error) { return { error }; }
+  componentDidCatch(error, info) {
+    Sentry.captureException(error, { extra: { page: this.props.name, componentStack: info?.componentStack } });
+  }
   render() {
     if (this.state.error) {
       return (

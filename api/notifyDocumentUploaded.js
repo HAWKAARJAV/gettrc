@@ -1,5 +1,7 @@
 import { getServiceClient, verifyApplicationOwner, syncLegacyRequestFromApplication } from "./_shared.js";
 import { sendAdvisorEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 // Called by the retail/corporate client immediately after they upload a
 // document. RLS prevents a client from writing a notification row targeted at
@@ -81,7 +83,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { advanced }, error: null });
   } catch (err) {
-    console.error("notifyDocumentUploaded error", err);
+    captureError("notifyDocumentUploaded error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }

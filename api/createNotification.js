@@ -1,4 +1,6 @@
 import { getServiceClient, verifyAdminOrAdvisor, normalizeActionUrl } from "./_shared.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -25,7 +27,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { notification: data }, historyEntry: null, notifications: [data], error: null });
   } catch (err) {
-    console.error("createNotification error", err);
+    captureError("createNotification error", err);
     return res.status(err?.status || 500).json({ success: false, error: err?.message || String(err) });
   }
 }

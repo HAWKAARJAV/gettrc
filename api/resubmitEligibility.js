@@ -1,5 +1,7 @@
 import { getServiceClient, verifyApplicationOwner, syncLegacyRequestFromApplication } from "./_shared.js";
 import { sendStatusEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 // Fields the retail applicant is allowed to correct and resubmit. Whitelisted
 // explicitly rather than accepting an arbitrary patch object, so a client
@@ -93,7 +95,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { application: updatedApp }, error: null });
   } catch (err) {
-    console.error("resubmitEligibility error", err);
+    captureError("resubmitEligibility error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }

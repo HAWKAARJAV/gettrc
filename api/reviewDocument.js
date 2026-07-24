@@ -1,6 +1,8 @@
 import { getServiceClient, verifyAdminOrAdvisor, normalizeActionUrl } from "./_shared.js";
 import { DOCUMENT_REVIEW_STATES } from "../src/workflow/workflowStates.js";
 import { sendDocumentEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -76,7 +78,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { document: updatedDocs?.[0] || null }, historyEntry: historyRow || null, notifications: notifRow ? [notifRow] : [], error: null });
   } catch (err) {
-    console.error("reviewDocument error", err);
+    captureError("reviewDocument error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }

@@ -1,6 +1,8 @@
 import Stripe from "stripe";
 import { getServiceClient, syncLegacyRequestFromApplication, normalizeActionUrl, autoAssignSoleAdvisor } from "./_shared.js";
 import { sendStatusEmail, sendAdvisorEmail } from "./_sendStatusEmail.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 // Stripe signature verification requires the raw, unparsed request body —
 // disable Vercel's default JSON body parsing for this route only.
@@ -33,7 +35,7 @@ export default async function handler(req, res) {
     const signature = req.headers["stripe-signature"];
     event = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    console.error("stripeWebhook signature verification failed", err?.message || err);
+    captureError("stripeWebhook signature verification failed", err);
     return res.status(400).json({ error: `Webhook signature verification failed: ${err?.message || err}` });
   }
 
@@ -136,7 +138,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ received: true });
   } catch (err) {
-    console.error("stripeWebhook processing error", err);
+    captureError("stripeWebhook processing error", err);
     // Return 500 so Stripe retries delivery — this is a processing failure, not a bad request.
     return res.status(500).json({ error: err?.message || String(err) });
   }

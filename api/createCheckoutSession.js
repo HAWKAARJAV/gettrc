@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 import { getServiceClient, verifyApplicationOwner } from "./_shared.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 // Fee amounts live in public.platform_settings (editable without a
 // redeploy — see supabase/migrations/20260724144400_platform_settings_pricing.sql),
@@ -92,7 +94,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { checkoutUrl: session.url }, error: null });
   } catch (err) {
-    console.error("createCheckoutSession error", err);
+    captureError("createCheckoutSession error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }

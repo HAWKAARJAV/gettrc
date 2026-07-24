@@ -1,4 +1,6 @@
 import { getServiceClient, verifyAdminOrAdvisor } from "./_shared.js";
+import { initSentry, captureError } from "./_sentry.js";
+initSentry();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -15,7 +17,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: { url: data?.signedUrl }, historyEntry: null, notifications: [], error: null });
   } catch (err) {
-    console.error("getSignedDocumentUrl error", err);
+    captureError("getSignedDocumentUrl error", err);
     return res.status(err?.status || 500).json({ error: err?.message || String(err) });
   }
 }
