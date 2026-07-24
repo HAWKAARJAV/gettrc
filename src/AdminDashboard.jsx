@@ -5,7 +5,7 @@ import AdminBlogTab from "./blog/AdminBlogTab";
 import { APPLICATION_STATES, getApplicationStateMeta, mapLegacyRequestStatusToWorkflowState } from "./workflow/applicationWorkflow";
 import { buildApplicationPatchFromRequest, getLegacyRequestKey, getLegacyRequestTable } from "./workflow/legacyRequestSync";
 import { generateRequiredActions } from "./workflow/generateRequiredActions";
-import useWorkflowMutation, { emitToast } from "./hooks/useWorkflowMutation";
+import { emitToast } from "./hooks/useWorkflowMutation";
 import ApplicationStatusStrip from "./components/ApplicationStatusStrip";
 import EmptyState from './components/EmptyState';
 import { useSEO } from "./seo/useSEO";
@@ -390,8 +390,6 @@ function QueuesTab() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-  const [advisorsList, setAdvisorsList] = useState([]);
-  const { executeMutation, isLoading: mutationPending } = useWorkflowMutation("updateWorkflow");
 
   useEffect(() => {
     Promise.resolve().then(() => {
@@ -404,30 +402,6 @@ function QueuesTab() {
       }).catch(() => { setApps([]); setLoading(false); });
     });
   }, []);
-
-  useEffect(() => {
-    dbGet('advisors', 'select=id,name,specialties&order=name.asc&limit=200').then((d) => setAdvisorsList(d || [])).catch(() => setAdvisorsList([]));
-  }, []);
-
-  const takeAction = async (id, newState) => {
-    const { updateWorkflowState } = await import('./workflow/workflowMutationService');
-    const result = await executeMutation(
-      updateWorkflowState,
-      { applicationId: id, newState, notes: `Updated via admin UI` },
-      { applicationId: id, mutationLabel: "updateWorkflow", successMessage: "Workflow updated successfully", errorMessage: "Workflow update blocked: review payment, documents, and advisor ownership first." }
-    );
-    if (result?.success !== false) setApps((prev) => prev.filter((a) => a.id !== id));
-  };
-
-  const takeAssign = async (applicationId, advisorId) => {
-    const { assignAdvisor } = await import('./workflow/workflowMutationService');
-    const result = await executeMutation(
-      assignAdvisor,
-      { applicationId, advisorId, notes: 'Assigned via admin UI' },
-      { applicationId, mutationLabel: "assignAdvisor", successMessage: "Advisor assigned successfully", errorMessage: "Advisor assignment failed: application is not eligible." }
-    );
-    if (result?.success !== false) setApps((prev) => prev.filter((a) => a.id !== applicationId));
-  };
 
   if (loading) return <div style={{ padding: 20 }}><SkeletonCard height={120} /></div>;
 
@@ -483,11 +457,7 @@ function QueuesTab() {
                 <div style={{ fontSize: 12, color: C.gold, fontWeight: 700, marginTop: 4 }}>{(generateRequiredActions(a, []).slice(0, 1)[0]?.title) || "Operational task ready"}</div>
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <select disabled={mutationPending} defaultValue="" onChange={e => { const adv = e.target.value; if (!adv) return; takeAssign(a.id, adv); }} style={{ padding: 8, borderRadius: 8, border: `1px solid ${C.border}` }}>
-                  <option value="">Assign...</option>
-                  {advisorsList.map(ad => <option key={ad.id} value={ad.id}>{ad.name}</option>)}
-                </select>
-                <button disabled={mutationPending} onClick={() => takeAction(a.id, 'rejected')} style={{ padding: 10, borderRadius: 8, background: mutationPending ? '#9CA3AF' : '#EF4444', color: '#fff', border: 'none', cursor: mutationPending ? 'not-allowed' : 'pointer' }}>{mutationPending ? 'Working...' : 'Reject'}</button>
+                <span style={{ fontSize: 11, color: C.muted, fontStyle: 'italic' }}>🔒 Managed by advisor</span>
               </div>
             </div>
           ))}
@@ -503,9 +473,6 @@ function EligibilityRequestsTab() {
   const [selected, setSelected] = useState(null);
   const [fetchInfo, setFetchInfo] = useState({ legacyCount: 0, appsCount: 0, legacyEmails: [], appsEmails: [] });
   const [advisorsList, setAdvisorsList] = useState([]);
-  const [advisorDraft, setAdvisorDraft] = useState("");
-  const [assigning, setAssigning] = useState(false);
-  const { executeMutation, isLoading: mutationPending } = useWorkflowMutation("updateWorkflow");
 
   const loadRequests = async () => {
     setLoading(true);
@@ -571,110 +538,6 @@ function EligibilityRequestsTab() {
   useEffect(() => {
     dbGet('advisors', 'select=id,name,user_id&order=name.asc&limit=200').then(d => setAdvisorsList(d || [])).catch(() => {});
   }, []);
-
-  // Reset advisor draft when selected changes
-  useEffect(() => {
-    // If an application is already assigned, pre-select that advisor in the draft.
-    if (!advisorsList || advisorsList.length === 0) {
-      setAdvisorDraft("");
-      return;
-    }
-    if (selected?.advisor_id) {
-      const match = advisorsList.find(ad => String(ad.user_id) === String(selected.advisor_id));
-      setAdvisorDraft(match ? match.id : "");
-    } else {
-      setAdvisorDraft("");
-    }
-  }, [selected?.id, selected?.advisor_id, advisorsList]);
-
-  const assignAdvisorToApplication = async () => {
-    if (!advisorDraft || !selected) return;
-    // resolve application id from the request
-    const appId = selected._is_synthetic_from_application
-      ? selected.application_id
-      : (await dbGet("applications", `select=id&eligibility_request_id=eq.${selected.id}&limit=1`).then(r => (r || [])[0]?.id).catch(() => null));
-    if (!appId) { alert("No linked application found. Approve eligibility first, then assign an advisor."); return; }
-
-    // advisorDraft is advisors.id in this UI; resolve to advisors.user_id so
-    // advisor workspace queries by auth user id continue to work.
-    const advisorUserId = await dbGet("advisors", `select=id,user_id&id=eq.${advisorDraft}&limit=1`)
-      .then((rows) => rows?.[0]?.user_id || advisorDraft)
-      .catch(() => advisorDraft);
-
-    setAssigning(true);
-    const result = await executeMutation(
-      async () => {
-        await dbPatch("applications", appId, {
-          advisor_id: advisorUserId,
-          advisor_assigned_at: new Date().toISOString(),
-          workflow_state: "advisor_assigned",
-          review_state: "advisor_assigned",
-        });
-        return { success: true, applicationId: appId };
-      },
-      { applicationId: appId, advisorId: advisorUserId, notes: "Assigned from eligibility review panel" },
-      { applicationId: appId, mutationLabel: "assignAdvisor", successMessage: "Advisor assigned successfully", errorMessage: "Advisor assignment failed. Make sure the application is in a valid state." }
-    );
-    setAssigning(false);
-    if (result?.success !== false) {
-      setAdvisorDraft("");
-      try {
-        await loadRequests();
-      } catch (e) {
-        // best-effort refresh; ignore errors
-      }
-    }
-  };
-
-  const updateRequest = async (id, patch) => {
-    const applicationId = String(id).startsWith("app-") ? String(id).split("app-")[1] : selected?.application_id;
-    const result = await executeMutation(async () => {
-      // Route through the real mutation API instead of a raw dbPatch — a
-      // direct PATCH from the browser skips the sendStatusEmail() call
-      // entirely, so the client's "you're eligible" / "payment confirmed"
-      // emails silently never sent. The API also keeps the legacy
-      // eligibility_requests row in sync itself (syncLegacyRequestFromApplication),
-      // so no separate dbPatch on that table is needed either.
-      const { updateWorkflowState, updatePaymentState } = await import('./workflow/workflowMutationService');
-
-      if (String(id).startsWith("app-")) {
-        const appId = String(id).split("app-")[1];
-        if (patch.payment_status === "completed") {
-          await updatePaymentState({ applicationId: appId, paymentState: "completed" });
-        } else {
-          const newState = deriveWorkflowState(patch.status || patch.review_state || patch.workflow_state);
-          if (newState) await updateWorkflowState({ applicationId: appId, newState, notes: "Updated via admin UI" });
-        }
-        return { success: true, applicationId: appId };
-      }
-
-      const targetStatus = patch.status || patch.workflow_state;
-      const syncedApplicationId = applicationId || await syncApplicationForRequest(id, patch, "retail");
-      if (syncedApplicationId && patch.payment_status === "completed") {
-        await updatePaymentState({ applicationId: syncedApplicationId, paymentState: "completed" });
-      } else if (syncedApplicationId && targetStatus) {
-        // Pass known-valid workflow states straight through; only remap
-        // legacy-only statuses (e.g. "needs_more_info") that aren't real
-        // applications.workflow_state values.
-        const newState = APPLICATION_STATES.includes(targetStatus) ? targetStatus : deriveWorkflowState(targetStatus);
-        await updateWorkflowState({ applicationId: syncedApplicationId, newState, notes: "Updated via admin UI" });
-      } else {
-        // No application resolved yet — fall back to the legacy direct patch
-        // so the action isn't silently a no-op.
-        await dbPatch("eligibility_requests", id, patch);
-      }
-      return { success: true, applicationId: syncedApplicationId };
-    }, { applicationId }, {
-      applicationId,
-      mutationLabel: patch.payment_status === "completed" ? "updatePayment" : "updateWorkflow",
-      successMessage: patch.payment_status === "completed" ? "Payment marked complete" : "Workflow updated successfully",
-      errorMessage: patch.payment_status === "completed" ? "Workflow update blocked: payment could not be marked complete." : "Workflow update blocked: review eligibility requirements before progressing.",
-      refresh: Boolean(applicationId),
-    });
-    if (result?.success === false) return;
-    setRequests((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
-    if (selected?.id === id) setSelected((prev) => ({ ...prev, ...patch }));
-  };
 
   const fmt = (d) => new Date(d).toLocaleDateString("en-GB", {
     day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -765,58 +628,13 @@ function EligibilityRequestsTab() {
             <p style={{fontSize:13,color:C.navy,lineHeight:1.7,background:C.offWhite2,borderRadius:10,padding:"12px 14px"}}>{selected.review_notes || "No notes yet"}</p>
           </div>
 
-          {/* Status Action Buttons */}
-          <div style={{marginBottom:18}}>
-            <p style={{fontSize:12,color:C.muted,marginBottom:10,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Update Status</p>
-            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-              {[
-                ["✓ Approve Eligibility", { status:"eligible", payment_status:"pending" }, C.success, C.successBg],
-                ["✗ Reject",              { status:"rejected" },                            C.error,   C.errorBg],
-                ["⚠ Request More Info",   { status:"needs_more_info" },                    C.warn,    C.warnBg],
-                ["💳 Mark Payment Done",  { status:"payment_completed", payment_status:"completed" }, "#5B21B6", "#F5F3FF"],
-              ].map(([label, patch, color, bg]) => (
-                <button key={label} disabled={mutationPending} onClick={()=>updateRequest(selected.id, patch)}
-                  style={{padding:"8px 14px",borderRadius:20,fontSize:12,fontWeight:700,cursor:mutationPending?"not-allowed":"pointer",background:mutationPending?C.offWhite:bg,color:mutationPending?C.muted:color,border:`1px solid ${mutationPending?C.border:color}`,opacity:mutationPending?0.6:1}}>
-                  {mutationPending?"Working…":label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:4}}>
             <span style={{fontSize:12,color:C.muted}}>Current status:</span>
             {(() => { const s=badge(selected.status); return <span style={{background:s.bg,color:s.color,fontSize:11,fontWeight:700,padding:"3px 12px",borderRadius:20}}>{selected.status?.replace(/_/g," ")}</span>; })()}
           </div>
-
-          {/* Assign Advisor — only unlocked after payment is approved */}
-          {(() => {
-            const paymentDone = selected.status==="payment_completed" || selected.payment_status==="completed";
-            return (
-              <div style={{marginTop:18,borderTop:`1px solid ${C.border}`,paddingTop:16}}>
-                <p style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8,
-                  color: paymentDone ? C.muted : "#9CA3AF"}}>
-                  {paymentDone ? "Assign Advisor" : "🔒 Assign Advisor (unlock after payment approved)"}
-                </p>
-                {paymentDone ? (
-                  <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-                    <select value={advisorDraft} onChange={e=>setAdvisorDraft(e.target.value)} disabled={mutationPending||assigning}
-                      style={{flex:1,minWidth:160,padding:"9px 12px",borderRadius:10,border:`1.5px solid ${C.gold}`,fontSize:13,fontFamily:"inherit",outline:"none",color:C.navy,background:"#fff"}}>
-                      <option value="">— Select Advisor —</option>
-                      {advisorsList.map(ad=><option key={ad.id} value={ad.id}>{ad.name}</option>)}
-                    </select>
-                    <button onClick={assignAdvisorToApplication} disabled={!advisorDraft||mutationPending||assigning}
-                      style={{padding:"9px 16px",borderRadius:10,background:!advisorDraft||mutationPending||assigning?"#9CA3AF":`linear-gradient(135deg,${C.gold},${C.goldDark})`,color:"#fff",border:"none",fontSize:13,fontWeight:700,cursor:!advisorDraft||mutationPending||assigning?"not-allowed":"pointer"}}>
-                      {assigning?"Assigning…":"Assign →"}
-                    </button>
-                  </div>
-                ) : (
-                  <div style={{background:C.offWhite,borderRadius:10,padding:"10px 14px",fontSize:13,color:"#9CA3AF",border:`1px dashed ${C.border}`}}>
-                    Mark payment as done above to unlock advisor assignment.
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+          <div style={{marginTop:10,fontSize:12,color:C.muted,fontStyle:"italic"}}>
+            🔒 Read-only — eligibility review, payment, and advisor assignment are now handled by the advisor. This panel reflects live status only.
+          </div>
         </div>
       )}
     </div>
@@ -827,9 +645,6 @@ function CorporateEligibilityRequestsTab() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [specialistDraft, setSpecialistDraft] = useState("");
-  const { executeMutation, isLoading: mutationPending } = useWorkflowMutation("updateWorkflow");
-
   const loadRequests = async () => {
     setLoading(true);
     const data = await dbGet(
@@ -843,26 +658,6 @@ function CorporateEligibilityRequestsTab() {
   useEffect(() => {
     Promise.resolve().then(() => loadRequests());
   }, []);
-
-  useEffect(() => {
-    Promise.resolve().then(() => setSpecialistDraft(selected?.assigned_specialist || ""));
-  }, [selected?.id, selected?.assigned_specialist]);
-
-  const updateRequest = async (id, patch) => {
-    const result = await executeMutation(async () => {
-      await dbPatch("corporate_eligibility_requests", id, patch);
-      const syncedApplicationId = await syncApplicationForRequest(id, patch, "corporate");
-      return { success: true, applicationId: syncedApplicationId };
-    }, { applicationId: selected?.application_id }, {
-      applicationId: selected?.application_id,
-      mutationLabel: patch.assigned_specialist ? "assignAdvisor" : patch.payment_status === "completed" ? "updatePayment" : "updateWorkflow",
-      successMessage: patch.assigned_specialist ? "Advisor assigned successfully" : patch.payment_status === "completed" ? "Payment marked complete" : "Workflow updated successfully",
-      errorMessage: patch.assigned_specialist ? "Advisor assignment failed: application is not eligible." : "Workflow update blocked: review corporate eligibility requirements first.",
-    });
-    if (result?.success === false) return;
-    setRequests((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
-    if (selected?.id === id) setSelected((prev) => ({ ...prev, ...patch }));
-  };
 
   const fmt = (d) => new Date(d).toLocaleDateString("en-GB", {
     day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -952,35 +747,15 @@ function CorporateEligibilityRequestsTab() {
             <p style={{fontSize:13,color:C.navy,lineHeight:1.7,background:C.offWhite2,borderRadius:10,padding:"12px 14px"}}>{selected.review_notes || "No notes yet"}</p>
           </div>
 
-          <div style={{marginBottom:18}}>
-            <p style={{fontSize:12,color:C.muted,marginBottom:10,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Actions</p>
-            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-              {[
-                ["Approve", { status: "eligible", payment_status: "pending" }],
-                ["Reject", { status: "rejected" }],
-                ["Request Consultation", { status: "needs_consultation" }],
-                ["Mark Payment Pending", { status: "payment_pending", payment_status: "pending" }],
-                ["Mark Payment Complete", { status: "payment_completed", payment_status: "completed" }],
-              ].map(([label, patch]) => (
-                <button key={label} disabled={mutationPending} onClick={()=>updateRequest(selected.id, patch)} style={{padding:"7px 12px",borderRadius:20,fontSize:12,fontWeight:600,cursor:mutationPending?"not-allowed":"pointer",background:mutationPending?C.offWhite:C.offWhite2,color:C.navy,border:`1px solid ${C.border}`}}>{mutationPending ? "Working..." : label}</button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{marginBottom:18}}>
-            <p style={{fontSize:12,color:C.muted,marginBottom:10,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Assign Specialist</p>
-            <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-              <input value={specialistDraft} onChange={(e)=>setSpecialistDraft(e.target.value)} placeholder="Compliance specialist name" style={{flex:1,minWidth:180,padding:"10px 12px",borderRadius:10,border:`1px solid ${C.border}`,fontSize:13,color:C.navy,outline:"none"}} />
-              <button disabled={mutationPending} onClick={()=>updateRequest(selected.id,{ assigned_specialist: specialistDraft })} style={{padding:"10px 14px",borderRadius:20,fontSize:12,fontWeight:700,cursor:mutationPending?"not-allowed":"pointer",background:mutationPending?C.muted:C.navy,color:C.white,border:`1px solid ${mutationPending?C.muted:C.navy}`}}>{mutationPending ? "Assigning..." : "Assign"}</button>
-            </div>
-          </div>
-
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-            <span style={{fontSize:12,color:C.muted}}>Updated manually by admin.</span>
+            <span style={{fontSize:12,color:C.muted}}>Current status:</span>
             {(() => {
               const current = badge(selected.status);
               return <span style={{background:current.bg,color:current.color,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20}}>{selected.status}</span>;
             })()}
+          </div>
+          <div style={{marginTop:10,fontSize:12,color:C.muted,fontStyle:"italic"}}>
+            🔒 Read-only — review, payment, and specialist assignment are now handled by the advisor. This panel reflects live status only.
           </div>
         </div>
       )}
@@ -994,9 +769,6 @@ function ApplicationsTab() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [managerDraft, setManagerDraft] = useState("");
-  const [notesDraft, setNotesDraft] = useState("");
-  const { executeMutation, isLoading: mutationPending } = useWorkflowMutation("updateWorkflow");
 
   const loadApplications = async () => {
     setLoading(true);
@@ -1016,7 +788,6 @@ function ApplicationsTab() {
         setHistory([]);
         return;
       }
-      setManagerDraft(selected.assigned_manager || "");
       Promise.all([
         dbGet("documents", `select=*&application_id=eq.${selected.id}&order=uploaded_at.desc`),
         dbGet("application_status_history", `select=*&application_id=eq.${selected.id}&order=created_at.asc`),
@@ -1025,38 +796,7 @@ function ApplicationsTab() {
         setHistory(historyRows || []);
       });
     });
-  }, [selected?.id, selected?.assigned_manager]);
-
-  const updateApplication = async (id, patch) => {
-    const { updateWorkflowState } = await import('./workflow/workflowMutationService');
-    let result = { success: true };
-    if (patch.workflow_state) {
-      result = await executeMutation(
-        updateWorkflowState,
-        { applicationId: id, newState: patch.workflow_state, patch, notes: notesDraft || 'Updated via admin applications view' },
-        { applicationId: id, mutationLabel: "updateWorkflow", successMessage: "Workflow updated successfully", errorMessage: "Workflow update blocked: payment, documents, or advisor ownership is incomplete." }
-      );
-    } else {
-      // For non-workflow patches, call the REST endpoint directly (non-privileged)
-      await dbPatch("applications", id, patch);
-    }
-    if (result?.success === false) return;
-    setApplications((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
-    if (selected?.id === id) setSelected((prev) => ({ ...prev, ...patch }));
-  };
-
-  const transitionApplication = async (state) => {
-    if (!selected?.id) return;
-    await updateApplication(selected.id, {
-      workflow_state: state,
-      review_state: state,
-      assigned_manager: managerDraft || selected.assigned_manager,
-      completed_at: state === "completed" ? new Date().toISOString() : selected.completed_at,
-    });
-    setNotesDraft("");
-    const nextHistory = await dbGet("application_status_history", `select=*&application_id=eq.${selected.id}&order=created_at.asc`);
-    setHistory(nextHistory || []);
-  };
+  }, [selected?.id]);
 
   const fmt = (d) => d ? new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
 
@@ -1123,22 +863,10 @@ function ApplicationsTab() {
           </div>
 
           <div style={{ marginTop: 16 }}>
-            <p style={{ fontSize: 12, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Assigned Manager</p>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input value={managerDraft} onChange={(event) => setManagerDraft(event.target.value)} placeholder="Manager name" style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: `1px solid ${C.border}`, fontSize: 13, color: C.navy, outline: "none" }} />
-              <button disabled={mutationPending} onClick={() => updateApplication(selected.id, { assigned_manager: managerDraft })} style={{ padding: "10px 14px", borderRadius: 20, fontSize: 12, fontWeight: 800, cursor: mutationPending ? "not-allowed" : "pointer", background: mutationPending ? C.muted : C.navy, color: C.white, border: `1px solid ${mutationPending ? C.muted : C.navy}` }}>{mutationPending ? "Saving..." : "Save"}</button>
-            </div>
-          </div>
-
-          <div style={{ marginTop: 18 }}>
-            <p style={{ fontSize: 12, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Workflow Progression</p>
-            <textarea value={notesDraft} onChange={(event) => setNotesDraft(event.target.value)} placeholder="Internal transition notes" rows={3} style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1px solid ${C.border}`, fontSize: 13, color: C.navy, outline: "none", resize: "vertical", marginBottom: 10 }} />
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {APPLICATION_STATES.map((state) => (
-                <button key={state} disabled={mutationPending} onClick={() => transitionApplication(state)} style={{ padding: "7px 11px", borderRadius: 20, fontSize: 11, fontWeight: 800, cursor: mutationPending ? "not-allowed" : "pointer", background: selected.workflow_state === state ? C.navy : C.offWhite2, color: selected.workflow_state === state ? C.white : C.navy, border: `1px solid ${selected.workflow_state === state ? C.navy : C.border}` }}>
-                  {mutationPending ? "Working..." : state.replaceAll("_", " ")}
-                </button>
-              ))}
+            <p style={{ fontSize: 12, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Current Workflow State</p>
+            <ApplicationBadge status={selected.workflow_state} />
+            <div style={{ marginTop: 10, fontSize: 12, color: C.muted, fontStyle: "italic" }}>
+              🔒 Read-only — manager assignment and workflow progression are now handled by the advisor. This panel reflects live status and logs only.
             </div>
           </div>
 
