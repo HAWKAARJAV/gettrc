@@ -1,15 +1,30 @@
 import Stripe from "stripe";
 import { getServiceClient, verifyApplicationOwner } from "./_shared.js";
 
-// Fee amounts are intentionally NOT hardcoded — pricing hasn't been decided
-// yet. Until STRIPE_RETAIL_FEE_AED / STRIPE_CORPORATE_FEE_AED are set, this
+// Fee amounts are intentionally NOT hardcoded and read from env vars, so this
 // endpoint refuses to create a checkout session rather than charging an
-// arbitrary placeholder amount.
-function getFeeAedForApplicantType(applicantType) {
-  const raw = applicantType === "corporate" ? process.env.STRIPE_CORPORATE_FEE_AED : process.env.STRIPE_RETAIL_FEE_AED;
+// arbitrary placeholder amount if pricing isn't configured. Total payable
+// = the FTA's published government fee for the applicant's tier + our flat
+// service fee on top:
+//   - Retail, already a registered taxpayer (vat_registered = "yes"): govt
+//     AED 550 -> STRIPE_RETAIL_REGISTERED_FEE_AED (govt + our fee)
+//   - Retail, not registered:                     govt AED 1,050 -> STRIPE_RETAIL_UNREGISTERED_FEE_AED
+//   - Corporate:                                   govt AED 1,800 -> STRIPE_CORPORATE_FEE_AED
+async function getFeeAedForApplication(application, svc) {
+  if (application.applicant_type === "corporate") {
+    const raw = process.env.STRIPE_CORPORATE_FEE_AED;
+    const amount = Number(raw);
+    return (!raw || !Number.isFinite(amount) || amount <= 0) ? null : amount;
+  }
+
+  let vatRegistered = "no";
+  if (application.eligibility_request_id) {
+    const { data: elig } = await svc.from("eligibility_requests").select("vat_registered").eq("id", application.eligibility_request_id).maybeSingle();
+    vatRegistered = String(elig?.vat_registered || "no").trim().toLowerCase();
+  }
+  const raw = vatRegistered === "yes" ? process.env.STRIPE_RETAIL_REGISTERED_FEE_AED : process.env.STRIPE_RETAIL_UNREGISTERED_FEE_AED;
   const amount = Number(raw);
-  if (!raw || !Number.isFinite(amount) || amount <= 0) return null;
-  return amount;
+  return (!raw || !Number.isFinite(amount) || amount <= 0) ? null : amount;
 }
 
 export default async function handler(req, res) {
@@ -29,13 +44,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: `Payment can only be started once your application is marked eligible (current state: ${application.workflow_state}).` });
     }
 
-    const feeAed = getFeeAedForApplicantType(application.applicant_type);
+    const svc = getServiceClient();
+    const feeAed = await getFeeAedForApplication(application, svc);
     if (feeAed === null) {
       return res.status(503).json({ error: "The service fee has not been configured yet. Please contact support to proceed with payment." });
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    const svc = getServiceClient();
     const { data: profile } = await svc.from("profiles").select("email,full_name").eq("id", user.id).maybeSingle();
 
     const base = application.applicant_type === "corporate" ? "/corporate" : "/retail";
