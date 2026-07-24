@@ -1597,6 +1597,7 @@ export default function AdminDashboard() {
   const [tab,     setTab]     = useState("overview");
   const [checking,setChecking]= useState(true);
   const [stats,   setStats]   = useState({retail:0,corporate:0,applications:0,advisorUpdates:0});
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(()=>{
     getSession().then(s=>{
@@ -1651,10 +1652,29 @@ export default function AdminDashboard() {
   return (
     <div style={{display:"flex",minHeight:"100vh",
       fontFamily:"'DM Sans',-apple-system,sans-serif",color:C.navy,background:C.offWhite}}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap');*{box-sizing:border-box;margin:0;padding:0;}`}</style>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0;}
+        .adm-sidebar { flex-shrink: 0; }
+        .adm-backdrop { display: none; }
+        .adm-hamburger { display: none; }
+        @media (max-width: 880px) {
+          .adm-sidebar {
+            position: fixed; top: 0; left: 0; z-index: 60; height: 100vh; width: 240px !important;
+            transform: translateX(${mobileNavOpen ? "0" : "-100%"});
+            transition: transform .25s ease;
+          }
+          .adm-backdrop {
+            display: ${mobileNavOpen ? "block" : "none"};
+            position: fixed; inset: 0; background: rgba(9,26,61,.5); z-index: 50;
+          }
+          .adm-hamburger { display: inline-flex !important; }
+          .adm-page { padding: 16px !important; }
+        }
+      `}</style>
 
       {/* SIDEBAR */}
-      <aside style={{width:240,flexShrink:0,background:C.sidebar,display:"flex",
+      <aside className="adm-sidebar" style={{width:240,flexShrink:0,background:C.sidebar,display:"flex",
         flexDirection:"column",minHeight:"100vh",position:"sticky",top:0,height:"100vh"}}>
         <div style={{padding:"22px 20px 18px",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
@@ -1673,7 +1693,7 @@ export default function AdminDashboard() {
           {NAV.map(item=>{
             const isA=tab===item.key;
             return (
-              <button key={item.key} onClick={()=>setTab(item.key)}
+              <button key={item.key} onClick={()=>{setTab(item.key); setMobileNavOpen(false);}}
                 style={{width:"100%",display:"flex",alignItems:"center",gap:11,
                   padding:"10px 12px",borderRadius:10,marginBottom:3,
                   background:isA?"rgba(201,168,76,.15)":"transparent",
@@ -1705,6 +1725,7 @@ export default function AdminDashboard() {
           </button>
         </div>
       </aside>
+      <div className="adm-backdrop" onClick={()=>setMobileNavOpen(false)} />
 
       {/* MAIN */}
       <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
@@ -1712,9 +1733,18 @@ export default function AdminDashboard() {
           display:"flex",alignItems:"center",justifyContent:"space-between",
           padding:"0 32px",position:"sticky",top:0,zIndex:100,
           boxShadow:"0 1px 8px rgba(15,37,87,.05)"}}>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy}}>
-            {NAV.find(n=>n.key===tab)?.label || "Admin"}
-          </h1>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <button
+              className="adm-hamburger"
+              onClick={()=>setMobileNavOpen(true)}
+              aria-label="Open menu"
+              style={{display:"none",flexShrink:0,width:36,height:36,borderRadius:9,border:`1px solid ${C.border}`,background:C.white,color:C.navy,fontSize:16,cursor:"pointer",alignItems:"center",justifyContent:"center"}}>
+              ☰
+            </button>
+            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy}}>
+              {NAV.find(n=>n.key===tab)?.label || "Admin"}
+            </h1>
+          </div>
           <div style={{display:"flex",alignItems:"center",gap:18}}>
             <NotificationCenter />
             <a href="https://gettrc.com" target="_blank" rel="noreferrer"
@@ -1724,7 +1754,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <main style={{flex:1,padding:"28px 32px"}}>
+        <main className="adm-page" style={{flex:1,padding:"28px 32px"}}>
           {tab==="overview"&&(
             <div style={{display:"flex",flexDirection:"column",gap:20}}>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:16}}>

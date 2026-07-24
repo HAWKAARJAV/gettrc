@@ -45,6 +45,7 @@ export default function AdvisorWorkspaceLayout() {
   const { workspace } = ctx;
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
     await logoutAdvisor();
@@ -61,8 +62,26 @@ export default function AdvisorWorkspaceLayout() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: SANS, background: C.offWhite }}>
+      <style>{`
+        .awl2-sidebar { flex-shrink: 0; }
+        .awl2-backdrop { display: none; }
+        .awl2-hamburger { display: none; }
+        @media (max-width: 880px) {
+          .awl2-sidebar {
+            position: fixed; top: 0; left: 0; z-index: 60; height: 100vh; width: 240px !important;
+            transform: translateX(${mobileOpen ? "0" : "-100%"});
+            transition: transform .25s ease;
+          }
+          .awl2-backdrop {
+            display: ${mobileOpen ? "block" : "none"};
+            position: fixed; inset: 0; background: rgba(9,26,61,.5); z-index: 50;
+          }
+          .awl2-hamburger { display: inline-flex !important; }
+          .awl2-page { padding: 16px !important; }
+        }
+      `}</style>
       {/* Sidebar */}
-      <aside style={{ width: sidebarW, minHeight: "100vh", background: C.sidebar, display: "flex", flexDirection: "column", flexShrink: 0, transition: "width .2s", position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
+      <aside className="awl2-sidebar" onClick={() => setMobileOpen(false)} style={{ width: sidebarW, minHeight: "100vh", background: C.sidebar, display: "flex", flexDirection: "column", flexShrink: 0, transition: "width .2s", position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
         {/* Brand */}
         <div style={{ padding: collapsed ? "20px 0" : "20px 16px", borderBottom: "1px solid rgba(255,255,255,.08)", display: "flex", alignItems: "center", gap: 10, justifyContent: collapsed ? "center" : "flex-start" }}>
           <div style={{ width: 34, height: 34, borderRadius: 8, background: `linear-gradient(135deg,${C.gold},${C.goldDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>⚖</div>
@@ -118,12 +137,21 @@ export default function AdvisorWorkspaceLayout() {
           </button>
         </div>
       </aside>
+      <div className="awl2-backdrop" onClick={() => setMobileOpen(false)} />
 
       {/* Main content */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
         {/* Top bar */}
         <header style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: "14px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, position: "sticky", top: 0, zIndex: 100 }}>
-          <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button
+              className="awl2-hamburger"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+              style={{ display: "none", flexShrink: 0, width: 36, height: 36, borderRadius: 9, border: `1px solid ${C.border}`, background: C.white, color: C.navy, fontSize: 16, cursor: "pointer", alignItems: "center", justifyContent: "center" }}
+            >
+              ☰
+            </button>
             <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".1em" }}>Advisor Dashboard</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -140,7 +168,7 @@ export default function AdvisorWorkspaceLayout() {
         </header>
 
         {/* Page */}
-        <main style={{ flex: 1, padding: "28px", overflowY: "auto" }}>
+        <main className="awl2-page" style={{ flex: 1, padding: "28px", overflowY: "auto" }}>
           <Outlet context={{ workspace, refresh: ctx.refresh }} />
         </main>
       </div>
