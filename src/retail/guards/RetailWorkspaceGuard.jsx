@@ -45,12 +45,16 @@ const STEPS = [
 ];
 
 // Stages that show a static "under review" screen instead of the real
-// workspace. 'eligible' and 'rejected' are deliberately NOT included here —
-// RetailEligibilityStatusPage renders live self-service actions for both
-// (the "Pay Now" button and the "correct & resubmit" flow, respectively),
-// and this outer guard was blocking the Outlet before either could ever
-// render, making both actions permanently unreachable in production.
-const LOCKED_STAGES = new Set(["pending_review", "payment_pending", "needs_more_info"]);
+// workspace. 'payment_pending' and 'rejected' are deliberately NOT included
+// here — RetailEligibilityStatusPage renders live self-service actions for
+// both (the "Pay Now" button and the "correct & resubmit" flow,
+// respectively), and this outer guard was blocking the Outlet before either
+// could ever render, making both actions permanently unreachable in
+// production. Note: raw workflow_state 'eligible' normalizes to stage
+// 'payment_pending' (see getApplicationUnlockState) — 'stage' is never
+// literally "eligible", so "payment_pending" is the string that actually
+// needs to be unlocked here.
+const LOCKED_STAGES = new Set(["pending_review", "needs_more_info"]);
 
 function UnderReviewScreen({ workspace }) {
   const stage = workspace.stage || "pending_review";

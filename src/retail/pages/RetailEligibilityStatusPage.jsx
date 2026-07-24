@@ -165,7 +165,7 @@ const STATUS_META = {
   pending_review:          { label: "Under review",            tone: "info",    msg: "Your file is in our review queue. Expect an update within 24–48 hours." },
   eligible:                { label: "Eligible",                tone: "success", msg: "You meet the criteria for a UAE Tax Residency Certificate. The next step is payment." },
   needs_more_info:         { label: "More info needed",        tone: "warning", msg: "Our team needs additional information from you before proceeding." },
-  payment_pending:         { label: "Awaiting payment",        tone: "warning", msg: "Our team will call you to complete the payment step." },
+  payment_pending:         { label: "Eligible",                tone: "success", msg: "You meet the criteria for a UAE Tax Residency Certificate. The next step is payment." },
   payment_completed:       { label: "Payment confirmed",       tone: "success", msg: "Payment received. Your workspace is fully unlocked." },
   documents_pending:       { label: "Documents required",      tone: "warning", msg: "Please upload the required documents to continue." },
   documents_under_review:  { label: "Documents under review",  tone: "info",    msg: "Your advisor is reviewing the documents you uploaded." },
@@ -433,8 +433,11 @@ export default function RetailEligibilityStatusPage() {
         </div>
       )}
 
-      {/* ── Payment step (only shown once eligible, before payment is completed) ── */}
-      {stage === "eligible" && (
+      {/* ── Payment step (only shown once eligible, before payment is completed) ──
+          Note: getApplicationUnlockState() normalizes raw workflow_state
+          'eligible' into stage 'payment_pending' — 'stage' here is NEVER
+          literally "eligible", so this must check "payment_pending". */}
+      {stage === "payment_pending" && (
         <div style={{
           background: C.white, border: `1.5px solid ${C.border}`,
           borderRadius: RETAIL_THEME.radius.md, padding: "20px 22px",
