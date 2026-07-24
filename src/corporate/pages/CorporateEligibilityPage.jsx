@@ -351,7 +351,7 @@ export default function CorporateEligibilityPage() {
                 )}
               </div>
               <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.7, marginTop: 8 }}>
-                Informational only — the processing fee is AED 500 if you hold a Corporate Tax TRN, or AED 1,750 if you do not. This app does not process payments.
+                Informational only — the corporate TRC service fee is AED 2,300, payable securely through this platform once your eligibility is confirmed.
               </p>
 
               <div style={{ marginTop: 14 }}>

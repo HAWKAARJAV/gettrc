@@ -47,6 +47,10 @@ function buildLink(application, suffix = "") {
 }
 
 function hasMissingEmiratesId(application) {
+  // Emirates ID is a retail (individual) requirement — corporate applications
+  // never populate these fields, so this always fired for every corporate
+  // case regardless of its real document status.
+  if (application?.applicant_type === "corporate") return false;
   return Boolean(application) && !application.emirates_id && !application.emiratesId && !application.identity_number;
 }
 
