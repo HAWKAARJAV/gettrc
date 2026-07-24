@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   try {
     const auth = (req.headers.authorization || req.headers.Authorization || "").replace("Bearer ", "");
-    const { user: reviewer } = await verifyAdminOrAdvisor(auth);
+    const { user: reviewer, profile: reviewerProfile } = await verifyAdminOrAdvisor(auth);
 
     const { documentId, action, reviewerNotes = "", resubmit = false } = req.body || {};
     if (!documentId || !action) return res.status(400).json({ error: "documentId and action required" });
@@ -25,7 +25,17 @@ export default async function handler(req, res) {
     const { data: doc } = await svc.from("documents").select("id,application_id,uploaded_by,review_status,document_type").eq("id", documentId).maybeSingle();
     if (!doc) return res.status(404).json({ error: "document not found" });
 
-    const { data: application } = await svc.from("applications").select("id,applicant_type").eq("id", doc.application_id).maybeSingle();
+    const { data: application } = await svc.from("applications").select("id,applicant_type,advisor_id").eq("id", doc.application_id).maybeSingle();
+
+    // Client documents are sensitive (passports, Emirates IDs, bank
+    // statements) — an advisor may only review documents for cases they're
+    // actually assigned to, same restriction requestDocument.js already
+    // applies. verifyAdminOrAdvisor only confirms an advisor role in
+    // general, not ownership of this specific case.
+    const isAdminEmail = reviewerProfile?.email && String(reviewerProfile.email).toLowerCase() === (process.env.ADMIN_EMAIL || "hawkwilds09@gmail.com");
+    if (reviewerProfile?.role !== "admin" && !isAdminEmail && application?.advisor_id && application.advisor_id !== reviewer.id) {
+      return res.status(403).json({ error: "Not assigned to this application" });
+    }
     const { data: updatedDocs, error: updateError } = await svc.from("documents").update({ review_status: reviewStatus, reviewer_notes: reviewerNotes, reviewed_by: reviewer.id, reviewed_at: new Date().toISOString() }).eq("id", documentId).select("*");
     if (updateError) throw updateError;
 
