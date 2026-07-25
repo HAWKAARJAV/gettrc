@@ -91,7 +91,7 @@ function Bubble({ msg, isOwn }) {
 
 // ── Main page ─────────────────────────────────────────────────
 export default function AdvisorChatPage() {
-  const { workspace } = useOutletContext();
+  const { workspace, refresh } = useOutletContext();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { cases, session } = workspace;
@@ -118,8 +118,14 @@ export default function AdvisorChatPage() {
       setAdminUnread(0);
     } else {
       const msgs = await fetchClientMessages(thread);
+      const hadUnread = msgs.some(m => m.sender_id !== advisorId && !m.is_read);
       setMessages(msgs);
       await markClientRead(thread, advisorId);
+      // The sidebar badge and per-case unread counts come from the workspace
+      // (fetched once on load, polled every 20s) — reading a thread here
+      // doesn't touch that cache on its own, so the badge would otherwise
+      // stay stale until the next poll. Refresh it immediately, silently.
+      if (hadUnread) refresh?.(true);
     }
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior:"smooth" }), 50);
   };
@@ -201,7 +207,7 @@ export default function AdvisorChatPage() {
             <ThreadItem key={app.id}
               label={c.full_name || c.email || app.id.slice(0,8)}
               sub={`${app.country||"UAE"} \xB7 ${app.application_type||"TRC"}`}
-              selected={selectedThread === app.id} unread={0}
+              selected={selectedThread === app.id} unread={selectedThread === app.id ? 0 : (app.unreadMessages || 0)}
               onClick={() => switchThread(app.id)} />
           );
         })}
