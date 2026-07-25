@@ -9,6 +9,7 @@ import {
   fetchApplicableDocumentRequirements,
   createDocumentRequest,
   createSignedDocumentUrl,
+  canonicalDocumentType,
   DOCUMENT_BUCKET,
 } from "../../documents/documentService";
 import { reviewDocument, updateWorkflowState, updatePaymentState } from "../../adminApi";
@@ -710,7 +711,7 @@ function DocumentsTab({ caseData, advisorUserId }) {
   const pendingRequests  = requests.filter(r => r.status === "pending");
   const fulfilledReqs    = requests.filter(r => r.status !== "pending");
   // Lookup sets for O(1) checks
-  const uploadedTypes   = new Set(documents.map(d => d.document_type));
+  const uploadedTypes   = new Set(documents.map(d => canonicalDocumentType(d.document_type)));
   const requestedTypes  = new Set(requests.map(r => r.document_type));
 
   return (
@@ -748,7 +749,7 @@ function DocumentsTab({ caseData, advisorUserId }) {
               const isUploaded  = uploadedTypes.has(req.document_name);
               const isRequested = requestedTypes.has(req.document_name);
               const isQuick     = quickRequesting === req.document_name;
-              const relatedDoc  = documents.find(d => d.document_type === req.document_name);
+              const relatedDoc  = documents.find(d => canonicalDocumentType(d.document_type) === req.document_name);
               return (
                 <div key={req.id || req.document_name}
                   style={{ padding: "14px 22px", borderBottom: i < requirements.length - 1 ? `1px solid ${C.border}` : "none", display: "flex", alignItems: "flex-start", gap: 14 }}>

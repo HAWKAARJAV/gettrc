@@ -3,7 +3,7 @@ import { useOutletContext, useNavigate } from "react-router-dom";
 import EmptyState from '../../components/EmptyState';
 import { supabase } from "../../supabaseClient";
 import { RETAIL_THEME } from "../../config/retailTheme";
-import { fetchApplicableDocumentRequirements, fetchDocumentRequests, notifyDocumentUploaded } from "../../documents/documentService";
+import { fetchApplicableDocumentRequirements, fetchDocumentRequests, notifyDocumentUploaded, canonicalDocumentType } from "../../documents/documentService";
 import DocumentTemplateButton from "../../documents/DocumentTemplateButton";
 import { withPeriodNote } from "../../documents/documentTemplates";
 
@@ -87,7 +87,7 @@ function DocRow({ doc, uploaded, onUpload, periodYear }) {
     }
   };
 
-  const latestUpload = uploaded.find(u => u.document_type === doc.key);
+  const latestUpload = uploaded.find(u => canonicalDocumentType(u.document_type) === doc.key);
   const hint = withPeriodNote(doc.hint, doc.label, periodYear);
 
   return (
@@ -176,7 +176,7 @@ export default function RetailDocumentsPage() {
   };
 
   const uploaded = docs.filter(d => d.review_status !== "deleted");
-  const approvedCount = requiredDocs.filter(d => uploaded.find(u => u.document_type === d.key && u.review_status === "approved")).length;
+  const approvedCount = requiredDocs.filter(d => uploaded.find(u => canonicalDocumentType(u.document_type) === d.key && u.review_status === "approved")).length;
 
   return (
     <div style={{ display:"grid", gap:20, fontFamily:SANS }}>

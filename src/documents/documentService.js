@@ -1,6 +1,27 @@
 import { supabase } from "../supabaseClient";
 import * as workflowMutations from "../workflow/workflowMutationService";
 
+// Older upload paths (pre document_requirements catalog, and the retail page's
+// fallback list) wrote plain slugs like "emirates_id" or "passport_front" into
+// documents.document_type instead of the catalog's display name. Those rows
+// still exist in production, so requirement-matching needs to recognize them
+// as equivalent to today's canonical document_requirements.document_name.
+const LEGACY_DOCUMENT_TYPE_ALIASES = {
+  passport_front: "Passport — Front Page",
+  passport_back: "Passport — Back Page",
+  passport: "Passport — Front Page",
+  emirates_id_front: "Emirates ID — Front",
+  emirates_id_back: "Emirates ID — Back",
+  emirates_id: "Emirates ID — Front",
+  residence_visa: "UAE Residence Visa",
+  salary_slip: "Salary Certificate / Proof of UAE Employment or Business",
+  tenancy: "Certified Tenancy Contract (Ejari) or Title Deed + Utility Bill",
+};
+
+export function canonicalDocumentType(rawType) {
+  return LEGACY_DOCUMENT_TYPE_ALIASES[rawType] || rawType;
+}
+
 export const DOCUMENT_BUCKET = "trc-private-documents";
 
 export async function fetchDocumentRequirements({ applicantType }) {
@@ -200,8 +221,8 @@ export async function uploadDocumentForRequest({ applicationId, requestId, docum
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function summarizeDocumentReadiness(requirements = [], documents = []) {
-  const uploadedTypes = new Set(documents.map((document) => document.document_type));
-  const approvedTypes = new Set(documents.filter((document) => document.review_status === "approved").map((document) => document.document_type));
+  const uploadedTypes = new Set(documents.map((document) => canonicalDocumentType(document.document_type)));
+  const approvedTypes = new Set(documents.filter((document) => document.review_status === "approved").map((document) => canonicalDocumentType(document.document_type)));
 
   const required = requirements.filter((requirement) => requirement.required);
   const uploadedCount = required.filter((requirement) => uploadedTypes.has(requirement.document_name)).length;
