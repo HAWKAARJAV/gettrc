@@ -6,10 +6,23 @@ export function useCorporateWorkspace() {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
   const [workspace, setWorkspace] = useState(readCorporateCache());
+  const [error, setError] = useState(null);
 
   const refresh = async () => {
-    const currentSession = await getCorporateSession();
+    // getCorporateSession() can throw on a transient error (network blip, a
+    // hiccup during Supabase's token refresh) unrelated to actually being
+    // logged out — surface it as an error rather than clearing the session,
+    // so the guard doesn't bounce an authenticated user to /corporate/login.
+    let currentSession;
+    try {
+      currentSession = await getCorporateSession();
+    } catch (authError) {
+      setError(authError);
+      setLoading(false);
+      return null;
+    }
     setSession(currentSession);
+    setError(null);
 
     if (!currentSession?.user?.id) {
       setWorkspace({});
@@ -25,7 +38,7 @@ export function useCorporateWorkspace() {
   };
 
   useEffect(() => {
-    refresh().catch(() => setLoading(false));
+    refresh().catch((e) => { setError(e); setLoading(false); });
 
     // Poll every 20s so corporate users see stage changes without hard-refreshing
     const pollInterval = setInterval(() => {
@@ -60,5 +73,5 @@ export function useCorporateWorkspace() {
     return () => unsubscribe && unsubscribe();
   }, []);
 
-  return { loading, session, profile: workspace.profile, request: workspace.request, application: workspace.application, stage: workspace.stage, refresh };
+  return { loading, session, error, profile: workspace.profile, request: workspace.request, application: workspace.application, stage: workspace.stage, refresh };
 }

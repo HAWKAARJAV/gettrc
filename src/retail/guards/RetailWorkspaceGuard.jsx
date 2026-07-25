@@ -176,25 +176,38 @@ export default function RetailWorkspaceGuard() {
     );
   }
 
-  if (!workspace.session) {
-    return <Navigate to="/retail/login" replace />;
-  }
-
+  // An error (including a transient failure while verifying the session
+  // itself) must never be treated as "not logged in" — only a clean,
+  // error-free absence of a session means the user is actually logged
+  // out. Checking error before session avoids bouncing an authenticated
+  // user to /retail/login on a network blip during refresh.
   if (workspace.error) {
     const errMsg = workspace.error?.message || workspace.error?.details || workspace.error?.hint || String(workspace.error);
     return (
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#091A3D", color: "#FFFFFF", fontFamily: SANS, gap: 16, padding: 24, textAlign: "center" }}>
         <div style={{ fontSize: 40 }}>⚠️</div>
         <p style={{ fontSize: 16, maxWidth: 420, lineHeight: 1.6, color: "rgba(255,255,255,0.8)" }}>
-          Your session is active but we couldn't load your workspace data.
+          {workspace.session ? "Your session is active but we couldn't load your workspace data." : "We couldn't verify your session. This is usually temporary — try again."}
         </p>
         <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 10, padding: "10px 18px", fontSize: 12, color: "#FBBF24", maxWidth: 480, wordBreak: "break-all", fontFamily: "monospace" }}>{errMsg}</div>
-        <button onClick={() => workspace.refresh()}
-          style={{ background: "#C9A84C", color: "#fff", border: "none", borderRadius: 10, padding: "12px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-          Retry
-        </button>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={() => workspace.refresh()}
+            style={{ background: "#C9A84C", color: "#fff", border: "none", borderRadius: 10, padding: "12px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+            Retry
+          </button>
+          {!workspace.session && (
+            <button onClick={() => { localStorage.clear(); window.location.assign("/retail/login"); }}
+              style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.3)", color: "#fff", borderRadius: 10, padding: "12px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+              Sign In
+            </button>
+          )}
+        </div>
       </div>
     );
+  }
+
+  if (!workspace.session) {
+    return <Navigate to="/retail/login" replace />;
   }
 
   if (workspace.profile?.role && workspace.profile.role !== "retail") {

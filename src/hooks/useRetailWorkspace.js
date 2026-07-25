@@ -26,19 +26,27 @@ export function useRetailWorkspace() {
     // silent=true is used by the polling interval — skip the loading flash
     // so the UI doesn't flicker every 20 s.
     if (!silent) setState((prev) => ({ ...prev, loading: true, error: null }));
-    // Declare session outside try so the catch block can preserve it.
-    // If the Supabase session is valid but a workspace DB fetch fails we must
-    // NOT clear the session — doing so causes the guard to bounce the user
-    // back to /retail/login even though they are authenticated.
-    let session = null;
+
+    // getRetailSession() itself can throw on a transient error (network blip,
+    // a hiccup during Supabase's token refresh) that has nothing to do with
+    // the user actually being logged out. Treat that as "couldn't verify"
+    // (preserve whatever session we last knew about) rather than "logged
+    // out" — only a clean `null` result means "no session".
+    let session;
     try {
       session = await getRetailSession();
-      if (!session?.user?.id) {
-        clearRetailCache();
-        setState({ ...EMPTY_STATE, loading: false, session: null });
-        return;
-      }
+    } catch (authError) {
+      setState((prev) => ({ ...prev, loading: false, error: authError }));
+      return;
+    }
 
+    if (!session?.user?.id) {
+      clearRetailCache();
+      setState({ ...EMPTY_STATE, loading: false, session: null });
+      return;
+    }
+
+    try {
       const workspace = await fetchRetailWorkspace(session.user.id);
       const nextState = {
         loading: false,

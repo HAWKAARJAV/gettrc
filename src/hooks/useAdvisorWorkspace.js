@@ -11,6 +11,7 @@ const EMPTY = {
   cases: [],
   unreadMessageCount: 0,
   openTicketCount: 0,
+  unreadTicketReplyCount: 0,
   error: null,
 };
 
@@ -20,14 +21,26 @@ export function useAdvisorWorkspace() {
 
   const refresh = useCallback(async (silent = false) => {
     if (!silent) setState((p) => ({ ...p, loading: true, error: null }));
-    let session = null;
+
+    // getAdvisorSession() can throw on a transient error (network blip, a
+    // hiccup during Supabase's token refresh) unrelated to actually being
+    // logged out — don't treat that as a logout. Only a clean `null` means
+    // "no session".
+    let session;
     try {
       session = await getAdvisorSession();
-      if (!session?.user?.id) {
-        await logoutAdvisor();
-        setState({ ...EMPTY, loading: false, session: null });
-        return;
-      }
+    } catch (authError) {
+      setState((p) => ({ ...p, loading: false, error: authError }));
+      return;
+    }
+
+    if (!session?.user?.id) {
+      await logoutAdvisor();
+      setState({ ...EMPTY, loading: false, session: null });
+      return;
+    }
+
+    try {
       const ws = await fetchAdvisorWorkspace(session.user.id);
       setState({
         loading: false,
@@ -37,10 +50,11 @@ export function useAdvisorWorkspace() {
         cases: ws.cases,
         unreadMessageCount: ws.unreadMessageCount,
         openTicketCount: ws.openTicketCount,
+        unreadTicketReplyCount: ws.unreadTicketReplyCount,
         error: null,
       });
     } catch (error) {
-      setState({ loading: false, session, profile: null, advisor: null, cases: [], unreadMessageCount: 0, openTicketCount: 0, error });
+      setState({ loading: false, session, profile: null, advisor: null, cases: [], unreadMessageCount: 0, openTicketCount: 0, unreadTicketReplyCount: 0, error });
     }
   }, []); // eslint-disable-line
 
