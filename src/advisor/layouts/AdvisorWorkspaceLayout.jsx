@@ -16,7 +16,7 @@ const NAV = [
   { to: "/advisor/dashboard", icon: "📊", label: "Dashboard",  badge: null },
   { to: "/advisor/cases",     icon: "📁", label: "My Cases",   badge: "cases" },
   { to: "/advisor/chat",      icon: "💬", label: "Chat",       badge: "unreadMessageCount" },
-  { to: "/advisor/updates",   icon: "📢", label: "Updates",    badge: "openTicketCount" },
+  { to: "/advisor/updates",   icon: "📢", label: "Updates",    badge: "unreadTicketReplyCount" },
   { to: "/advisor/profile",   icon: "👤", label: "Profile",    badge: null },
 ];
 
@@ -55,7 +55,7 @@ export default function AdvisorWorkspaceLayout() {
   const badgeMap = {
     cases: workspace.cases?.length || 0,
     unreadMessageCount: workspace.unreadMessageCount || 0,
-    openTicketCount: workspace.openTicketCount || 0,
+    unreadTicketReplyCount: workspace.unreadTicketReplyCount || 0,
   };
 
   const sidebarW = collapsed ? 64 : 240;

@@ -78,9 +78,9 @@ export async function fetchAdvisorWorkspace(userId) {
   const caseList = cases || [];
   const caseIds = caseList.map(c => c.id);
 
-  // Step 2 — unread messages per case + open advisor tickets
+  // Step 2 — unread messages per case + advisor tickets
   const sentinel = "00000000-0000-0000-0000-000000000000"; // avoids IN() error on empty array
-  const [{ data: unreadMessages }, { data: openTickets }] = await Promise.all([
+  const [{ data: unreadMessages }, { data: openTickets }, { data: allTickets }] = await Promise.all([
     supabase
       .from("messages")
       .select("id, application_id")   // include application_id so we can group per-case
@@ -92,7 +92,18 @@ export async function fetchAdvisorWorkspace(userId) {
       .select("id")
       .eq("user_id", userId)
       .eq("status", "open"),
+    supabase
+      .from("support_tickets")
+      .select("id, admin_reply, admin_replied_at, advisor_viewed_at")
+      .eq("user_id", userId)
+      .not("admin_reply", "is", null),
   ]);
+
+  // A ticket counts as "unread" only once admin has replied and the advisor
+  // hasn't viewed it since — mirrors the read-receipt model used for messages.
+  const unreadTicketReplyCount = (allTickets || []).filter(t =>
+    !t.advisor_viewed_at || new Date(t.advisor_viewed_at) < new Date(t.admin_replied_at)
+  ).length;
 
   // Build a per-case unread count map: { [applicationId]: number }
   const perCaseUnread = {};
@@ -114,5 +125,6 @@ export async function fetchAdvisorWorkspace(userId) {
     cases: enrichedCases,
     unreadMessageCount: (unreadMessages || []).length,
     openTicketCount: (openTickets || []).length,
+    unreadTicketReplyCount,
   };
 }

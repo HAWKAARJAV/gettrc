@@ -43,8 +43,16 @@ async function createTicket(advisorId, applicationId, subject, message, priority
   return data;
 }
 
+async function markTicketViewed(ticketId) {
+  const { error } = await supabase
+    .from("support_tickets")
+    .update({ advisor_viewed_at: new Date().toISOString() })
+    .eq("id", ticketId);
+  if (error) console.warn("[advisor updates] failed to mark ticket viewed:", error);
+}
+
 export default function AdvisorUpdatesPage() {
-  const { workspace } = useOutletContext();
+  const { workspace, refresh } = useOutletContext();
   const [params] = useSearchParams();
   const { session, cases } = workspace;
   const advisorId = session?.user?.id;
@@ -182,7 +190,15 @@ export default function AdvisorUpdatesPage() {
                 {tickets.length} ticket{tickets.length !== 1 ? "s" : ""}
               </div>
               {tickets.map(t => (
-                <div key={t.id} onClick={() => setSelected(selected === t.id ? null : t.id)}
+                <div key={t.id} onClick={() => {
+                  const willOpen = selected !== t.id;
+                  setSelected(willOpen ? t.id : null);
+                  if (willOpen && t.admin_reply && (!t.advisor_viewed_at || new Date(t.advisor_viewed_at) < new Date(t.admin_replied_at))) {
+                    const viewedAt = new Date().toISOString();
+                    setTickets(prev => prev.map(x => x.id === t.id ? { ...x, advisor_viewed_at: viewedAt } : x));
+                    markTicketViewed(t.id).then(() => refresh?.(true));
+                  }
+                }}
                   style={{ padding: "14px 20px", borderBottom: `1px solid ${C.border}`, cursor: "pointer", background: selected === t.id ? "#EEF2FF" : "transparent", borderLeft: selected === t.id ? "3px solid #5B21B6" : "3px solid transparent", transition: "background .15s" }}
                   onMouseEnter={e => { if (selected !== t.id) e.currentTarget.style.background = C.offWhite; }}
                   onMouseLeave={e => { if (selected !== t.id) e.currentTarget.style.background = "transparent"; }}
