@@ -23,8 +23,8 @@ const STAGE_CONTENT = {
   eligible: {
     icon: "✅",
     title: "You're eligible — one step left before processing",
-    message: "Great news — your eligibility has been confirmed. Our team will contact you shortly to arrange the payment and unlock your full workspace.",
-    cta: { label: "Contact support", path: "/retail/support" },
+    message: "Great news — your eligibility has been confirmed. Complete the service fee payment to unlock your full workspace and start document upload.",
+    cta: { label: "Pay now", path: "/retail/eligibility-status" },
     tone: "success",
   },
   payment_pending: {
@@ -339,7 +339,14 @@ export default function RetailDashboardPage() {
   const profile = workspace.profile;
   const app     = workspace.application;
 
-  const content = STAGE_CONTENT[stage] || FALLBACK_CONTENT;
+  // workspace.stage collapses the raw workflow_state "eligible" into
+  // "payment_pending" for workspace-unlock gating purposes (see
+  // getApplicationUnlockState / RetailWorkspaceGuard) — that's correct for
+  // unlocking the real workspace, but it means this dashboard would never
+  // actually show the "you're eligible" card. Prefer the application's raw
+  // workflow_state here, which still has the real "eligible" value, and only
+  // fall back to the collapsed stage for states that don't differ.
+  const content = STAGE_CONTENT[app?.workflow_state] || STAGE_CONTENT[stage] || FALLBACK_CONTENT;
 
   const toneColors = {
     success: { bg: C.successBg, border: "#BBF7D0", accent: C.success },
