@@ -160,8 +160,8 @@ function StatusBadge({ status }) {
     processing:{ bg:"#F5F3FF", color:"#5B21B6" },
     approved:  { bg:C.successBg,color:C.success },
     issued:    { bg:C.successBg,color:C.success },
-    closed:    { bg:C.offWhite2,color:C.muted  },
-  }[status] || { bg:C.offWhite2, color:C.muted };
+    closed:    { bg:"var(--c-surface-2)",color:"var(--c-text-muted)"  },
+  }[status] || { bg:"var(--c-surface-2)", color:"var(--c-text-muted)" };
   return (
     <span style={{background:s.bg,color:s.color,fontSize:11,fontWeight:700,
       padding:"3px 10px",borderRadius:20,letterSpacing:".04em",whiteSpace:"nowrap"}}>
@@ -177,7 +177,7 @@ function ApplicationBadge({ status }) {
     warning: { bg: C.warnBg, color: C.warn },
     info: { bg: "#EFF6FF", color: "#1D6FB8" },
     error: { bg: C.errorBg, color: C.error },
-  }[meta.tone] || { bg: C.offWhite2, color: C.muted };
+  }[meta.tone] || { bg: "var(--c-surface-2)", color: "var(--c-text-muted)" };
 
   return <span style={{ background: tone.bg, color: tone.color, fontSize: 11, fontWeight: 800, padding: "4px 10px", borderRadius: 999, textTransform: "uppercase", letterSpacing: ".05em", whiteSpace: "nowrap" }}>{String(status || "pending_review").replaceAll("_", " ")}</span>;
 }
@@ -220,46 +220,46 @@ function LoginScreen({ onLogin }) {
       display:"flex",alignItems:"center",justifyContent:"center",padding:24,
       fontFamily:"'DM Sans',-apple-system,sans-serif"}}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap');*{box-sizing:border-box;margin:0;padding:0;}`}</style>
-      <div style={{background:C.white,borderRadius:20,padding:"48px 40px",width:"100%",maxWidth:420,
+      <div style={{background:"var(--c-surface)",borderRadius:20,padding:"48px 40px",width:"100%",maxWidth:420,
         boxShadow:"0 40px 80px rgba(0,0,0,0.3)"}}>
         <div style={{textAlign:"center",marginBottom:36}}>
           <div style={{width:52,height:52,background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,
             borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",
             fontSize:24,margin:"0 auto 16px"}}>⚖</div>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:700,color:C.navy,marginBottom:6}}>
+          <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:700,color:"var(--c-text)",marginBottom:6}}>
             TRC Connect Admin
           </h1>
-          <p style={{fontSize:14,color:C.muted}}>Sign in to access your dashboard</p>
-          <p style={{fontSize:12,color:C.muted,marginTop:8}}>Use {ADMIN_EMAIL} only</p>
+          <p style={{fontSize:14,color:"var(--c-text-muted)"}}>Sign in to access your dashboard</p>
+          <p style={{fontSize:12,color:"var(--c-text-muted)",marginTop:8}}>Use {ADMIN_EMAIL} only</p>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:16}}>
           <div>
-            <label style={{fontSize:12,fontWeight:700,color:C.muted,textTransform:"uppercase",
+            <label style={{fontSize:12,fontWeight:700,color:"var(--c-text-muted)",textTransform:"uppercase",
               letterSpacing:".08em",display:"block",marginBottom:8}}>Email</label>
             <input value={email} type="email" onChange={e=>setEmail(e.target.value)}
               placeholder={ADMIN_EMAIL}
               onKeyDown={e=>e.key==="Enter"&&handleLogin()}
               style={{width:"100%",padding:"13px 16px",borderRadius:11,fontFamily:"inherit",
-                border:`1.5px solid ${C.border}`,fontSize:14,color:C.navy,outline:"none"}}
+                border:`1.5px solid ${"var(--c-border)"}`,fontSize:14,color:"var(--c-text)",outline:"none"}}
               onFocus={e=>e.target.style.borderColor=C.gold}
-              onBlur={e=>e.target.style.borderColor=C.border}/>
+              onBlur={e=>e.target.style.borderColor="var(--c-border)"}/>
           </div>
           <div>
-            <label style={{fontSize:12,fontWeight:700,color:C.muted,textTransform:"uppercase",
+            <label style={{fontSize:12,fontWeight:700,color:"var(--c-text-muted)",textTransform:"uppercase",
               letterSpacing:".08em",display:"block",marginBottom:8}}>Password</label>
             <input value={password} type="password" onChange={e=>setPassword(e.target.value)}
               placeholder="••••••••"
               onKeyDown={e=>e.key==="Enter"&&handleLogin()}
               style={{width:"100%",padding:"13px 16px",borderRadius:11,fontFamily:"inherit",
-                border:`1.5px solid ${C.border}`,fontSize:14,color:C.navy,outline:"none"}}
+                border:`1.5px solid ${"var(--c-border)"}`,fontSize:14,color:"var(--c-text)",outline:"none"}}
               onFocus={e=>e.target.style.borderColor=C.gold}
-              onBlur={e=>e.target.style.borderColor=C.border}/>
+              onBlur={e=>e.target.style.borderColor="var(--c-border)"}/>
           </div>
           {error&&<div style={{background:C.errorBg,border:`1px solid ${C.errorBorder}`,
             borderRadius:10,padding:"11px 14px",fontSize:13,color:C.error}}>⚠ {error}</div>}
           <button onClick={handleLogin} disabled={loading}
             style={{background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,
-              color:C.white,border:"none",borderRadius:12,padding:"14px",
+              color:"#fff",border:"none",borderRadius:12,padding:"14px",
               fontSize:15,fontWeight:700,cursor:loading?"not-allowed":"pointer",
               boxShadow:"0 6px 20px rgba(201,168,76,.4)",marginTop:8}}>
             {loading?"Signing in…":"Sign In →"}
@@ -292,18 +292,18 @@ function InquiriesTab() {
     day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"
   });
 
-  if(loading) return <div style={{textAlign:"center",padding:60,color:C.muted}}>Loading inquiries…</div>;
+  if(loading) return <div style={{textAlign:"center",padding:60,color:"var(--c-text-muted)"}}>Loading inquiries…</div>;
 
   return (
     <div style={{display:"grid",gridTemplateColumns:selected?"1fr 380px":"1fr",gap:20}}>
-      <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,
+      <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,
         overflow:"hidden",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
-        <div style={{padding:"16px 22px",background:C.offWhite2,borderBottom:`1px solid ${C.border}`,
+        <div style={{padding:"16px 22px",background:"var(--c-surface-2)",borderBottom:`1px solid ${"var(--c-border)"}`,
           display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{fontSize:14,fontWeight:700,color:C.navy}}>All Inquiries ({inquiries.length})</span>
+          <span style={{fontSize:14,fontWeight:700,color:"var(--c-text)"}}>All Inquiries ({inquiries.length})</span>
           <button onClick={()=>dbGet("inquiries","order=created_at.desc").then(d=>setInquiries(d||[]))}
-            style={{background:"none",border:`1px solid ${C.border}`,borderRadius:8,
-              padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer",color:C.navy}}>
+            style={{background:"none",border:`1px solid ${"var(--c-border)"}`,borderRadius:8,
+              padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer",color:"var(--c-text)"}}>
             ↻ Refresh
           </button>
         </div>
@@ -317,57 +317,57 @@ function InquiriesTab() {
           </div>
         ):inquiries.map((inq,i)=>(
           <div key={inq.id} onClick={()=>setSelected(inq)}
-            style={{padding:"16px 22px",borderBottom:i<inquiries.length-1?`1px solid ${C.border}`:"none",
-              cursor:"pointer",background:selected?.id===inq.id?C.offWhite2:C.white,transition:"background .15s"}}
-            onMouseEnter={e=>{if(selected?.id!==inq.id)e.currentTarget.style.background=C.offWhite;}}
-            onMouseLeave={e=>{e.currentTarget.style.background=selected?.id===inq.id?C.offWhite2:C.white;}}>
+            style={{padding:"16px 22px",borderBottom:i<inquiries.length-1?`1px solid ${"var(--c-border)"}`:"none",
+              cursor:"pointer",background:selected?.id===inq.id?"var(--c-surface-2)":"var(--c-surface)",transition:"background .15s"}}
+            onMouseEnter={e=>{if(selected?.id!==inq.id)e.currentTarget.style.background="var(--c-bg)";}}
+            onMouseLeave={e=>{e.currentTarget.style.background=selected?.id===inq.id?"var(--c-surface-2)":"var(--c-surface)";}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12}}>
               <div style={{minWidth:0}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
-                  <p style={{fontSize:14,fontWeight:700,color:C.navy}}>{inq.full_name}</p>
+                  <p style={{fontSize:14,fontWeight:700,color:"var(--c-text)"}}>{inq.full_name}</p>
                   <StatusBadge status={inq.status}/>
                   {inq.status==="new"&&<span style={{width:8,height:8,borderRadius:"50%",background:C.error,display:"inline-block"}}/>}
                 </div>
-                <p style={{fontSize:12,color:C.muted}}>{inq.email} · {inq.country}</p>
-                <p style={{fontSize:12,color:C.muted,marginTop:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:400}}>{inq.message}</p>
+                <p style={{fontSize:12,color:"var(--c-text-muted)"}}>{inq.email} · {inq.country}</p>
+                <p style={{fontSize:12,color:"var(--c-text-muted)",marginTop:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:400}}>{inq.message}</p>
               </div>
-              <span style={{fontSize:11,color:C.muted,whiteSpace:"nowrap",flexShrink:0}}>{fmt(inq.created_at)}</span>
+              <span style={{fontSize:11,color:"var(--c-text-muted)",whiteSpace:"nowrap",flexShrink:0}}>{fmt(inq.created_at)}</span>
             </div>
           </div>
         ))}
       </div>
 
       {selected&&(
-        <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,
+        <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,
           padding:"24px",boxShadow:"0 2px 12px rgba(15,37,87,.05)",alignSelf:"start",
           position:"sticky",top:90}}>
           <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
-            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy}}>Inquiry Detail</h3>
-            <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:C.muted}}>×</button>
+            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:"var(--c-text)"}}>Inquiry Detail</h3>
+            <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"var(--c-text-muted)"}}>×</button>
           </div>
           {[["Name",selected.full_name],["Email",selected.email],["Phone",selected.phone||"—"],
             ["Country",selected.country||"—"],["Advisor",selected.advisor_name||"No preference"],
             ["Residency",selected.residency_status||"—"],["Received",fmt(selected.created_at)]
           ].map(([l,v])=>(
             <div key={l} style={{display:"flex",justifyContent:"space-between",gap:12,
-              padding:"9px 0",borderBottom:`1px solid ${C.border}`}}>
-              <span style={{fontSize:13,color:C.muted}}>{l}</span>
-              <span style={{fontSize:13,fontWeight:600,color:C.navy,textAlign:"right"}}>{v}</span>
+              padding:"9px 0",borderBottom:`1px solid ${"var(--c-border)"}`}}>
+              <span style={{fontSize:13,color:"var(--c-text-muted)"}}>{l}</span>
+              <span style={{fontSize:13,fontWeight:600,color:"var(--c-text)",textAlign:"right"}}>{v}</span>
             </div>
           ))}
           <div style={{marginTop:16,marginBottom:20}}>
-            <p style={{fontSize:12,color:C.muted,marginBottom:8,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Message</p>
-            <p style={{fontSize:13,color:C.navy,lineHeight:1.7,background:C.offWhite2,borderRadius:10,padding:"12px 14px"}}>{selected.message}</p>
+            <p style={{fontSize:12,color:"var(--c-text-muted)",marginBottom:8,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Message</p>
+            <p style={{fontSize:13,color:"var(--c-text)",lineHeight:1.7,background:"var(--c-surface-2)",borderRadius:10,padding:"12px 14px"}}>{selected.message}</p>
           </div>
           <div style={{marginBottom:20}}>
-            <p style={{fontSize:12,color:C.muted,marginBottom:10,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Update Status</p>
+            <p style={{fontSize:12,color:"var(--c-text-muted)",marginBottom:10,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Update Status</p>
             <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
               {["new","contacted","submitted","processing","approved","issued","closed"].map(s=>(
                 <button key={s} onClick={()=>updateStatus(selected.id,s)}
                   style={{padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:600,cursor:"pointer",
-                    background:selected.status===s?C.navy:C.offWhite2,
-                    color:selected.status===s?C.white:C.navy,
-                    border:`1px solid ${selected.status===s?C.navy:C.border}`}}>
+                    background:selected.status===s?C.navy:"var(--c-surface-2)",
+                    color:selected.status===s?"var(--c-surface)":"var(--c-text)",
+                    border:`1px solid ${selected.status===s?C.navy:"var(--c-border)"}`}}>
                   {s}
                 </button>
               ))}
@@ -375,7 +375,7 @@ function InquiriesTab() {
           </div>
           <a href={`mailto:${selected.email}?subject=Your TRC Connect Inquiry&body=Dear ${selected.full_name},%0D%0A%0D%0AThank you for your inquiry.`}
             style={{display:"block",background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,
-              color:C.white,textDecoration:"none",borderRadius:12,padding:"13px",
+              color:"#fff",textDecoration:"none",borderRadius:12,padding:"13px",
               fontSize:14,fontWeight:700,textAlign:"center",
               boxShadow:"0 4px 14px rgba(201,168,76,.35)"}}>
             📧 Reply by Email
@@ -432,8 +432,8 @@ function QueuesTab() {
     <div>
       <h2 style={{ marginTop: 0 }}>Operations Queues</h2>
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-        <input placeholder="Search by id, email or name" value={query} onChange={e=>setQuery(e.target.value)} style={{ padding: 10, borderRadius: 8, border: `1px solid ${C.border}`, flex: 1 }} />
-        <select value={stateFilter} onChange={e=>setStateFilter(e.target.value)} style={{ padding: 10, borderRadius: 8, border: `1px solid ${C.border}` }}>
+        <input placeholder="Search by id, email or name" value={query} onChange={e=>setQuery(e.target.value)} style={{ padding: 10, borderRadius: 8, border: `1px solid ${"var(--c-border)"}`, flex: 1 }} />
+        <select value={stateFilter} onChange={e=>setStateFilter(e.target.value)} style={{ padding: 10, borderRadius: 8, border: `1px solid ${"var(--c-border)"}` }}>
           <option value="">All states</option>
           {APPLICATION_STATES.map(s => <option key={s} value={s}>{s.replaceAll('_',' ')}</option>)}
         </select>
@@ -451,14 +451,14 @@ function QueuesTab() {
       ) : (
         <div style={{ display: 'grid', gap: 12 }}>
           {filtered.map((a) => (
-            <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderRadius: 8, border: `1px solid ${C.border}`, background: C.white }}>
+            <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderRadius: 8, border: `1px solid ${"var(--c-border)"}`, background: "var(--c-surface)" }}>
               <div>
                 <div style={{ fontWeight: 800 }}>{a.id} — {a.applicant_name || a.contact_email || a.user_id}</div>
-                <div style={{ fontSize: 13, color: C.muted }}>{a.workflow_state}</div>
+                <div style={{ fontSize: 13, color: "var(--c-text-muted)" }}>{a.workflow_state}</div>
                 <div style={{ fontSize: 12, color: C.gold, fontWeight: 700, marginTop: 4 }}>{(generateRequiredActions(a, []).slice(0, 1)[0]?.title) || "Operational task ready"}</div>
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: C.muted, fontStyle: 'italic' }}>🔒 Managed by advisor</span>
+                <span style={{ fontSize: 11, color: "var(--c-text-muted)", fontStyle: 'italic' }}>🔒 Managed by advisor</span>
               </div>
             </div>
           ))}
@@ -551,24 +551,24 @@ function EligibilityRequestsTab() {
     needs_more_info: { bg: C.warnBg, color: C.warn },
     payment_pending: { bg: "#F5F3FF", color: "#5B21B6" },
     payment_completed: { bg: C.successBg, color: C.success },
-  }[status] || { bg: C.offWhite2, color: C.muted });
+  }[status] || { bg: "var(--c-surface-2)", color: "var(--c-text-muted)" });
 
-  if (loading) return <div style={{textAlign:"center",padding:60,color:C.muted}}>Loading eligibility requests…</div>;
+  if (loading) return <div style={{textAlign:"center",padding:60,color:"var(--c-text-muted)"}}>Loading eligibility requests…</div>;
 
   return (
     <div style={{display:"grid",gridTemplateColumns:selected?"1fr 390px":"1fr",gap:20}}>
-      <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,overflow:"hidden",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
-        <div style={{padding:"16px 22px",background:C.offWhite2,borderBottom:`1px solid ${C.border}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{fontSize:14,fontWeight:700,color:C.navy}}>Eligibility Requests ({requests.length})</span>
-          <button onClick={loadRequests} style={{background:"none",border:`1px solid ${C.border}`,borderRadius:8,padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer",color:C.navy}}>↻ Refresh</button>
+      <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,overflow:"hidden",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
+        <div style={{padding:"16px 22px",background:"var(--c-surface-2)",borderBottom:`1px solid ${"var(--c-border)"}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <span style={{fontSize:14,fontWeight:700,color:"var(--c-text)"}}>Eligibility Requests ({requests.length})</span>
+          <button onClick={loadRequests} style={{background:"none",border:`1px solid ${"var(--c-border)"}`,borderRadius:8,padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer",color:"var(--c-text)"}}>↻ Refresh</button>
         </div>
 
         {requests.length===0 ? (
           <div style={{textAlign:"center",padding:40}}>
             <div style={{fontSize:34,marginBottom:8}}>📮</div>
-            <p style={{color:C.muted,fontSize:15,marginBottom:16}}>No eligibility requests found. Try refreshing or check that RLS policies are in place.</p>
+            <p style={{color:"var(--c-text-muted)",fontSize:15,marginBottom:16}}>No eligibility requests found. Try refreshing or check that RLS policies are in place.</p>
             <div style={{display:"flex",gap:8,justifyContent:"center"}}>
-              <button onClick={loadRequests} style={{padding:"8px 12px",borderRadius:8,border:`1px solid ${C.border}`,background:C.offWhite2,cursor:"pointer"}}>↻ Retry</button>
+              <button onClick={loadRequests} style={{padding:"8px 12px",borderRadius:8,border:`1px solid ${"var(--c-border)"}`,background:"var(--c-surface-2)",cursor:"pointer"}}>↻ Retry</button>
             </div>
           </div>
         ) : requests.map((req, i) => {
@@ -576,19 +576,19 @@ function EligibilityRequestsTab() {
           const profile = req.profiles || {};
           return (
             <div key={req.id} onClick={()=>setSelected(req)}
-              style={{padding:"16px 22px",borderBottom:i<requests.length-1?`1px solid ${C.border}`:"none",cursor:"pointer",background:selected?.id===req.id?C.offWhite2:C.white,transition:"background .15s"}}
-              onMouseEnter={e=>{if(selected?.id!==req.id)e.currentTarget.style.background=C.offWhite;}}
-              onMouseLeave={e=>{e.currentTarget.style.background=selected?.id===req.id?C.offWhite2:C.white;}}>
+              style={{padding:"16px 22px",borderBottom:i<requests.length-1?`1px solid ${"var(--c-border)"}`:"none",cursor:"pointer",background:selected?.id===req.id?"var(--c-surface-2)":"var(--c-surface)",transition:"background .15s"}}
+              onMouseEnter={e=>{if(selected?.id!==req.id)e.currentTarget.style.background="var(--c-bg)";}}
+              onMouseLeave={e=>{e.currentTarget.style.background=selected?.id===req.id?"var(--c-surface-2)":"var(--c-surface)";}}>
               <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-start"}}>
                 <div>
                   <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}>
-                    <p style={{fontSize:14,fontWeight:700,color:C.navy}}>{profile.full_name || "Retail Applicant"}</p>
+                    <p style={{fontSize:14,fontWeight:700,color:"var(--c-text)"}}>{profile.full_name || "Retail Applicant"}</p>
                     <span style={{background:s.bg,color:s.color,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20}}>{req.status}</span>
                   </div>
-                  <p style={{fontSize:12,color:C.muted}}>{profile.email || "No email"} · {profile.nationality || req.current_country || "—"}</p>
-                  <p style={{fontSize:12,color:C.muted,marginTop:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:420}}>{req.urgency || "standard"} · {req.uae_visa || "visa"} · {req.days_in_uae || "0"} days in UAE</p>
+                  <p style={{fontSize:12,color:"var(--c-text-muted)"}}>{profile.email || "No email"} · {profile.nationality || req.current_country || "—"}</p>
+                  <p style={{fontSize:12,color:"var(--c-text-muted)",marginTop:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:420}}>{req.urgency || "standard"} · {req.uae_visa || "visa"} · {req.days_in_uae || "0"} days in UAE</p>
                 </div>
-                <span style={{fontSize:11,color:C.muted,whiteSpace:"nowrap",flexShrink:0}}>{fmt(req.created_at)}</span>
+                <span style={{fontSize:11,color:"var(--c-text-muted)",whiteSpace:"nowrap",flexShrink:0}}>{fmt(req.created_at)}</span>
               </div>
             </div>
           );
@@ -596,10 +596,10 @@ function EligibilityRequestsTab() {
       </div>
 
       {selected && (
-        <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,padding:"24px",boxShadow:"0 2px 12px rgba(15,37,87,.05)",alignSelf:"start",position:"sticky",top:90}}>
+        <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,padding:"24px",boxShadow:"0 2px 12px rgba(15,37,87,.05)",alignSelf:"start",position:"sticky",top:90}}>
           <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
-            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy}}>Eligibility Review</h3>
-            <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:C.muted}}>×</button>
+            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:"var(--c-text)"}}>Eligibility Review</h3>
+            <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"var(--c-text-muted)"}}>×</button>
           </div>
 
           {[
@@ -618,22 +618,22 @@ function EligibilityRequestsTab() {
             ["Payment Status", selected.payment_status || "pending"],
             ["Assigned Advisor", (function(){ if (!selected?.advisor_id) return "—"; const match = (advisorsList||[]).find(ad => String(ad.user_id) === String(selected.advisor_id)); return match ? match.name : selected.advisor_id; })()],
           ].map(([label, value]) => (
-            <div key={label} style={{display:"flex",justifyContent:"space-between",gap:12,padding:"9px 0",borderBottom:`1px solid ${C.border}`}}>
-              <span style={{fontSize:13,color:C.muted}}>{label}</span>
-              <span style={{fontSize:13,fontWeight:600,color:C.navy,textAlign:"right"}}>{value}</span>
+            <div key={label} style={{display:"flex",justifyContent:"space-between",gap:12,padding:"9px 0",borderBottom:`1px solid ${"var(--c-border)"}`}}>
+              <span style={{fontSize:13,color:"var(--c-text-muted)"}}>{label}</span>
+              <span style={{fontSize:13,fontWeight:600,color:"var(--c-text)",textAlign:"right"}}>{value}</span>
             </div>
           ))}
 
           <div style={{marginTop:16,marginBottom:20}}>
-            <p style={{fontSize:12,color:C.muted,marginBottom:8,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Review Notes</p>
-            <p style={{fontSize:13,color:C.navy,lineHeight:1.7,background:C.offWhite2,borderRadius:10,padding:"12px 14px"}}>{selected.review_notes || "No notes yet"}</p>
+            <p style={{fontSize:12,color:"var(--c-text-muted)",marginBottom:8,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Review Notes</p>
+            <p style={{fontSize:13,color:"var(--c-text)",lineHeight:1.7,background:"var(--c-surface-2)",borderRadius:10,padding:"12px 14px"}}>{selected.review_notes || "No notes yet"}</p>
           </div>
 
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:4}}>
-            <span style={{fontSize:12,color:C.muted}}>Current status:</span>
+            <span style={{fontSize:12,color:"var(--c-text-muted)"}}>Current status:</span>
             {(() => { const s=badge(selected.status); return <span style={{background:s.bg,color:s.color,fontSize:11,fontWeight:700,padding:"3px 12px",borderRadius:20}}>{selected.status?.replace(/_/g," ")}</span>; })()}
           </div>
-          <div style={{marginTop:10,fontSize:12,color:C.muted,fontStyle:"italic"}}>
+          <div style={{marginTop:10,fontSize:12,color:"var(--c-text-muted)",fontStyle:"italic"}}>
             🔒 Read-only — eligibility review, payment, and advisor assignment are now handled by the advisor. This panel reflects live status only.
           </div>
         </div>
@@ -671,41 +671,41 @@ function CorporateEligibilityRequestsTab() {
     needs_consultation: { bg: C.warnBg, color: C.warn },
     payment_pending: { bg: "#F5F3FF", color: "#5B21B6" },
     payment_completed: { bg: C.successBg, color: C.success },
-  }[status] || { bg: C.offWhite2, color: C.muted });
+  }[status] || { bg: "var(--c-surface-2)", color: "var(--c-text-muted)" });
 
-  if (loading) return <div style={{textAlign:"center",padding:60,color:C.muted}}>Loading corporate eligibility requests…</div>;
+  if (loading) return <div style={{textAlign:"center",padding:60,color:"var(--c-text-muted)"}}>Loading corporate eligibility requests…</div>;
 
   return (
     <div style={{display:"grid",gridTemplateColumns:selected?"1fr 390px":"1fr",gap:20}}>
-      <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,overflow:"hidden",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
-        <div style={{padding:"16px 22px",background:C.offWhite2,borderBottom:`1px solid ${C.border}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{fontSize:14,fontWeight:700,color:C.navy}}>Corporate Eligibility Requests ({requests.length})</span>
-          <button onClick={loadRequests} style={{background:"none",border:`1px solid ${C.border}`,borderRadius:8,padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer",color:C.navy}}>↻ Refresh</button>
+      <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,overflow:"hidden",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
+        <div style={{padding:"16px 22px",background:"var(--c-surface-2)",borderBottom:`1px solid ${"var(--c-border)"}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <span style={{fontSize:14,fontWeight:700,color:"var(--c-text)"}}>Corporate Eligibility Requests ({requests.length})</span>
+          <button onClick={loadRequests} style={{background:"none",border:`1px solid ${"var(--c-border)"}`,borderRadius:8,padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer",color:"var(--c-text)"}}>↻ Refresh</button>
         </div>
 
         {requests.length===0 ? (
           <div style={{textAlign:"center",padding:60}}>
             <div style={{fontSize:40,marginBottom:12}}>🏢</div>
-            <p style={{color:C.muted,fontSize:15}}>No corporate requests yet</p>
+            <p style={{color:"var(--c-text-muted)",fontSize:15}}>No corporate requests yet</p>
           </div>
         ) : requests.map((req, i) => {
           const s = badge(req.status);
           const profile = req.corporate_profiles || {};
           return (
             <div key={req.id} onClick={()=>setSelected(req)}
-              style={{padding:"16px 22px",borderBottom:i<requests.length-1?`1px solid ${C.border}`:"none",cursor:"pointer",background:selected?.id===req.id?C.offWhite2:C.white,transition:"background .15s"}}
-              onMouseEnter={e=>{if(selected?.id!==req.id)e.currentTarget.style.background=C.offWhite;}}
-              onMouseLeave={e=>{e.currentTarget.style.background=selected?.id===req.id?C.offWhite2:C.white;}}>
+              style={{padding:"16px 22px",borderBottom:i<requests.length-1?`1px solid ${"var(--c-border)"}`:"none",cursor:"pointer",background:selected?.id===req.id?"var(--c-surface-2)":"var(--c-surface)",transition:"background .15s"}}
+              onMouseEnter={e=>{if(selected?.id!==req.id)e.currentTarget.style.background="var(--c-bg)";}}
+              onMouseLeave={e=>{e.currentTarget.style.background=selected?.id===req.id?"var(--c-surface-2)":"var(--c-surface)";}}>
               <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-start"}}>
                 <div>
                   <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}>
-                    <p style={{fontSize:14,fontWeight:700,color:C.navy}}>{profile.company_name || "Corporate Applicant"}</p>
+                    <p style={{fontSize:14,fontWeight:700,color:"var(--c-text)"}}>{profile.company_name || "Corporate Applicant"}</p>
                     <span style={{background:s.bg,color:s.color,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20}}>{req.status}</span>
                   </div>
-                  <p style={{fontSize:12,color:C.muted}}>{profile.business_email || "No email"} · {profile.registered_country || req.entity_type || "—"}</p>
-                  <p style={{fontSize:12,color:C.muted,marginTop:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:500}}>{req.urgency || "standard"} · {req.entity_type || "entity"} · {req.countries_of_operation || "No geography listed"}</p>
+                  <p style={{fontSize:12,color:"var(--c-text-muted)"}}>{profile.business_email || "No email"} · {profile.registered_country || req.entity_type || "—"}</p>
+                  <p style={{fontSize:12,color:"var(--c-text-muted)",marginTop:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:500}}>{req.urgency || "standard"} · {req.entity_type || "entity"} · {req.countries_of_operation || "No geography listed"}</p>
                 </div>
-                <span style={{fontSize:11,color:C.muted,whiteSpace:"nowrap",flexShrink:0}}>{fmt(req.created_at)}</span>
+                <span style={{fontSize:11,color:"var(--c-text-muted)",whiteSpace:"nowrap",flexShrink:0}}>{fmt(req.created_at)}</span>
               </div>
             </div>
           );
@@ -713,10 +713,10 @@ function CorporateEligibilityRequestsTab() {
       </div>
 
       {selected && (
-        <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,padding:"24px",boxShadow:"0 2px 12px rgba(15,37,87,.05)",alignSelf:"start",position:"sticky",top:90}}>
+        <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,padding:"24px",boxShadow:"0 2px 12px rgba(15,37,87,.05)",alignSelf:"start",position:"sticky",top:90}}>
           <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
-            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy}}>Corporate Review</h3>
-            <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:C.muted}}>×</button>
+            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:"var(--c-text)"}}>Corporate Review</h3>
+            <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"var(--c-text-muted)"}}>×</button>
           </div>
 
           {[
@@ -737,25 +737,25 @@ function CorporateEligibilityRequestsTab() {
             ["Payment Status", selected.payment_status || "pending"],
             ["Assigned Specialist", selected.assigned_specialist || "—"],
           ].map(([label, value]) => (
-            <div key={label} style={{display:"flex",justifyContent:"space-between",gap:12,padding:"9px 0",borderBottom:`1px solid ${C.border}`}}>
-              <span style={{fontSize:13,color:C.muted}}>{label}</span>
-              <span style={{fontSize:13,fontWeight:600,color:C.navy,textAlign:"right"}}>{value}</span>
+            <div key={label} style={{display:"flex",justifyContent:"space-between",gap:12,padding:"9px 0",borderBottom:`1px solid ${"var(--c-border)"}`}}>
+              <span style={{fontSize:13,color:"var(--c-text-muted)"}}>{label}</span>
+              <span style={{fontSize:13,fontWeight:600,color:"var(--c-text)",textAlign:"right"}}>{value}</span>
             </div>
           ))}
 
           <div style={{marginTop:16,marginBottom:20}}>
-            <p style={{fontSize:12,color:C.muted,marginBottom:8,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Review Notes</p>
-            <p style={{fontSize:13,color:C.navy,lineHeight:1.7,background:C.offWhite2,borderRadius:10,padding:"12px 14px"}}>{selected.review_notes || "No notes yet"}</p>
+            <p style={{fontSize:12,color:"var(--c-text-muted)",marginBottom:8,textTransform:"uppercase",letterSpacing:".07em",fontWeight:700}}>Review Notes</p>
+            <p style={{fontSize:13,color:"var(--c-text)",lineHeight:1.7,background:"var(--c-surface-2)",borderRadius:10,padding:"12px 14px"}}>{selected.review_notes || "No notes yet"}</p>
           </div>
 
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-            <span style={{fontSize:12,color:C.muted}}>Current status:</span>
+            <span style={{fontSize:12,color:"var(--c-text-muted)"}}>Current status:</span>
             {(() => {
               const current = badge(selected.status);
               return <span style={{background:current.bg,color:current.color,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20}}>{selected.status}</span>;
             })()}
           </div>
-          <div style={{marginTop:10,fontSize:12,color:C.muted,fontStyle:"italic"}}>
+          <div style={{marginTop:10,fontSize:12,color:"var(--c-text-muted)",fontStyle:"italic"}}>
             🔒 Read-only — review, payment, and specialist assignment are now handled by the advisor. This panel reflects live status only.
           </div>
         </div>
@@ -801,14 +801,14 @@ function ApplicationsTab() {
 
   const fmt = (d) => d ? new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
 
-  if (loading) return <div style={{ textAlign: "center", padding: 60, color: C.muted }}>Loading applications…</div>;
+  if (loading) return <div style={{ textAlign: "center", padding: 60, color: "var(--c-text-muted)" }}>Loading applications…</div>;
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap: 20 }}>
-      <div style={{ background: C.white, borderRadius: 18, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
-        <div style={{ padding: "16px 22px", background: C.offWhite2, borderBottom: `1px solid ${C.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 14, fontWeight: 800, color: C.navy }}>Applications ({applications.length})</span>
-          <button onClick={loadApplications} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer", color: C.navy }}>↻ Refresh</button>
+      <div style={{ background: "var(--c-surface)", borderRadius: 18, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+        <div style={{ padding: "16px 22px", background: "var(--c-surface-2)", borderBottom: `1px solid ${"var(--c-border)"}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: 14, fontWeight: 800, color: "var(--c-text)" }}>Applications ({applications.length})</span>
+          <button onClick={loadApplications} style={{ background: "none", border: `1px solid ${"var(--c-border)"}`, borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer", color: "var(--c-text)" }}>↻ Refresh</button>
         </div>
         {applications.length === 0 ? (
           <div style={{ padding: 20 }}>
@@ -821,17 +821,17 @@ function ApplicationsTab() {
         ) : applications.map((application, index) => {
           const profile = application.profiles || {};
           return (
-            <div key={application.id} onClick={() => setSelected(application)} style={{ padding: "16px 22px", borderBottom: index < applications.length - 1 ? `1px solid ${C.border}` : "none", cursor: "pointer", background: selected?.id === application.id ? C.offWhite2 : C.white }}>
+            <div key={application.id} onClick={() => setSelected(application)} style={{ padding: "16px 22px", borderBottom: index < applications.length - 1 ? `1px solid ${"var(--c-border)"}` : "none", cursor: "pointer", background: selected?.id === application.id ? "var(--c-surface-2)" : "var(--c-surface)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 5 }}>
-                    <p style={{ fontSize: 14, fontWeight: 800, color: C.navy }}>{profile.full_name || application.user_id}</p>
+                    <p style={{ fontSize: 14, fontWeight: 800, color: "var(--c-text)" }}>{profile.full_name || application.user_id}</p>
                     <ApplicationBadge status={application.workflow_state} />
                   </div>
-                  <p style={{ fontSize: 12, color: C.muted }}>{profile.email || "No email"} · {application.applicant_type} · {application.country || "AE"}</p>
-                  <p style={{ fontSize: 12, color: C.muted, marginTop: 3 }}>{application.application_type || "trc_eligibility"} · Manager: {application.assigned_manager || "unassigned"}</p>
+                  <p style={{ fontSize: 12, color: "var(--c-text-muted)" }}>{profile.email || "No email"} · {application.applicant_type} · {application.country || "AE"}</p>
+                  <p style={{ fontSize: 12, color: "var(--c-text-muted)", marginTop: 3 }}>{application.application_type || "trc_eligibility"} · Manager: {application.assigned_manager || "unassigned"}</p>
                 </div>
-                <span style={{ fontSize: 11, color: C.muted, whiteSpace: "nowrap" }}>{fmt(application.created_at)}</span>
+                <span style={{ fontSize: 11, color: "var(--c-text-muted)", whiteSpace: "nowrap" }}>{fmt(application.created_at)}</span>
               </div>
             </div>
           );
@@ -839,10 +839,10 @@ function ApplicationsTab() {
       </div>
 
       {selected && (
-        <div style={{ background: C.white, borderRadius: 18, border: `1px solid ${C.border}`, padding: 24, boxShadow: "0 2px 12px rgba(15,37,87,.05)", alignSelf: "start", position: "sticky", top: 90 }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: 18, border: `1px solid ${"var(--c-border)"}`, padding: 24, boxShadow: "0 2px 12px rgba(15,37,87,.05)", alignSelf: "start", position: "sticky", top: 90 }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
-            <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 800, color: C.navy }}>Operations File</h3>
-            <button onClick={() => setSelected(null)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: C.muted }}>×</button>
+            <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 800, color: "var(--c-text)" }}>Operations File</h3>
+            <button onClick={() => setSelected(null)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "var(--c-text-muted)" }}>×</button>
           </div>
 
           {[
@@ -853,9 +853,9 @@ function ApplicationsTab() {
             ["Started", fmt(selected.started_at)],
             ["Completed", fmt(selected.completed_at)],
           ].map(([label, value]) => (
-            <div key={label} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "9px 0", borderBottom: `1px solid ${C.border}` }}>
-              <span style={{ fontSize: 13, color: C.muted }}>{label}</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: C.navy, textAlign: "right" }}>{value}</span>
+            <div key={label} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "9px 0", borderBottom: `1px solid ${"var(--c-border)"}` }}>
+              <span style={{ fontSize: 13, color: "var(--c-text-muted)" }}>{label}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--c-text)", textAlign: "right" }}>{value}</span>
             </div>
           ))}
 
@@ -864,19 +864,19 @@ function ApplicationsTab() {
           </div>
 
           <div style={{ marginTop: 16 }}>
-            <p style={{ fontSize: 12, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Current Workflow State</p>
+            <p style={{ fontSize: 12, color: "var(--c-text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Current Workflow State</p>
             <ApplicationBadge status={selected.workflow_state} />
-            <div style={{ marginTop: 10, fontSize: 12, color: C.muted, fontStyle: "italic" }}>
+            <div style={{ marginTop: 10, fontSize: 12, color: "var(--c-text-muted)", fontStyle: "italic" }}>
               🔒 Read-only — manager assignment and workflow progression are now handled by the advisor. This panel reflects live status and logs only.
             </div>
           </div>
 
           <div style={{ marginTop: 20 }}>
-            <p style={{ fontSize: 12, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Documents ({documents.length})</p>
+            <p style={{ fontSize: 12, color: "var(--c-text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Documents ({documents.length})</p>
               <div style={{ display: "grid", gap: 7 }}>
-                {documents.length === 0 ? <span style={{ fontSize: 13, color: C.muted }}>No documents uploaded for this application.</span> : documents.slice(0, 4).map((document) => (
-                <div key={document.id} style={{ display: "flex", justifyContent: "space-between", gap: 10, background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10 }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: C.navy }}>{document.document_type}</span>
+                {documents.length === 0 ? <span style={{ fontSize: 13, color: "var(--c-text-muted)" }}>No documents uploaded for this application.</span> : documents.slice(0, 4).map((document) => (
+                <div key={document.id} style={{ display: "flex", justifyContent: "space-between", gap: 10, background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: 10, padding: 10 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "var(--c-text)" }}>{document.document_type}</span>
                   <span style={{ fontSize: 11, color: C.gold, fontWeight: 800 }}>{document.review_status}</span>
                 </div>
               ))}
@@ -884,12 +884,12 @@ function ApplicationsTab() {
           </div>
 
           <div style={{ marginTop: 20 }}>
-            <p style={{ fontSize: 12, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Audit History ({history.length})</p>
+            <p style={{ fontSize: 12, color: "var(--c-text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".07em", fontWeight: 800 }}>Audit History ({history.length})</p>
             <div style={{ display: "grid", gap: 7, maxHeight: 180, overflow: "auto" }}>
-              {history.length === 0 ? <span style={{ fontSize: 13, color: C.muted }}>No status changes recorded for this application.</span> : history.map((entry) => (
-                <div key={entry.id} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10 }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: C.navy }}>{entry.previous_state || "created"} → {entry.new_state}</div>
-                  <div style={{ fontSize: 11, color: C.muted, marginTop: 3 }}>{fmt(entry.created_at)} · {entry.updated_by || "system"}</div>
+              {history.length === 0 ? <span style={{ fontSize: 13, color: "var(--c-text-muted)" }}>No status changes recorded for this application.</span> : history.map((entry) => (
+                <div key={entry.id} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: 10, padding: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: "var(--c-text)" }}>{entry.previous_state || "created"} → {entry.new_state}</div>
+                  <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 3 }}>{fmt(entry.created_at)} · {entry.updated_by || "system"}</div>
                 </div>
               ))}
             </div>
@@ -942,23 +942,23 @@ function AddAdvisorModal({ onClose, onCreated }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(9,26,61,.55)", display: "grid", placeItems: "center", padding: 24 }} onClick={onClose}>
-      <div onClick={e => e.stopPropagation()} style={{ width: "min(100%, 440px)", background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, boxShadow: "0 30px 70px rgba(0,0,0,.25)", padding: 24 }}>
-        <h3 style={{ margin: "0 0 4px", fontFamily: "'Cormorant Garamond',serif", fontSize: 22, color: C.navy }}>Add Advisor</h3>
-        <p style={{ margin: "0 0 18px", fontSize: 13, color: C.muted }}>Creates the account and emails them a temporary password.</p>
+      <div onClick={e => e.stopPropagation()} style={{ width: "min(100%, 440px)", background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, boxShadow: "0 30px 70px rgba(0,0,0,.25)", padding: 24 }}>
+        <h3 style={{ margin: "0 0 4px", fontFamily: "'Cormorant Garamond',serif", fontSize: 22, color: "var(--c-text)" }}>Add Advisor</h3>
+        <p style={{ margin: "0 0 18px", fontSize: 13, color: "var(--c-text-muted)" }}>Creates the account and emails them a temporary password.</p>
 
-        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>Full name</label>
+        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>Full name</label>
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Advisor's full name"
-          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: C.navy, marginBottom: 14, boxSizing: "border-box" }} />
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: "var(--c-text)", marginBottom: 14, boxSizing: "border-box" }} />
 
-        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>Email</label>
+        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>Email</label>
         <input value={email} onChange={e => setEmail(e.target.value)} placeholder="advisor@example.com" type="email"
-          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: C.navy, marginBottom: 14, boxSizing: "border-box" }} />
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: "var(--c-text)", marginBottom: 14, boxSizing: "border-box" }} />
 
         {error && <div style={{ background: C.errorBg, border: `1px solid ${C.errorBorder}`, color: C.error, borderRadius: 10, padding: "10px 12px", fontSize: 13, marginBottom: 14 }}>{error}</div>}
 
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={onClose} disabled={submitting} style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, background: C.white, color: C.navy, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Cancel</button>
-          <button onClick={submit} disabled={submitting} style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "none", background: submitting ? C.offWhite2 : C.navy, color: submitting ? C.muted : "#fff", fontWeight: 700, fontSize: 13, cursor: submitting ? "not-allowed" : "pointer" }}>
+          <button onClick={onClose} disabled={submitting} style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, background: "var(--c-surface)", color: "var(--c-text)", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+          <button onClick={submit} disabled={submitting} style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "none", background: submitting ? "var(--c-surface-2)" : C.navy, color: submitting ? "var(--c-text-muted)" : "#fff", fontWeight: 700, fontSize: 13, cursor: submitting ? "not-allowed" : "pointer" }}>
             {submitting ? "Creating…" : "Create Advisor"}
           </button>
         </div>
@@ -1001,8 +1001,8 @@ function AccountsTab() {
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>
-          <h2 style={{ margin: 0, fontFamily: "'Cormorant Garamond',serif", fontSize: 26, color: C.navy }}>All Accounts</h2>
-          <p style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>Every registered user with their role. Advisors show extra info.</p>
+          <h2 style={{ margin: 0, fontFamily: "'Cormorant Garamond',serif", fontSize: 26, color: "var(--c-text)" }}>All Accounts</h2>
+          <p style={{ color: "var(--c-text-muted)", fontSize: 13, marginTop: 4 }}>Every registered user with their role. Advisors show extra info.</p>
         </div>
         <button onClick={() => setShowAddAdvisor(true)}
           style={{ padding: "10px 18px", borderRadius: 10, border: "none", background: `linear-gradient(135deg,${C.gold},${C.goldDark})`, color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "0 4px 14px rgba(201,168,76,.35)" }}>
@@ -1015,11 +1015,11 @@ function AccountsTab() {
       <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
         <input value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search by name or email…"
-          style={{ flex: 1, minWidth: 200, padding: "9px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: C.navy }} />
+          style={{ flex: 1, minWidth: 200, padding: "9px 14px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: "inherit", fontSize: 14, outline: "none", color: "var(--c-text)" }} />
         {["all","admin","advisor","retail","client"].map(r => (
           <button key={r} onClick={() => setRoleFilter(r)}
             style={{ padding: "9px 16px", borderRadius: 999, border: "none", fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: "pointer",
-              background: roleFilter === r ? C.navy : C.white, color: roleFilter === r ? "#fff" : C.muted,
+              background: roleFilter === r ? C.navy : "var(--c-surface)", color: roleFilter === r ? "#fff" : "var(--c-text-muted)",
               boxShadow: "0 1px 4px rgba(15,37,87,.08)" }}>
             {r === "all" ? "All" : (ROLE_META[r]?.icon + " " + ROLE_META[r]?.label)}
           </button>
@@ -1027,13 +1027,13 @@ function AccountsTab() {
       </div>
 
       {loading ? (
-        <div style={{ padding: 40, textAlign: "center", color: C.muted }}>Loading accounts…</div>
+        <div style={{ padding: 40, textAlign: "center", color: "var(--c-text-muted)" }}>Loading accounts…</div>
       ) : (
-        <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
           {/* Header */}
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1.4fr 1fr 1fr 120px", gap: 0, padding: "10px 20px", borderBottom: `1px solid ${C.border}`, background: C.offWhite }}>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1.4fr 1fr 1fr 120px", gap: 0, padding: "10px 20px", borderBottom: `1px solid ${"var(--c-border)"}`, background: "var(--c-bg)" }}>
             {["Account / Email", "Name", "Role", "Joined", "Advisor Info"].map(h => (
-              <div key={h} style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>{h}</div>
+              <div key={h} style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>{h}</div>
             ))}
           </div>
 
@@ -1048,15 +1048,15 @@ function AccountsTab() {
           ) : filtered.map(p => {
             const adv = advisorMap[p.id];
             return (
-              <div key={p.id} style={{ display: "grid", gridTemplateColumns: "2fr 1.4fr 1fr 1fr 120px", gap: 0, padding: "14px 20px", borderBottom: `1px solid ${C.border}`, alignItems: "center" }}>
+              <div key={p.id} style={{ display: "grid", gridTemplateColumns: "2fr 1.4fr 1fr 1fr 120px", gap: 0, padding: "14px 20px", borderBottom: `1px solid ${"var(--c-border)"}`, alignItems: "center" }}>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: C.navy }}>{p.email}</div>
-                  <div style={{ fontSize: 10, color: C.muted, marginTop: 2, fontFamily: "monospace" }}>{p.id.slice(0, 8)}…</div>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "var(--c-text)" }}>{p.email}</div>
+                  <div style={{ fontSize: 10, color: "var(--c-text-muted)", marginTop: 2, fontFamily: "monospace" }}>{p.id.slice(0, 8)}…</div>
                 </div>
-                <div style={{ fontSize: 13, color: C.navy, fontWeight: 600 }}>{p.full_name || "—"}</div>
+                <div style={{ fontSize: 13, color: "var(--c-text)", fontWeight: 600 }}>{p.full_name || "—"}</div>
                 <div><RoleBadge role={p.role} /></div>
-                <div style={{ fontSize: 12, color: C.muted }}>{p.created_at ? new Date(p.created_at).toLocaleDateString() : "—"}</div>
-                <div style={{ fontSize: 11, color: C.muted }}>
+                <div style={{ fontSize: 12, color: "var(--c-text-muted)" }}>{p.created_at ? new Date(p.created_at).toLocaleDateString() : "—"}</div>
+                <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>
                   {adv ? (
                     <div>
                       <div style={{ color: C.gold, fontWeight: 700 }}>★ {adv.rating || "—"} ({adv.reviews || 0})</div>
@@ -1167,14 +1167,14 @@ function AdminAdvisorChatTab() {
   const selectedAdvisor = advisors.find(a => a.user_id === selected);
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"220px 1fr", height:"calc(100vh - 140px)", background:C.white, borderRadius:18, border:`1px solid ${C.border}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(15,37,87,.05)" }}>
+    <div style={{ display:"grid", gridTemplateColumns:"220px 1fr", height:"calc(100vh - 140px)", background:"var(--c-surface)", borderRadius:18, border:`1px solid ${"var(--c-border)"}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(15,37,87,.05)" }}>
       {/* Advisor list */}
-      <div style={{ borderRight:`1px solid ${C.border}`, display:"flex", flexDirection:"column", overflowY:"auto", background:C.offWhite2 }}>
-        <div style={{ padding:"14px 16px 10px", borderBottom:`1px solid ${C.border}`, fontSize:12, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:".08em" }}>
+      <div style={{ borderRight:`1px solid ${"var(--c-border)"}`, display:"flex", flexDirection:"column", overflowY:"auto", background:"var(--c-surface-2)" }}>
+        <div style={{ padding:"14px 16px 10px", borderBottom:`1px solid ${"var(--c-border)"}`, fontSize:12, fontWeight:700, color:"var(--c-text-muted)", textTransform:"uppercase", letterSpacing:".08em" }}>
           Advisors
         </div>
         {loadingAdv ? (
-          <div style={{ padding:20, fontSize:13, color:C.muted }}>Loading…</div>
+          <div style={{ padding:20, fontSize:13, color:"var(--c-text-muted)" }}>Loading…</div>
         ) : advisors.length === 0 ? (
           <div style={{ padding: 20 }}>
             <EmptyState
@@ -1189,10 +1189,10 @@ function AdminAdvisorChatTab() {
           return (
             <div key={adv.user_id} onClick={() => setSelected(adv.user_id)}
               style={{ padding:"12px 16px", cursor:"pointer", background: isSel ? "#EDE9FE" : "transparent", borderLeft: isSel ? "3px solid #5B21B6" : "3px solid transparent", transition:"background .15s" }}
-              onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = C.offWhite; }}
+              onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = "var(--c-bg)"; }}
               onMouseLeave={e => { if (!isSel) e.currentTarget.style.background = "transparent"; }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:6 }}>
-                <div style={{ fontWeight:700, fontSize:13, color:C.navy, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{adv.name || adv.user_id.slice(0,8)}</div>
+                <div style={{ fontWeight:700, fontSize:13, color:"var(--c-text)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{adv.name || adv.user_id.slice(0,8)}</div>
                 {unread > 0 && <span style={{ background:"#EF4444", color:"#fff", fontSize:10, fontWeight:800, minWidth:18, height:18, borderRadius:999, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 4px", flexShrink:0 }}>{unread}</span>}
               </div>
             </div>
@@ -1202,36 +1202,36 @@ function AdminAdvisorChatTab() {
 
       {/* Chat area */}
       {!selected ? (
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", color:C.muted, fontSize:14 }}>Select an advisor to chat.</div>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", color:"var(--c-text-muted)", fontSize:14 }}>Select an advisor to chat.</div>
       ) : (
         <div style={{ display:"flex", flexDirection:"column" }}>
           {/* Header */}
-          <div style={{ padding:"13px 20px", borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"center", gap:10, background:C.white }}>
+          <div style={{ padding:"13px 20px", borderBottom:`1px solid ${"var(--c-border)"}`, display:"flex", alignItems:"center", gap:10, background:"var(--c-surface)" }}>
             <div style={{ width:34, height:34, borderRadius:"50%", background:`linear-gradient(135deg,#5B21B6,#7C3AED)`, color:"#fff", fontSize:14, fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center" }}>
               {(selectedAdvisor?.name||"A").charAt(0).toUpperCase()}
             </div>
             <div>
-              <div style={{ fontWeight:700, fontSize:13, color:C.navy }}>{selectedAdvisor?.name || "Advisor"}</div>
+              <div style={{ fontWeight:700, fontSize:13, color:"var(--c-text)" }}>{selectedAdvisor?.name || "Advisor"}</div>
             </div>
           </div>
 
           {/* Messages */}
-          <div style={{ flex:1, overflowY:"auto", padding:"16px 20px", background:C.offWhite }}>
+          <div style={{ flex:1, overflowY:"auto", padding:"16px 20px", background:"var(--c-bg)" }}>
             {loadingMsg ? (
-              <div style={{ textAlign:"center", color:C.muted, fontSize:13, paddingTop:40 }}>Loading…</div>
+              <div style={{ textAlign:"center", color:"var(--c-text-muted)", fontSize:13, paddingTop:40 }}>Loading…</div>
             ) : messages.length === 0 ? (
-              <div style={{ textAlign:"center", color:C.muted, fontSize:13, paddingTop:40 }}>No messages yet. Start the conversation.</div>
+              <div style={{ textAlign:"center", color:"var(--c-text-muted)", fontSize:13, paddingTop:40 }}>No messages yet. Start the conversation.</div>
             ) : messages.map(m => {
               const isOwn = m.sender_role === "admin";
               return (
                 <div key={m.id} style={{ display:"flex", justifyContent:isOwn?"flex-end":"flex-start", marginBottom:10 }}>
                   <div style={{ maxWidth:"72%", padding:"10px 14px",
                     borderRadius: isOwn?"16px 16px 4px 16px":"16px 16px 16px 4px",
-                    background: isOwn?`linear-gradient(135deg,${C.navy},${C.navyLight})`:C.white,
-                    color: isOwn?"#fff":C.navy, fontSize:13, lineHeight:1.55,
-                    boxShadow:"0 1px 6px rgba(0,0,0,.08)", border:isOwn?"none":`1px solid ${C.border}` }}>
+                    background: isOwn?`linear-gradient(135deg,${C.navy},${C.navyLight})`:"var(--c-surface)",
+                    color: isOwn?"#fff":"var(--c-text)", fontSize:13, lineHeight:1.55,
+                    boxShadow:"0 1px 6px rgba(0,0,0,.08)", border:isOwn?"none":`1px solid ${"var(--c-border)"}` }}>
                     {m.message}
-                    <div style={{ fontSize:10, color:isOwn?"rgba(255,255,255,.6)":C.muted, marginTop:4, textAlign:"right" }}>
+                    <div style={{ fontSize:10, color:isOwn?"rgba(255,255,255,.6)":"var(--c-text-muted)", marginTop:4, textAlign:"right" }}>
                       {isOwn?"Admin":selectedAdvisor?.name} · {new Date(m.created_at).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}
                     </div>
                   </div>
@@ -1242,12 +1242,12 @@ function AdminAdvisorChatTab() {
           </div>
 
           {/* Input */}
-          <div style={{ padding:"10px 16px", borderTop:`1px solid ${C.border}`, display:"flex", gap:8, alignItems:"flex-end" }}>
+          <div style={{ padding:"10px 16px", borderTop:`1px solid ${"var(--c-border)"}`, display:"flex", gap:8, alignItems:"flex-end" }}>
             <textarea value={text} onChange={e => setText(e.target.value)}
               onKeyDown={e => { if (e.key==="Enter"&&!e.shiftKey){e.preventDefault();handleSend();} }}
               placeholder="Message advisor… (Enter to send)"
               rows={2}
-              style={{ flex:1, padding:"10px 13px", borderRadius:10, border:`1.5px solid ${C.border}`, fontSize:13, resize:"none", outline:"none", color:C.navy, fontFamily:"inherit" }} />
+              style={{ flex:1, padding:"10px 13px", borderRadius:10, border:`1.5px solid ${"var(--c-border)"}`, fontSize:13, resize:"none", outline:"none", color:"var(--c-text)", fontFamily:"inherit" }} />
             <button onClick={handleSend} disabled={sending||!text.trim()}
               style={{ padding:"10px 16px", borderRadius:10, background:`linear-gradient(135deg,${C.navy},${C.navyLight})`, color:"#fff", border:"none", fontWeight:700, fontSize:13, cursor:sending||!text.trim()?"not-allowed":"pointer", opacity:sending||!text.trim()?0.5:1, flexShrink:0 }}>
               {sending?"…":"Send"}
@@ -1331,43 +1331,43 @@ function AdminAdvisorUpdatesTab() {
   };
   const pill = (val, map) => { const [bg, color] = map[val] || ["#F3F4F6","#6B7280"]; return <span style={{ background:bg, color, fontSize:10, fontWeight:700, padding:"3px 10px", borderRadius:999, textTransform:"uppercase", letterSpacing:".04em" }}>{val||"—"}</span>; };
 
-  if (loading) return <div style={{ textAlign:"center", padding:60, color:C.muted }}>Loading support tickets…</div>;
+  if (loading) return <div style={{ textAlign:"center", padding:60, color:"var(--c-text-muted)" }}>Loading support tickets…</div>;
 
   return (
     <div style={{ display:"grid", gridTemplateColumns: selected ? "1fr 420px" : "1fr", gap:20 }}>
       {/* Ticket list */}
-      <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(15,37,87,.05)" }}>
-        <div style={{ padding:"16px 22px", background:C.offWhite2, borderBottom:`1px solid ${C.border}`, display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
-          <span style={{ fontSize:14, fontWeight:700, color:C.navy }}>Support Tickets ({tickets.length})</span>
+      <div style={{ background:"var(--c-surface)", borderRadius:18, border:`1px solid ${"var(--c-border)"}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(15,37,87,.05)" }}>
+        <div style={{ padding:"16px 22px", background:"var(--c-surface-2)", borderBottom:`1px solid ${"var(--c-border)"}`, display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
+          <span style={{ fontSize:14, fontWeight:700, color:"var(--c-text)" }}>Support Tickets ({tickets.length})</span>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             {/* Role filter toggle */}
-            <div style={{ display:"flex", borderRadius:8, border:`1px solid ${C.border}`, overflow:"hidden" }}>
+            <div style={{ display:"flex", borderRadius:8, border:`1px solid ${"var(--c-border)"}`, overflow:"hidden" }}>
               {[["all","All"],["advisor","Advisors"],["retail","Retail"]].map(([val,label]) => (
                 <button key={val} onClick={() => setRoleFilter(val)}
-                  style={{ background: roleFilter===val ? C.navy : C.white, color: roleFilter===val ? "#fff" : C.navy, border:"none", padding:"5px 12px", fontSize:12, fontWeight:700, cursor:"pointer", borderRight: val!=="retail" ? `1px solid ${C.border}` : "none" }}>
+                  style={{ background: roleFilter===val ? C.navy : "var(--c-surface)", color: roleFilter===val ? "#fff" : "var(--c-text)", border:"none", padding:"5px 12px", fontSize:12, fontWeight:700, cursor:"pointer", borderRight: val!=="retail" ? `1px solid ${"var(--c-border)"}` : "none" }}>
                   {label}
                 </button>
               ))}
             </div>
-            <button onClick={load} style={{ background:"none", border:`1px solid ${C.border}`, borderRadius:8, padding:"6px 12px", fontSize:12, fontWeight:600, cursor:"pointer", color:C.navy }}>↻ Refresh</button>
+            <button onClick={load} style={{ background:"none", border:`1px solid ${"var(--c-border)"}`, borderRadius:8, padding:"6px 12px", fontSize:12, fontWeight:600, cursor:"pointer", color:"var(--c-text)" }}>↻ Refresh</button>
           </div>
         </div>
         {tickets.length === 0 ? (
           <div style={{ textAlign:"center", padding:60 }}>
             <div style={{ fontSize:36, marginBottom:12 }}>📭</div>
-            <p style={{ color:C.muted, fontSize:14 }}>No {roleFilter !== "all" ? roleFilter+" " : ""}support tickets yet.</p>
+            <p style={{ color:"var(--c-text-muted)", fontSize:14 }}>No {roleFilter !== "all" ? roleFilter+" " : ""}support tickets yet.</p>
           </div>
         ) : tickets.map((t, i) => (
           <div key={t.id} onClick={() => setSelected(selected?.id===t.id ? null : t)}
-            style={{ padding:"14px 22px", borderBottom: i<tickets.length-1?`1px solid ${C.border}`:"none", cursor:"pointer", background:selected?.id===t.id?C.offWhite2:C.white, transition:"background .15s" }}
-            onMouseEnter={e => { if (selected?.id!==t.id) e.currentTarget.style.background = C.offWhite; }}
-            onMouseLeave={e => { e.currentTarget.style.background = selected?.id===t.id ? C.offWhite2 : C.white; }}>
+            style={{ padding:"14px 22px", borderBottom: i<tickets.length-1?`1px solid ${"var(--c-border)"}`:"none", cursor:"pointer", background:selected?.id===t.id?"var(--c-surface-2)":"var(--c-surface)", transition:"background .15s" }}
+            onMouseEnter={e => { if (selected?.id!==t.id) e.currentTarget.style.background = "var(--c-bg)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = selected?.id===t.id ? "var(--c-surface-2)" : "var(--c-surface)"; }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:6 }}>
               <div style={{ minWidth:0 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
-                  <span style={{ fontSize:13, fontWeight:700, color:C.navy, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{t.subject}</span>
+                  <span style={{ fontSize:13, fontWeight:700, color:"var(--c-text)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{t.subject}</span>
                 </div>
-                <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:12, color:C.muted }}>
+                <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:12, color:"var(--c-text-muted)" }}>
                   {t.profiles?.full_name || t.profiles?.email || "Unknown user"}
                   {t.profiles?.role === "retail" && <span style={{ background:"#EFF6FF", color:"#1D6FB8", fontSize:10, fontWeight:700, padding:"2px 7px", borderRadius:20, textTransform:"uppercase" }}>Retail</span>}
                   {(t.profiles?.role === "advisor" || !t.profiles?.role) && <span style={{ background:"#F0FDF4", color:"#15803D", fontSize:10, fontWeight:700, padding:"2px 7px", borderRadius:20, textTransform:"uppercase" }}>Advisor</span>}
@@ -1380,7 +1380,7 @@ function AdminAdvisorUpdatesTab() {
             </div>
             <div style={{ display:"flex", alignItems:"center", gap:8 }}>
               {t.admin_reply && <span style={{ fontSize:11, color:"#5B21B6", fontWeight:700 }}>✓ Replied</span>}
-              <span style={{ fontSize:11, color:C.muted }}>{new Date(t.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</span>
+              <span style={{ fontSize:11, color:"var(--c-text-muted)" }}>{new Date(t.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</span>
             </div>
           </div>
         ))}
@@ -1388,21 +1388,21 @@ function AdminAdvisorUpdatesTab() {
 
       {/* Detail + reply panel */}
       {selected && (
-        <div style={{ background:C.white, borderRadius:18, border:`1px solid ${C.border}`, padding:24, boxShadow:"0 2px 12px rgba(15,37,87,.05)", alignSelf:"start", position:"sticky", top:90 }}>
+        <div style={{ background:"var(--c-surface)", borderRadius:18, border:`1px solid ${"var(--c-border)"}`, padding:24, boxShadow:"0 2px 12px rgba(15,37,87,.05)", alignSelf:"start", position:"sticky", top:90 }}>
           <div style={{ display:"flex", justifyContent:"space-between", marginBottom:18 }}>
-            <h3 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, fontWeight:700, color:C.navy }}>{selected.subject}</h3>
-            <button onClick={() => setSelected(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:C.muted }}>×</button>
+            <h3 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, fontWeight:700, color:"var(--c-text)" }}>{selected.subject}</h3>
+            <button onClick={() => setSelected(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:"var(--c-text-muted)" }}>×</button>
           </div>
 
           <div style={{ display:"flex", gap:8, marginBottom:14, flexWrap:"wrap" }}>
             {pill(selected.status, STATUS_COLORS)}
             {pill(selected.priority, PRIORITY_COLORS)}
-            <span style={{ fontSize:12, color:C.muted }}>{selected.profiles?.full_name || selected.profiles?.email}</span>
+            <span style={{ fontSize:12, color:"var(--c-text-muted)" }}>{selected.profiles?.full_name || selected.profiles?.email}</span>
           </div>
 
           {/* Original message */}
-          <div style={{ fontSize:11, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:".08em", marginBottom:6 }}>Message</div>
-          <div style={{ background:C.offWhite2, borderRadius:10, padding:"12px 14px", fontSize:13, color:C.navy, lineHeight:1.7, marginBottom:16, border:`1px solid ${C.border}` }}>
+          <div style={{ fontSize:11, fontWeight:700, color:"var(--c-text-muted)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:6 }}>Message</div>
+          <div style={{ background:"var(--c-surface-2)", borderRadius:10, padding:"12px 14px", fontSize:13, color:"var(--c-text)", lineHeight:1.7, marginBottom:16, border:`1px solid ${"var(--c-border)"}` }}>
             {selected.message}
           </div>
 
@@ -1416,14 +1416,14 @@ function AdminAdvisorUpdatesTab() {
 
           {/* Status buttons */}
           <div style={{ marginBottom:14 }}>
-            <div style={{ fontSize:11, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:".08em", marginBottom:8 }}>Set Status</div>
+            <div style={{ fontSize:11, fontWeight:700, color:"var(--c-text-muted)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:8 }}>Set Status</div>
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
               {["open","in_progress","resolved","closed"].map(s => (
                 <button key={s} onClick={() => updateStatus(selected.id, s)}
                   style={{ padding:"6px 12px", borderRadius:999, fontSize:11, fontWeight:700, cursor:"pointer",
-                    background: selected.status===s ? C.navy : C.offWhite2,
-                    color: selected.status===s ? C.white : C.navy,
-                    border: `1px solid ${selected.status===s ? C.navy : C.border}` }}>
+                    background: selected.status===s ? C.navy : "var(--c-surface-2)",
+                    color: selected.status===s ? "var(--c-surface)" : "var(--c-text)",
+                    border: `1px solid ${selected.status===s ? C.navy : "var(--c-border)"}` }}>
                   {s.replace("_"," ")}
                 </button>
               ))}
@@ -1431,12 +1431,12 @@ function AdminAdvisorUpdatesTab() {
           </div>
 
           {/* Reply textarea */}
-          <div style={{ fontSize:11, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:".08em", marginBottom:8 }}>
+          <div style={{ fontSize:11, fontWeight:700, color:"var(--c-text-muted)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:8 }}>
             {selected.admin_reply ? "Update Reply" : "Reply to Advisor"}
           </div>
           <textarea value={reply} onChange={e => setReply(e.target.value)} rows={4}
             placeholder="Write your reply to the advisor…"
-            style={{ width:"100%", padding:"11px 14px", borderRadius:10, border:`1.5px solid ${C.border}`, fontSize:13, resize:"vertical", outline:"none", color:C.navy, fontFamily:"inherit", boxSizing:"border-box", marginBottom:10 }} />
+            style={{ width:"100%", padding:"11px 14px", borderRadius:10, border:`1.5px solid ${"var(--c-border)"}`, fontSize:13, resize:"vertical", outline:"none", color:"var(--c-text)", fontFamily:"inherit", boxSizing:"border-box", marginBottom:10 }} />
           <button onClick={sendReply} disabled={replying || !reply.trim()}
             style={{ width:"100%", padding:"11px", borderRadius:10, background: replying||!reply.trim() ? "#9CA3AF" : `linear-gradient(135deg,#5B21B6,#7C3AED)`, color:"#fff", border:"none", fontWeight:700, fontSize:13, cursor:replying||!reply.trim()?"not-allowed":"pointer" }}>
             {replying ? "Sending…" : "Send Reply →"}
@@ -1472,7 +1472,7 @@ function AnalyticsTab() {
       .then(data=>{ setApps(data||[]); setLoading(false); });
   },[]);
 
-  if(loading) return <div style={{padding:60,textAlign:"center",color:C.muted}}>Loading analytics…</div>;
+  if(loading) return <div style={{padding:60,textAlign:"center",color:"var(--c-text-muted)"}}>Loading analytics…</div>;
 
   const total     = apps.length;
   const completed = apps.filter(a=>a.workflow_state==="completed");
@@ -1514,13 +1514,13 @@ function AnalyticsTab() {
   }).length;
 
   const statCard = (icon,label,value,sub,color=C.navy)=>(
-    <div style={{background:C.white,borderRadius:16,border:`1px solid ${C.border}`,padding:"22px 24px",boxShadow:"0 2px 10px rgba(15,37,87,.05)"}}>
+    <div style={{background:"var(--c-surface)",borderRadius:16,border:`1px solid ${"var(--c-border)"}`,padding:"22px 24px",boxShadow:"0 2px 10px rgba(15,37,87,.05)"}}>
       <div style={{display:"flex",justifyContent:"space-between",marginBottom:12}}>
         <span style={{fontSize:26}}>{icon}</span>
-        <span style={{fontSize:10,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:".08em",textAlign:"right",maxWidth:110}}>{label}</span>
+        <span style={{fontSize:10,fontWeight:700,color:"var(--c-text-muted)",textTransform:"uppercase",letterSpacing:".08em",textAlign:"right",maxWidth:110}}>{label}</span>
       </div>
       <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:34,fontWeight:800,color,lineHeight:1}}>{value}</div>
-      {sub&&<div style={{fontSize:12,color:C.muted,marginTop:6}}>{sub}</div>}
+      {sub&&<div style={{fontSize:12,color:"var(--c-text-muted)",marginTop:6}}>{sub}</div>}
     </div>
   );
 
@@ -1529,8 +1529,8 @@ function AnalyticsTab() {
 
       {/* Header */}
       <div>
-        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:700,color:C.navy,marginBottom:4}}>Analytics & Revenue</h2>
-        <p style={{color:C.muted,fontSize:13}}>Live snapshot — all time unless stated.</p>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:700,color:"var(--c-text)",marginBottom:4}}>Analytics & Revenue</h2>
+        <p style={{color:"var(--c-text-muted)",fontSize:13}}>Live snapshot — all time unless stated.</p>
       </div>
 
       {/* Stat cards */}
@@ -1548,8 +1548,8 @@ function AnalyticsTab() {
       </div>
 
       {/* Pipeline funnel */}
-      <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,padding:"24px 28px",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
-        <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy,marginBottom:20}}>Pipeline Breakdown</h3>
+      <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,padding:"24px 28px",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
+        <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:"var(--c-text)",marginBottom:20}}>Pipeline Breakdown</h3>
         <div style={{display:"grid",gap:10}}>
           {PIPELINE_STAGES.map(s=>{
             const count=pipelineCounts[s.key]||0;
@@ -1559,11 +1559,11 @@ function AnalyticsTab() {
             const barColor=isGood?"#059669":isBad?"#DC2626":C.gold;
             return (
               <div key={s.key} style={{display:"grid",gridTemplateColumns:"160px 1fr 40px",alignItems:"center",gap:12}}>
-                <span style={{fontSize:12,fontWeight:600,color:C.navy,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{s.label}</span>
-                <div style={{height:8,background:C.offWhite,borderRadius:99,overflow:"hidden"}}>
+                <span style={{fontSize:12,fontWeight:600,color:"var(--c-text)",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{s.label}</span>
+                <div style={{height:8,background:"var(--c-bg)",borderRadius:99,overflow:"hidden"}}>
                   <div style={{height:"100%",width:`${pct}%`,background:barColor,borderRadius:99,transition:"width .5s"}} />
                 </div>
-                <span style={{fontSize:13,fontWeight:700,color:C.navy,textAlign:"right"}}>{count}</span>
+                <span style={{fontSize:13,fontWeight:700,color:"var(--c-text)",textAlign:"right"}}>{count}</span>
               </div>
             );
           })}
@@ -1572,16 +1572,16 @@ function AnalyticsTab() {
 
       {/* Top advisors */}
       {topAdvisors.length>0&&(
-        <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,padding:"24px 28px",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
-          <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy,marginBottom:18}}>Top Advisors — Completed Cases</h3>
+        <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,padding:"24px 28px",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
+          <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:"var(--c-text)",marginBottom:18}}>Top Advisors — Completed Cases</h3>
           <div style={{display:"grid",gap:8}}>
             {topAdvisors.map(([name,count],i)=>(
-              <div key={name} style={{display:"flex",alignItems:"center",gap:14,padding:"10px 14px",background:i===0?`${C.gold}12`:C.offWhite,borderRadius:10,border:`1px solid ${i===0?C.gold:C.border}`}}>
-                <div style={{width:28,height:28,borderRadius:"50%",background:i===0?C.gold:C.offWhite2,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,color:i===0?"#fff":C.muted,flexShrink:0}}>
+              <div key={name} style={{display:"flex",alignItems:"center",gap:14,padding:"10px 14px",background:i===0?`${C.gold}12`:"var(--c-bg)",borderRadius:10,border:`1px solid ${i===0?C.gold:"var(--c-border)"}`}}>
+                <div style={{width:28,height:28,borderRadius:"50%",background:i===0?C.gold:"var(--c-surface-2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,color:i===0?"#fff":"var(--c-text-muted)",flexShrink:0}}>
                   {i+1}
                 </div>
-                <div style={{flex:1,fontSize:14,fontWeight:700,color:C.navy}}>{name}</div>
-                <div style={{fontSize:14,fontWeight:800,color:i===0?C.gold:C.navy}}>{count} completed</div>
+                <div style={{flex:1,fontSize:14,fontWeight:700,color:"var(--c-text)"}}>{name}</div>
+                <div style={{fontSize:14,fontWeight:800,color:i===0?C.gold:"var(--c-text)"}}>{count} completed</div>
               </div>
             ))}
           </div>
@@ -1633,7 +1633,7 @@ export default function AdminDashboard() {
 
   if(checking) return (
     <div style={{minHeight:"100vh",background:C.navyDark,display:"flex",
-      alignItems:"center",justifyContent:"center",color:C.white,fontSize:16,
+      alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,
       fontFamily:"sans-serif"}}>Loading…</div>
   );
 
@@ -1683,10 +1683,10 @@ export default function AdminDashboard() {
             <div style={{width:32,height:32,background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,
               borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>⚖</div>
             <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:19,fontWeight:700,
-              color:C.white}}>TRC<span style={{color:C.goldLight,fontWeight:400}}> Admin</span></span>
+              color:"#fff"}}>TRC<span style={{color:C.goldLight,fontWeight:400}}> Admin</span></span>
           </div>
           <div style={{background:"rgba(255,255,255,.06)",borderRadius:10,padding:"10px 12px"}}>
-            <p style={{fontSize:12,fontWeight:600,color:C.white,marginBottom:2}}>{user.email}</p>
+            <p style={{fontSize:12,fontWeight:600,color:"#fff",marginBottom:2}}>{user.email}</p>
             <p style={{fontSize:11,color:"rgba(255,255,255,.4)"}}>Administrator</p>
           </div>
         </div>
@@ -1707,7 +1707,7 @@ export default function AdminDashboard() {
                 onMouseLeave={e=>{if(!isA)e.currentTarget.style.background="transparent";}}>
                 <span style={{fontSize:15,flexShrink:0}}>{item.icon}</span>
                 <span style={{flex:1}}>{item.label}</span>
-                {item.badge>0&&<span style={{background:"#DC2626",color:C.white,fontSize:10,
+                {item.badge>0&&<span style={{background:"#DC2626",color:"#fff",fontSize:10,
                   fontWeight:800,borderRadius:"50%",width:18,height:18,
                   display:"flex",alignItems:"center",justifyContent:"center"}}>{item.badge}</span>}
               </button>
@@ -1763,18 +1763,18 @@ export default function AdminDashboard() {
                 {[
                   {icon:"🧾",label:"Retail Applications",value:stats.retail,    color:C.gold,   tab:"retail_eligibility"},
                   {icon:"🏢",label:"Corporate Requests", value:stats.corporate,  color:"#5B21B6",tab:"corporate"},
-                  {icon:"▦", label:"Total Applications", value:stats.applications,color:C.navy,  tab:null},
+                  {icon:"▦", label:"Total Applications", value:stats.applications,color:"var(--c-text)",  tab:null},
                   {icon:"📋",label:"Open Advisor Updates",value:stats.advisorUpdates,color:C.error,tab:"advisor_updates"},
                 ].map(s=>(
                   <div key={s.label} onClick={()=>s.tab&&setTab(s.tab)}
-                    style={{background:C.white,borderRadius:16,border:`1px solid ${C.border}`,
+                    style={{background:"var(--c-surface)",borderRadius:16,border:`1px solid ${"var(--c-border)"}`,
                       padding:"22px",boxShadow:"0 2px 10px rgba(15,37,87,.05)",
                       cursor:s.tab?"pointer":"default",transition:"border-color .15s"}}
                     onMouseEnter={e=>{if(s.tab)e.currentTarget.style.borderColor=C.gold;}}
-                    onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;}}>
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--c-border)";}}>
                     <div style={{display:"flex",justifyContent:"space-between",marginBottom:12}}>
                       <span style={{fontSize:24}}>{s.icon}</span>
-                      <span style={{fontSize:10,fontWeight:700,color:C.muted,
+                      <span style={{fontSize:10,fontWeight:700,color:"var(--c-text-muted)",
                         textTransform:"uppercase",letterSpacing:".08em",textAlign:"right",maxWidth:90}}>{s.label}</span>
                     </div>
                     <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,
@@ -1782,10 +1782,10 @@ export default function AdminDashboard() {
                   </div>
                 ))}
               </div>
-              <div style={{background:C.white,borderRadius:18,border:`1px solid ${C.border}`,
+              <div style={{background:"var(--c-surface)",borderRadius:18,border:`1px solid ${"var(--c-border)"}`,
                 padding:"28px",boxShadow:"0 2px 12px rgba(15,37,87,.05)"}}>
                 <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,
-                  color:C.navy,marginBottom:16}}>Quick Actions</h3>
+                  color:"var(--c-text)",marginBottom:16}}>Quick Actions</h3>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:12}}>
                   {[
                     {icon:"🧾",label:"Review Retail Eligibility",tab:"retail_eligibility"},
@@ -1794,12 +1794,12 @@ export default function AdminDashboard() {
                     {icon:"📋",label:"Advisor Updates",tab:"advisor_updates"},
                   ].map(a=>(
                     <button key={a.tab} onClick={()=>setTab(a.tab)}
-                      style={{background:C.offWhite2,border:`1px solid ${C.border}`,borderRadius:14,
+                      style={{background:"var(--c-surface-2)",border:`1px solid ${"var(--c-border)"}`,borderRadius:14,
                         padding:"18px",textAlign:"left",cursor:"pointer",transition:"all .2s"}}
-                      onMouseEnter={e=>{e.currentTarget.style.borderColor=C.gold;e.currentTarget.style.background=C.white;}}
-                      onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.background=C.offWhite2;}}>
+                      onMouseEnter={e=>{e.currentTarget.style.borderColor=C.gold;e.currentTarget.style.background="var(--c-surface)";}}
+                      onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--c-border)";e.currentTarget.style.background="var(--c-surface-2)";}}>
                       <div style={{fontSize:22,marginBottom:8}}>{a.icon}</div>
-                      <p style={{fontSize:13,fontWeight:700,color:C.navy}}>{a.label}</p>
+                      <p style={{fontSize:13,fontWeight:700,color:"var(--c-text)"}}>{a.label}</p>
                     </button>
                   ))}
                 </div>
