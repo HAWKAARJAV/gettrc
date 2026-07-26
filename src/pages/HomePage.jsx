@@ -47,7 +47,7 @@ function SectionTitle({ children, light=false }) {
   return (
     <h2 style={{fontFamily:"'Cormorant Garamond',serif",
       fontSize:"clamp(28px,3.5vw,42px)",fontWeight:700,
-      color:light?"#FFFFFF":"#0F2557",letterSpacing:"-.02em",lineHeight:1.15}}>
+      color:light?"#FFFFFF":C.text,letterSpacing:"-.02em",lineHeight:1.15}}>
       {children}
     </h2>
   );
@@ -182,7 +182,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div style={{ fontFamily: "'DM Sans', -apple-system, sans-serif", color: C.navy, background: C.white }}>
+    <div style={{ fontFamily: "'DM Sans', -apple-system, sans-serif", color: C.text, background: C.surface }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -322,20 +322,20 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  PROBLEM — what's broken today                       ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="solutions" style={{ background: C.white, padding: "80px 24px 64px" }}>
+      <section id="solutions" style={{ background: C.surface, padding: "80px 24px 64px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }} className="hero-grid">
             {/* text */}
             <div>
               <SectionLabel>The actual problem</SectionLabel>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(30px, 3.8vw, 46px)", fontWeight: 700, color: C.navy, letterSpacing: "-0.02em", lineHeight: 1.18, marginBottom: 18 }}>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(30px, 3.8vw, 46px)", fontWeight: 700, color: C.text, letterSpacing: "-0.02em", lineHeight: 1.18, marginBottom: 18 }}>
                 TRC work isn't hard.<br />
                 <span style={{ color: C.gold, fontStyle: "italic" }}>Coordinating it without a system is.</span>
               </h2>
-              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.8, maxWidth: 420 }}>
+              <p style={{ fontSize: 15, color: C.textMutedTheme, lineHeight: 1.8, maxWidth: 420 }}>
                 Documents live in WhatsApp groups. Advisors wait on clients who don't know what's missing. Admins chase updates over email. No single person has the full picture of where a case actually stands.
               </p>
-              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.8, maxWidth: 420, marginTop: 14 }}>
+              <p style={{ fontSize: 15, color: C.textMutedTheme, lineHeight: 1.8, maxWidth: 420, marginTop: 14 }}>
                 TRC Connect replaces that with a shared workspace where every document, message, and status change is visible to the right person — and only them.
               </p>
             </div>
@@ -346,11 +346,11 @@ export default function HomePage() {
                 { icon: "🧭", title: "No one owns the next step", desc: "Clients don't know what to submit. Advisors don't know what's missing. Admins spend time chasing instead of deciding." },
                 { icon: "🗂", title: "Zero audit trail", desc: "When a submission is questioned, the evidence trail is a string of forwarded emails and a memory of what happened three weeks ago." },
               ].map((item) => (
-                <div key={item.title} style={{ display: "flex", gap: 14, alignItems: "flex-start", background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 20px" }}>
+                <div key={item.title} style={{ display: "flex", gap: 14, alignItems: "flex-start", background: C.surfaceMuted, border: `1px solid ${C.themeBorder}`, borderRadius: 14, padding: "18px 20px" }}>
                   <span style={{ fontSize: 22, flexShrink: 0, marginTop: 2 }}>{item.icon}</span>
                   <div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: C.navy, marginBottom: 4 }}>{item.title}</div>
-                    <div style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.7 }}>{item.desc}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: C.text, marginBottom: 4 }}>{item.title}</div>
+                    <div style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.7 }}>{item.desc}</div>
                   </div>
                 </div>
               ))}
@@ -362,19 +362,19 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  FOR WHO — two clear paths                           ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="for-who" style={{ background: C.offWhite, padding: "80px 24px" }}>
+      <section id="for-who" style={{ background: C.surfaceMuted, padding: "80px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <SectionLabel>Two paths, one platform</SectionLabel>
             <SectionTitle>Built for individuals and enterprise teams</SectionTitle>
-            <p style={{ fontSize: 15, color: C.textMuted, marginTop: 12, maxWidth: 580, margin: "12px auto 0", lineHeight: 1.75 }}>
+            <p style={{ fontSize: 15, color: C.textMutedTheme, marginTop: 12, maxWidth: 580, margin: "12px auto 0", lineHeight: 1.75 }}>
               Whether you're an individual resident or a company managing compliance across entities, TRC Connect has a dedicated workspace for you.
             </p>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }} className="hero-grid">
             {/* Individual */}
-            <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 20, overflow: "hidden" }}>
+            <div style={{ background: C.surface, border: `1px solid ${C.themeBorder}`, borderRadius: 20, overflow: "hidden" }}>
               <div style={{ background: `linear-gradient(135deg, ${C.navyDark}, ${C.navy})`, padding: "28px 28px 24px" }}>
                 <div style={{ fontSize: 28, marginBottom: 10 }}>🧾</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: C.goldLight, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8 }}>For Individuals</div>
@@ -393,13 +393,13 @@ export default function HomePage() {
                   ].map((item) => (
                     <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                       <span style={{ color: C.gold, fontWeight: 800, fontSize: 13, marginTop: 2, flexShrink: 0 }}>✓</span>
-                      <span style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>{item}</span>
+                      <span style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.6 }}>{item}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderTop: `1px solid ${C.border}`, marginBottom: 20 }}>
-                  <div style={{ fontSize: 12, color: C.textMuted }}>Typical timeline</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: C.navy }}>10–14 working days</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderTop: `1px solid ${C.themeBorder}`, marginBottom: 20 }}>
+                  <div style={{ fontSize: 12, color: C.textMutedTheme }}>Typical timeline</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>10–14 working days</div>
                 </div>
                 <button onClick={() => navigate('/check-eligibility')} style={{ width: "100%", background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: 11, padding: "14px", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "0 6px 20px rgba(201,168,76,0.35)" }}>
                   Start Individual Application →
@@ -408,7 +408,7 @@ export default function HomePage() {
             </div>
 
             {/* Corporate */}
-            <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 20, overflow: "hidden" }}>
+            <div style={{ background: C.surface, border: `1px solid ${C.themeBorder}`, borderRadius: 20, overflow: "hidden" }}>
               <div style={{ background: `linear-gradient(135deg, #1A3570, #243F8C)`, padding: "28px 28px 24px" }}>
                 <div style={{ fontSize: 28, marginBottom: 10 }}>🏛</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: C.goldLight, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8 }}>For Companies & Enterprise</div>
@@ -427,13 +427,13 @@ export default function HomePage() {
                   ].map((item) => (
                     <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                       <span style={{ color: C.gold, fontWeight: 800, fontSize: 13, marginTop: 2, flexShrink: 0 }}>✓</span>
-                      <span style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>{item}</span>
+                      <span style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.6 }}>{item}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderTop: `1px solid ${C.border}`, marginBottom: 20 }}>
-                  <div style={{ fontSize: 12, color: C.textMuted }}>Application type</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: C.navy }}>Case-by-case assessment</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderTop: `1px solid ${C.themeBorder}`, marginBottom: 20 }}>
+                  <div style={{ fontSize: 12, color: C.textMutedTheme }}>Application type</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Case-by-case assessment</div>
                 </div>
                 <button onClick={() => navigate('/corporate/check-eligibility')} style={{ width: "100%", background: `linear-gradient(135deg, ${C.navy}, ${C.navyLight})`, color: C.white, border: "none", borderRadius: 11, padding: "14px", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "0 6px 20px rgba(15,37,87,0.25)" }}>
                   Start Corporate Application →
@@ -447,12 +447,12 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  PLATFORM — what you actually get inside             ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="platform-overview" style={{ background: C.white, padding: "80px 24px" }}>
+      <section id="platform-overview" style={{ background: C.surface, padding: "80px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <SectionLabel>Inside the platform</SectionLabel>
             <SectionTitle>Everything you need. Nothing you don't.</SectionTitle>
-            <p style={{ fontSize: 15, color: C.textMuted, marginTop: 12, maxWidth: 580, margin: "12px auto 0", lineHeight: 1.75 }}>
+            <p style={{ fontSize: 15, color: C.textMutedTheme, marginTop: 12, maxWidth: 580, margin: "12px auto 0", lineHeight: 1.75 }}>
               Your workspace unlocks progressively as your case moves forward — you only see what's relevant to where you are.
             </p>
           </div>
@@ -460,7 +460,7 @@ export default function HomePage() {
           {/* Two-column deep dive — retail left, corporate right */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }} className="hero-grid">
             {/* Retail */}
-            <div style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden" }}>
+            <div style={{ border: `1px solid ${C.themeBorder}`, borderRadius: 18, overflow: "hidden" }}>
               <div style={{ background: C.navy, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
                 <span style={{ fontSize: 20 }}>🧾</span>
                 <div>
@@ -468,18 +468,18 @@ export default function HomePage() {
                   <div style={{ fontSize: 16, fontWeight: 700, color: C.white, marginTop: 2 }}>What you see as a retail client</div>
                 </div>
               </div>
-              <div style={{ padding: "20px 24px", background: C.white }}>
+              <div style={{ padding: "20px 24px", background: C.surface }}>
                 {[
                   { stage: "Before you apply", items: ["Guided eligibility check — know if you qualify before submitting", "Residency signals form: visa type, days in UAE, income source"] },
                   { stage: "Active case", items: ["Stage tracker: pending review → documents → processing → issued", "Document checklist with upload and advisor-requested file queue", "Live messaging with your assigned advisor"] },
                   { stage: "After issuance", items: ["Certificate download and case archive", "Support ticket thread if anything needs follow-up"] },
                 ].map((group) => (
                   <div key={group.stage} style={{ marginBottom: 18 }}>
-                    <div style={{ fontSize: 10, fontWeight: 800, color: C.gold, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${C.border}` }}>{group.stage}</div>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: C.gold, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${C.themeBorder}` }}>{group.stage}</div>
                     {group.items.map(item => (
                       <div key={item} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 6 }}>
                         <span style={{ color: C.gold, fontSize: 11, fontWeight: 800, marginTop: 2, flexShrink: 0 }}>▸</span>
-                        <span style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>{item}</span>
+                        <span style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.6 }}>{item}</span>
                       </div>
                     ))}
                   </div>
@@ -488,7 +488,7 @@ export default function HomePage() {
             </div>
 
             {/* Corporate */}
-            <div style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden" }}>
+            <div style={{ border: `1px solid ${C.themeBorder}`, borderRadius: 18, overflow: "hidden" }}>
               <div style={{ background: "#1A3570", padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
                 <span style={{ fontSize: 20 }}>🏛</span>
                 <div>
@@ -496,18 +496,18 @@ export default function HomePage() {
                   <div style={{ fontSize: 16, fontWeight: 700, color: C.white, marginTop: 2 }}>What you see as a corporate client</div>
                 </div>
               </div>
-              <div style={{ padding: "20px 24px", background: C.white }}>
+              <div style={{ padding: "20px 24px", background: C.surface }}>
                 {[
                   { stage: "Eligibility & onboarding", items: ["Corporate structure form: entity type, UAE presence, jurisdiction", "Separate corporate eligibility flow — assessed by compliance team"] },
                   { stage: "Active workspace (post-payment)", items: ["Applications tab: case status and submission states", "Documents tab: advisor requests visible and uploadable directly", "Advisors tab: assigned compliance manager and contact", "Billing & Reports: invoices and certificate archive"] },
                   { stage: "Ongoing compliance", items: ["Settings: editable company profile synced to case record", "Support queue with compliance manager response thread"] },
                 ].map((group) => (
                   <div key={group.stage} style={{ marginBottom: 18 }}>
-                    <div style={{ fontSize: 10, fontWeight: 800, color: C.gold, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${C.border}` }}>{group.stage}</div>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: C.gold, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${C.themeBorder}` }}>{group.stage}</div>
                     {group.items.map(item => (
                       <div key={item} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 6 }}>
                         <span style={{ color: C.gold, fontSize: 11, fontWeight: 800, marginTop: 2, flexShrink: 0 }}>▸</span>
-                        <span style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>{item}</span>
+                        <span style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.6 }}>{item}</span>
                       </div>
                     ))}
                   </div>
@@ -521,20 +521,20 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  WORKFLOW — operational state machine                ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="workflow" style={{ background: C.offWhite, padding: "80px 24px" }}>
+      <section id="workflow" style={{ background: C.surfaceMuted, padding: "80px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 64, alignItems: "start" }} className="hero-grid">
             <div>
               <SectionLabel>Workflow</SectionLabel>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(28px, 3.2vw, 40px)", fontWeight: 700, color: C.navy, lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 16 }}>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(28px, 3.2vw, 40px)", fontWeight: 700, color: C.text, lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 16 }}>
                 How a case moves through the system
               </h2>
-              <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.8 }}>
+              <p style={{ fontSize: 14, color: C.textMutedTheme, lineHeight: 1.8 }}>
                 Every state transition is logged with a timestamp, actor, and note. Clients, advisors, and admins each see the parts of the timeline relevant to them.
               </p>
-              <div style={{ marginTop: 24, padding: "16px 18px", background: C.white, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+              <div style={{ marginTop: 24, padding: "16px 18px", background: C.surface, border: `1px solid ${C.themeBorder}`, borderRadius: 12 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>All transitions logged to</div>
-                <div style={{ fontFamily: "monospace", fontSize: 12, color: C.navy, background: C.offWhite, padding: "8px 10px", borderRadius: 8, border: `1px solid ${C.border}` }}>application_status_history</div>
+                <div style={{ fontFamily: "monospace", fontSize: 12, color: C.text, background: C.surfaceMuted, padding: "8px 10px", borderRadius: 8, border: `1px solid ${C.themeBorder}` }}>application_status_history</div>
               </div>
             </div>
 
@@ -547,7 +547,7 @@ export default function HomePage() {
                 { num: "05", state: "submitted_to_authority", title: "Authority review", desc: "Case tracked through FTA processing. Advisor follows up on any queries.", active: false },
                 { num: "06", state: "completed", title: "Certificate issued", desc: "TRC delivered digitally. Certificate, history, and audit log archived on the case record.", active: false },
               ].map((step, i) => (
-                <div key={step.num} style={{ display: "flex", gap: 16, padding: "18px 20px", background: step.active ? C.navy : C.white, borderRadius: step.active ? 14 : 0, border: `1px solid ${step.active ? "transparent" : C.border}`, borderBottom: `1px solid ${C.border}`, marginBottom: step.active ? 0 : 0, position: "relative" }}>
+                <div key={step.num} style={{ display: "flex", gap: 16, padding: "18px 20px", background: step.active ? C.navy : C.surface, borderRadius: step.active ? 14 : 0, border: `1px solid ${step.active ? "transparent" : C.themeBorder}`, borderBottom: `1px solid ${C.themeBorder}`, marginBottom: step.active ? 0 : 0, position: "relative" }}>
                   <div style={{ flexShrink: 0 }}>
                     <div style={{ width: 28, height: 28, borderRadius: "50%", background: step.active ? C.gold : `${C.gold}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: step.active ? C.navyDark : C.gold }}>
                       {step.num}
@@ -555,10 +555,10 @@ export default function HomePage() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: step.active ? C.white : C.navy }}>{step.title}</span>
-                      <code style={{ fontSize: 10, background: step.active ? "rgba(255,255,255,0.1)" : C.offWhite, color: step.active ? "rgba(255,255,255,0.5)" : C.textMuted, padding: "2px 7px", borderRadius: 5, fontFamily: "monospace" }}>{step.state}</code>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: step.active ? C.white : C.text }}>{step.title}</span>
+                      <code style={{ fontSize: 10, background: step.active ? "rgba(255,255,255,0.1)" : C.offWhite, color: step.active ? "rgba(255,255,255,0.5)" : C.textMutedTheme, padding: "2px 7px", borderRadius: 5, fontFamily: "monospace" }}>{step.state}</code>
                     </div>
-                    <div style={{ fontSize: 13, color: step.active ? "rgba(255,255,255,0.62)" : C.textMuted, lineHeight: 1.65 }}>{step.desc}</div>
+                    <div style={{ fontSize: 13, color: step.active ? "rgba(255,255,255,0.62)" : C.textMutedTheme, lineHeight: 1.65 }}>{step.desc}</div>
                   </div>
                 </div>
               ))}
@@ -570,7 +570,7 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  SECURITY                                            ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section style={{ background: C.white, padding: "72px 24px" }}>
+      <section style={{ background: C.surface, padding: "72px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <SectionLabel>Security model</SectionLabel>
@@ -583,10 +583,10 @@ export default function HomePage() {
               { icon: "📁", title: "Signed document URLs", desc: "Documents are stored in a private Supabase bucket. Files are served via short-lived signed URLs generated server-side only." },
               { icon: "🪪", title: "JWT verification on every function", desc: "Every Netlify function validates the caller's Supabase JWT before executing. Role is derived from the token, not from client-sent params." },
             ].map((item) => (
-              <div key={item.title} style={{ padding: "22px 22px", border: `1px solid ${C.border}`, borderRadius: 16, background: C.offWhite }}>
+              <div key={item.title} style={{ padding: "22px 22px", border: `1px solid ${C.themeBorder}`, borderRadius: 16, background: C.surfaceMuted }}>
                 <div style={{ fontSize: 24, marginBottom: 12 }}>{item.icon}</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 8, lineHeight: 1.35 }}>{item.title}</div>
-                <div style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.7 }}>{item.desc}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 8, lineHeight: 1.35 }}>{item.title}</div>
+                <div style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.7 }}>{item.desc}</div>
               </div>
             ))}
           </div>
@@ -596,18 +596,18 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  PRICING — enterprise-grade service packaging        ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="pricing" style={{ background: C.offWhite, padding: "80px 24px", scrollMarginTop: 96 }}>
+      <section id="pricing" style={{ background: C.surfaceMuted, padding: "80px 24px", scrollMarginTop: 96 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "0.9fr 1.4fr", gap: 44, alignItems: "start" }} className="hero-grid">
             <div>
               <SectionLabel>Pricing</SectionLabel>
               <SectionTitle>Clear packages for serious compliance operations</SectionTitle>
-              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.8, marginTop: 16 }}>
+              <p style={{ fontSize: 15, color: C.textMutedTheme, lineHeight: 1.8, marginTop: 16 }}>
                 TRC Connect is positioned as workflow infrastructure, not a lead form. Pricing separates platform access, advisor execution, and authority fees so individuals and enterprise teams can budget cleanly.
               </p>
-              <div style={{ marginTop: 22, padding: "16px 18px", background: C.white, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+              <div style={{ marginTop: 22, padding: "16px 18px", background: C.surface, border: `1px solid ${C.themeBorder}`, borderRadius: 12 }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: C.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8 }}>Enterprise note</div>
-                <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.7 }}>
+                <p style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.7 }}>
                   Multi-entity plans are designed for founders, holding companies, and finance teams managing renewals across employees or group structures.
                 </p>
               </div>
@@ -619,21 +619,21 @@ export default function HomePage() {
                 { name: "Enterprise", price: "Custom", desc: "For teams managing recurring TRC operations.", points: ["Multi-entity workflow", "Renewal tracking", "Audit-ready exports", "Priority support"], cta: "Discuss Fit", action: () => scrollToElementId('about') },
               ].map((plan) => (
                 <div key={plan.name}
-                  style={{ background: plan.featured ? C.navy : C.white, border: `1px solid ${plan.featured ? "transparent" : C.border}`, borderRadius: 16, padding: 22, boxShadow: plan.featured ? "0 22px 48px rgba(15,37,87,0.22)" : "0 8px 22px rgba(15,37,87,0.06)", transition: "transform .2s ease, box-shadow .2s ease" }}
+                  style={{ background: plan.featured ? C.navy : C.surface, border: `1px solid ${plan.featured ? "transparent" : C.themeBorder}`, borderRadius: 16, padding: 22, boxShadow: plan.featured ? "0 22px 48px rgba(15,37,87,0.22)" : "0 8px 22px rgba(15,37,87,0.06)", transition: "transform .2s ease, box-shadow .2s ease" }}
                   onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = plan.featured ? "0 28px 56px rgba(15,37,87,0.3)" : "0 14px 32px rgba(15,37,87,0.1)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = plan.featured ? "0 22px 48px rgba(15,37,87,0.22)" : "0 8px 22px rgba(15,37,87,0.06)"; }}>
                   <div style={{ fontSize: 12, color: plan.featured ? C.goldLight : C.gold, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10 }}>{plan.name}</div>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 30, fontWeight: 700, color: plan.featured ? C.white : C.navy, lineHeight: 1 }}>{plan.price}</div>
-                  <p style={{ fontSize: 13, color: plan.featured ? "rgba(255,255,255,0.62)" : C.textMuted, lineHeight: 1.65, marginTop: 12, minHeight: 44 }}>{plan.desc}</p>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 30, fontWeight: 700, color: plan.featured ? C.white : C.text, lineHeight: 1 }}>{plan.price}</div>
+                  <p style={{ fontSize: 13, color: plan.featured ? "rgba(255,255,255,0.62)" : C.textMutedTheme, lineHeight: 1.65, marginTop: 12, minHeight: 44 }}>{plan.desc}</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 18, marginBottom: 22 }}>
                     {plan.points.map((point) => (
                       <div key={point} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
                         <span style={{ color: C.gold, fontWeight: 800, fontSize: 12, marginTop: 2 }}>✓</span>
-                        <span style={{ fontSize: 12, color: plan.featured ? "rgba(255,255,255,0.72)" : C.textMuted, lineHeight: 1.55 }}>{point}</span>
+                        <span style={{ fontSize: 12, color: plan.featured ? "rgba(255,255,255,0.72)" : C.textMutedTheme, lineHeight: 1.55 }}>{point}</span>
                       </div>
                     ))}
                   </div>
-                  <button onClick={plan.action} style={{ width: "100%", background: plan.featured ? `linear-gradient(135deg, ${C.gold}, ${C.goldDark})` : C.offWhite, color: plan.featured ? C.white : C.navy, border: plan.featured ? "none" : `1px solid ${C.border}`, borderRadius: 10, padding: "12px 14px", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
+                  <button onClick={plan.action} style={{ width: "100%", background: plan.featured ? `linear-gradient(135deg, ${C.gold}, ${C.goldDark})` : C.surfaceMuted, color: plan.featured ? C.white : C.text, border: plan.featured ? "none" : `1px solid ${C.themeBorder}`, borderRadius: 10, padding: "12px 14px", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
                     {plan.cta}
                   </button>
                 </div>
@@ -646,20 +646,20 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  RESOURCES                                          ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="resources" style={{ background: C.white, padding: "80px 24px", scrollMarginTop: 96 }}>
+      <section id="resources" style={{ background: C.surface, padding: "80px 24px", scrollMarginTop: 96 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 42 }}>
             <SectionLabel>Resources</SectionLabel>
             <SectionTitle>Everything you need before you apply</SectionTitle>
-            <p style={{ fontSize: 15, color: C.textMuted, marginTop: 12, maxWidth: 620, margin: "12px auto 0", lineHeight: 1.75 }}>
+            <p style={{ fontSize: 15, color: C.textMutedTheme, marginTop: 12, maxWidth: 620, margin: "12px auto 0", lineHeight: 1.75 }}>
               Guidance on UAE eligibility rules, the documents advisors typically request, and how a case moves from application to certificate.
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 18 }}>
             {resourceCards.map((item) => (
-              <div key={item.id} style={{ border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, background: C.offWhite, boxShadow: "0 8px 22px rgba(15,37,87,0.05)" }}>
-                <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 10 }}>{item.title}</div>
-                <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.75, minHeight: 68 }}>{item.description}</p>
+              <div key={item.id} style={{ border: `1px solid ${C.themeBorder}`, borderRadius: 16, padding: 24, background: C.surfaceMuted, boxShadow: "0 8px 22px rgba(15,37,87,0.05)" }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: C.text, marginBottom: 10 }}>{item.title}</div>
+                <p style={{ fontSize: 13, color: C.textMutedTheme, lineHeight: 1.75, minHeight: 68 }}>{item.description}</p>
                 <button onClick={() => {
                   if (item.action_type === "path") navigate(item.action_value);
                   else if (item.action_type === "url") window.open(item.action_value, "_blank", "noopener,noreferrer");
@@ -676,16 +676,16 @@ export default function HomePage() {
       {/* ╔══════════════════════════════════════════════════════╗
           ║  ABOUT                                              ║
           ╚══════════════════════════════════════════════════════╝ */}
-      <section id="about" style={{ background: C.offWhite, padding: "80px 24px", scrollMarginTop: 96 }}>
+      <section id="about" style={{ background: C.surfaceMuted, padding: "80px 24px", scrollMarginTop: 96 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }} className="hero-grid">
             <div>
               <SectionLabel>About TRC Connect</SectionLabel>
               <SectionTitle>A clearer way to get your UAE Tax Residency Certificate</SectionTitle>
-              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.85, marginTop: 16 }}>
+              <p style={{ fontSize: 15, color: C.textMutedTheme, lineHeight: 1.85, marginTop: 16 }}>
                 TRC Connect pairs every applicant — individual or company — with a verified Chartered Accountant who reviews your eligibility, tells you exactly which documents are needed, and carries the case through to the Federal Tax Authority on your behalf.
               </p>
-              <p style={{ fontSize: 15, color: C.textMuted, lineHeight: 1.85, marginTop: 14 }}>
+              <p style={{ fontSize: 15, color: C.textMutedTheme, lineHeight: 1.85, marginTop: 14 }}>
                 No scattered email threads or WhatsApp attachments. Every request, upload, and status update lives in one workspace that you and your advisor both see.
               </p>
             </div>
