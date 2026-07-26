@@ -1,11 +1,76 @@
 import { getServiceClient } from "./_shared.js";
 import { getClientIp, enforceRateLimit } from "./_rateLimit.js";
 import { initSentry, captureError } from "./_sentry.js";
+import { sendStatusEmail, sendAdvisorEmail } from "./_sendStatusEmail.js";
 initSentry();
 
+// Merged with the "eligibility submitted" notification (dispatched on
+// `type`) to stay within the Vercel Hobby plan's 12-serverless-function cap
+// — same reasoning as api/updateApplicationState.js. Both are public,
+// unauthenticated endpoints fired before any session exists (contact form /
+// just-completed signup), so they share the same no-auth + IP-rate-limit shape.
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.body?.type === "eligibility_submitted") return handleEligibilitySubmitted(req, res);
+  return handleInquiry(req, res);
+}
 
+async function handleEligibilitySubmitted(req, res) {
+  const svc = getServiceClient();
+  const ip = getClientIp(req);
+  const allowed = await enforceRateLimit(req, res, svc, {
+    key: `elig-submit-notify:${ip}`,
+    limit: 10,
+    windowSeconds: 600,
+    message: "Too many requests. Please try again in a few minutes.",
+  });
+  if (!allowed) return;
+
+  const email = String(req.body?.email || "").trim().toLowerCase();
+  if (!email) return res.status(400).json({ error: "email required" });
+
+  try {
+    const siteUrl = process.env.SITE_URL || "https://gettrc.com";
+    const { data: profile } = await svc.from("profiles").select("id,full_name,email").eq("email", email).maybeSingle();
+    if (!profile?.id) {
+      // The signup DB trigger may not have run yet, or signup failed upstream.
+      return res.status(200).json({ success: true, skipped: "no profile found" });
+    }
+
+    const { data: application } = await svc
+      .from("applications")
+      .select("id,advisor_id")
+      .eq("user_id", profile.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    try {
+      await sendStatusEmail({ email: profile.email, name: profile.full_name || "", newState: "pending_review", applicationId: application?.id || "", siteUrl });
+    } catch (e) {
+      console.warn("[sendInquiryEmail:eligibility_submitted] applicant email failed (non-fatal):", e?.message || e);
+    }
+
+    if (application?.advisor_id) {
+      try {
+        const { data: advisorProfile } = await svc.from("profiles").select("full_name,email").eq("id", application.advisor_id).maybeSingle();
+        if (advisorProfile?.email) {
+          await sendAdvisorEmail({ email: advisorProfile.email, name: advisorProfile.full_name || "", kind: "new_case_assigned", clientName: profile.full_name, applicationId: application.id, siteUrl });
+        }
+      } catch (e) {
+        console.warn("[sendInquiryEmail:eligibility_submitted] advisor email failed (non-fatal):", e?.message || e);
+      }
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    captureError("sendInquiryEmail(eligibility_submitted) error", err);
+    // Non-fatal by design — caller (signup flow) should not treat this as a failure.
+    return res.status(200).json({ success: false, error: err?.message || String(err) });
+  }
+}
+
+async function handleInquiry(req, res) {
   // Public, unauthenticated endpoint — the only protection against spam
   // (and unbounded Resend usage) is IP-based rate limiting.
   const svc = getServiceClient();

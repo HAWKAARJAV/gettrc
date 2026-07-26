@@ -171,6 +171,15 @@ export async function registerRetailApplicant(payload) {
     await supabase.auth.signOut();
   }
 
+  // Best-effort: notify the applicant ("we've received it") and, if the
+  // creation trigger auto-assigned an advisor, notify that advisor too.
+  // Never blocks or fails signup on email delivery issues.
+  fetch("/api/sendInquiryEmail", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "eligibility_submitted", email }),
+  }).catch(() => {});
+
   return {
     user: signUpData.user,
     session: null,

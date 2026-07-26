@@ -170,6 +170,13 @@ export async function sendStatusEmail({ email, name, newState, applicationId, si
 // document. Kept as a single function (vs. one per event) since both are
 // simple "here's what happened, go look" nudges with the same shape.
 const ADVISOR_EMAIL_CONTENT = {
+  new_case_assigned: ({ clientName }) => ({
+    subject: "New eligibility review request assigned to you",
+    emoji: "📥",
+    heading: "A new case needs your review",
+    body: `${clientName || "A new applicant"} just submitted a TRC eligibility check and it's been assigned to you. Please review it and mark it eligible or rejected from your case dashboard.`,
+    cta: { label: "Review the Case", path: null },
+  }),
   payment_received: ({ clientName }) => ({
     subject: "Payment received — case ready to proceed",
     emoji: "💳",
