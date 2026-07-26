@@ -61,7 +61,7 @@ export default function AdvisorWorkspaceLayout() {
   const sidebarW = collapsed ? 64 : 240;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: SANS, background: C.offWhite }}>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: SANS, background: "var(--c-bg)" }}>
       <style>{`
         .awl2-sidebar { flex-shrink: 0; }
         .awl2-backdrop { display: none; }
@@ -142,17 +142,17 @@ export default function AdvisorWorkspaceLayout() {
       {/* Main content */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
         {/* Top bar */}
-        <header style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: "14px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ background: "var(--c-surface)", borderBottom: "1px solid var(--c-border)", padding: "14px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, position: "sticky", top: 0, zIndex: 100 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button
               className="awl2-hamburger"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
-              style={{ display: "none", flexShrink: 0, width: 36, height: 36, borderRadius: 9, border: `1px solid ${C.border}`, background: C.white, color: C.navy, fontSize: 16, cursor: "pointer", alignItems: "center", justifyContent: "center" }}
+              style={{ display: "none", flexShrink: 0, width: 36, height: 36, borderRadius: 9, border: "1px solid var(--c-border)", background: "var(--c-surface)", color: "var(--c-text)", fontSize: 16, cursor: "pointer", alignItems: "center", justifyContent: "center" }}
             >
               ☰
             </button>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".1em" }}>Advisor Dashboard</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".1em" }}>Advisor Dashboard</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <NotificationCenter />
