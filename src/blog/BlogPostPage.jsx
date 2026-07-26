@@ -280,21 +280,10 @@ export default function BlogPostPage() {
         ${MD_CSS}
       `}</style>
 
-      <header style={{ background:`linear-gradient(135deg, ${C.navy} 0%, ${C.navyLight} 100%)`, padding:"14px 0", borderBottom:`1px solid rgba(255,255,255,.08)`, boxShadow:"0 8px 30px rgba(15,37,87,.18)" }}>
-        <div style={{ maxWidth:1100, margin:"0 auto", padding:"0 24px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <Link to="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
-            <div style={{ width:32,height:32,background:`linear-gradient(135deg,${C.gold},${C.goldLight})`, borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16 }}>⚖</div>
-            <span style={{ fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.white }}>
-              TRC<span style={{ color:C.goldLight,fontWeight:400 }}> Connect</span>
-            </span>
-          </Link>
-          <nav style={{ display:"flex", gap:24, alignItems:"center" }}>
-            <Link to="/blog" style={{ color:"rgba(255,255,255,.7)", textDecoration:"none", fontSize:14 }}>← Blog</Link>
-          </nav>
-        </div>
-      </header>
-
-      <main style={{ maxWidth:1200, margin:"0 auto", padding:"22px 24px 72px" }}>
+      {/* Top padding compensates for the fixed global site nav (rendered
+          once in TRCConnectApp.jsx's AppShell) — this page no longer rolls
+          its own header, so it needs clearance instead. */}
+      <main style={{ maxWidth:1200, margin:"0 auto", padding:"142px 24px 72px" }}>
         <nav aria-label="Breadcrumb" style={{ fontSize:13, marginBottom:14, color:C.muted }}>
           <Link to="/" style={{ color:C.muted, textDecoration:"none" }}>Home</Link>
           <span style={{ margin:"0 8px" }}>/</span>
@@ -374,11 +363,15 @@ export default function BlogPostPage() {
               )}
 
               <section style={{ maxWidth:760, margin:"32px auto 0", padding:"24px", background:`linear-gradient(135deg, ${C.navy} 0%, ${C.navyLight} 100%)`, borderRadius:18, color:C.white }}>
-                <p style={{ margin:0, fontSize:12, fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", color:C.goldLight }}>Need help with your TRC?</p>
+                <p style={{ margin:0, fontSize:12, fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", color:C.goldLight }}>{post.cta_heading || "Need help with your TRC?"}</p>
                 <h2 style={{ margin:"10px 0 10px", fontFamily:"'Cormorant Garamond',serif", fontSize:28, lineHeight:1.15 }}>Book a consultation or download the checklist.</h2>
-                <p style={{ margin:"0 0 18px", fontSize:14, color:"rgba(255,255,255,.72)", lineHeight:1.7 }}>Get the document list, eligibility review, and filing support before you submit your application.</p>
+                <p style={{ margin:"0 0 18px", fontSize:14, color:"rgba(255,255,255,.72)", lineHeight:1.7 }}>{post.cta_text || "Get the document list, eligibility review, and filing support before you submit your application."}</p>
                 <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
-                  <Link to="/check-eligibility" style={{ background:`linear-gradient(135deg,${C.gold},${C.goldLight})`, color:C.navy, padding:"12px 18px", borderRadius:10, textDecoration:"none", fontSize:14, fontWeight:700 }}>Check Eligibility</Link>
+                  {(post.cta_button_url || "/check-eligibility").startsWith("/") ? (
+                    <Link to={post.cta_button_url || "/check-eligibility"} style={{ background:`linear-gradient(135deg,${C.gold},${C.goldLight})`, color:C.navy, padding:"12px 18px", borderRadius:10, textDecoration:"none", fontSize:14, fontWeight:700 }}>{post.cta_button_label || "Check Eligibility"}</Link>
+                  ) : (
+                    <a href={post.cta_button_url || "/check-eligibility"} style={{ background:`linear-gradient(135deg,${C.gold},${C.goldLight})`, color:C.navy, padding:"12px 18px", borderRadius:10, textDecoration:"none", fontSize:14, fontWeight:700 }}>{post.cta_button_label || "Check Eligibility"}</a>
+                  )}
                   <a href="mailto:hello@gettrc.com" style={{ background:"rgba(255,255,255,.08)", color:C.white, padding:"12px 18px", borderRadius:10, textDecoration:"none", fontSize:14, fontWeight:700, border:"1px solid rgba(255,255,255,.12)" }}>Book Consultation</a>
                 </div>
               </section>

@@ -170,6 +170,10 @@ function BlogEditor({ initial, onSaved, onCancel }) {
     seo_title:       initial?.seo_title       || "",
     seo_description: initial?.seo_description || "",
     cover_image_url: initial?.cover_image_url || "",
+    cta_heading:      initial?.cta_heading      || "",
+    cta_text:         initial?.cta_text         || "",
+    cta_button_label: initial?.cta_button_label || "",
+    cta_button_url:   initial?.cta_button_url   || "",
     status:          initial?.status          || "draft",
   });
 
@@ -207,6 +211,10 @@ function BlogEditor({ initial, onSaved, onCancel }) {
       seo_title:       form.seo_title.trim() || form.title,
       seo_description: form.seo_description.trim() || form.excerpt.slice(0,160),
       cover_image_url: form.cover_image_url.trim() || null,
+      cta_heading:      form.cta_heading.trim() || null,
+      cta_text:         form.cta_text.trim() || null,
+      cta_button_label: form.cta_button_label.trim() || null,
+      cta_button_url:   form.cta_button_url.trim() || null,
       read_time_minutes: readTimeEst(form.content),
       status,
       published_at:    status==="published" ? (initial?.published_at || new Date().toISOString()) : null,
@@ -383,6 +391,38 @@ function BlogEditor({ initial, onSaved, onCancel }) {
                     {form.seo_description.length}/160
                   </span>
                 </Field>
+              </div>
+            </div>
+
+            {/* Call to Action Section */}
+            <div style={{ padding:"20px",background:"#FFFBEB",borderRadius:12,
+              border:"1px solid #FDE68A" }}>
+              <p style={{ fontSize:13,fontWeight:700,color:"#92400E",marginBottom:6 }}>
+                📣 Call to Action
+              </p>
+              <p style={{ fontSize:12,color:"#92400E",opacity:.8,marginBottom:14 }}>
+                Shown at the end of the post. Leave blank to use the default "Check Eligibility" banner.
+              </p>
+              <div style={{ display:"flex",flexDirection:"column",gap:12 }}>
+                <Field label="Heading" hint='defaults to "Need help with your TRC?"'>
+                  <input value={form.cta_heading} onChange={set("cta_heading")}
+                    placeholder="Need help with your TRC?" style={inputStyle} />
+                </Field>
+                <Field label="Subtext">
+                  <textarea value={form.cta_text} onChange={set("cta_text")} rows={2}
+                    placeholder="Get the document list, eligibility review, and filing support before you submit your application."
+                    style={{ ...inputStyle, resize:"vertical" }} />
+                </Field>
+                <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:16 }}>
+                  <Field label="Button Label">
+                    <input value={form.cta_button_label} onChange={set("cta_button_label")}
+                      placeholder="Check Eligibility" style={inputStyle} />
+                  </Field>
+                  <Field label="Button Link">
+                    <input value={form.cta_button_url} onChange={set("cta_button_url")}
+                      placeholder="/check-eligibility" style={inputStyle} />
+                  </Field>
+                </div>
               </div>
             </div>
 
