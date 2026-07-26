@@ -18,9 +18,9 @@ const C = RETAIL_THEME.colors;
 
 function Card({ title, subtitle, children, highlight = false }) {
   return (
-    <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${highlight ? C.gold : C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${highlight ? C.gold : "var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>{title}</div>
-      {subtitle && <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>{subtitle}</p>}
+      {subtitle && <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>{subtitle}</p>}
       {children}
     </div>
   );
@@ -30,9 +30,9 @@ function KeyValueGrid({ rows }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
       {rows.map(([label, value]) => (
-        <div key={label} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 6 }}>{label}</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, lineHeight: 1.6 }}>{value}</div>
+        <div key={label} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 6 }}>{label}</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)", lineHeight: 1.6 }}>{value}</div>
         </div>
       ))}
     </div>
@@ -64,10 +64,10 @@ export function CorporateDashboardPage() {
     <div style={{ display: "grid", gap: 18 }}>
       <Card title="Dashboard overview" subtitle="Executive workspace summary for corporate review and compliance operations." highlight={!unlocked}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <button onClick={() => navigate("/corporate/eligibility-status")} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: "pointer" }}>
+          <button onClick={() => navigate("/corporate/eligibility-status")} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: "pointer" }}>
             View Eligibility Status
           </button>
-          <button onClick={() => navigate("/corporate/support")} style={{ background: C.offWhite, color: C.navy, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: "pointer" }}>
+          <button onClick={() => navigate("/corporate/support")} style={{ background: "var(--c-bg)", color: "var(--c-text)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: "pointer" }}>
             Contact Support
           </button>
         </div>
@@ -75,9 +75,9 @@ export function CorporateDashboardPage() {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
         {quickStats.map(([label, value]) => (
-          <div key={label} style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 20 }}>
+          <div key={label} style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 20 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{label}</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: C.navy, lineHeight: 1.6 }}>{value}</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--c-text)", lineHeight: 1.6 }}>{value}</div>
           </div>
         ))}
       </div>
@@ -88,15 +88,15 @@ export function CorporateDashboardPage() {
         <Card title="Limited enterprise workspace" subtitle="Your compliance workspace is partially unlocked until payment is completed.">
           <div style={{ display: "grid", gap: 12 }}>
             {["Dashboard", "Eligibility Status", "Company Profile", "Support"].map((item) => (
-              <div key={item} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14, opacity: 0.95 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{item}</span>
+              <div key={item} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14, opacity: 0.95 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{item}</span>
                 <span style={{ fontSize: 11, fontWeight: 800, color: C.gold, textTransform: "uppercase", letterSpacing: ".08em" }}>Active</span>
               </div>
             ))}
             {["Employees / Entities", "Company Applications", "Compliance Center", "Documents", "Advisors", "Billing", "Reports"].map((item) => (
-              <div key={item} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, background: "rgba(255,255,255,.6)", border: `1px dashed ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14, opacity: 0.55 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{item}</span>
-                <span style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>Locked</span>
+              <div key={item} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, background: "rgba(255,255,255,.6)", border: `1px dashed ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14, opacity: 0.55 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{item}</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>Locked</span>
               </div>
             ))}
           </div>
@@ -144,11 +144,11 @@ export function CorporateEligibilityStatusPage() {
       <Card title="Review timeline" subtitle="Your file advances as the compliance team updates the corporate workflow.">
         <div style={{ display: "grid", gap: 10 }}>
           {["Submit Corporate Eligibility Request", "Compliance Team Reviews Structure", "Receive Corporate Eligibility Confirmation", "Consultation & Payment", "Begin Compliance Processing"].map((step, index) => (
-            <div key={step} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: 14, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, background: index <= 1 ? C.offWhite : C.white }}>
-              <div style={{ width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: index <= 1 ? C.gold : C.offWhite2, color: index <= 1 ? C.white : C.muted, fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{index + 1}</div>
+            <div key={step} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: 14, border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, background: index <= 1 ? "var(--c-bg)" : "var(--c-surface)" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: index <= 1 ? C.gold : "var(--c-surface-2)", color: index <= 1 ? "var(--c-surface)" : "var(--c-text-muted)", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{index + 1}</div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{step}</div>
-                <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6, marginTop: 3 }}>Progress advances as the corporate file is reviewed.</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{step}</div>
+                <div style={{ fontSize: 12, color: "var(--c-text-muted)", lineHeight: 1.6, marginTop: 3 }}>Progress advances as the corporate file is reviewed.</div>
               </div>
             </div>
           ))}
@@ -195,19 +195,19 @@ export function CorporateProfilePage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
           {["company_name", "business_email", "phone", "industry", "website"].map((key) => (
             <div key={key}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{key.replaceAll("_", " ")}</label>
-              <input value={form[key]} onChange={(e) => update(key, e.target.value)} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+              <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{key.replaceAll("_", " ")}</label>
+              <input value={form[key]} onChange={(e) => update(key, e.target.value)} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${"var(--c-border)"}`, color: "var(--c-text)", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
           ))}
           <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>registered country</label>
-            <div style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.muted, fontSize: 14, boxSizing: "border-box", background: C.offWhite }}>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>registered country</label>
+            <div style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${"var(--c-border)"}`, color: "var(--c-text-muted)", fontSize: 14, boxSizing: "border-box", background: "var(--c-bg)" }}>
               {workspace.profile?.registered_country || "UAE"}
             </div>
           </div>
         </div>
         {message && <div style={{ marginTop: 14, color: C.gold, fontSize: 13, fontWeight: 700 }}>{message}</div>}
-        <button onClick={saveProfile} disabled={saving} style={{ marginTop: 16, background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
+        <button onClick={saveProfile} disabled={saving} style={{ marginTop: 16, background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
           {saving ? "Saving…" : "Refresh Profile"}
         </button>
       </Card>
@@ -302,7 +302,7 @@ export function CorporateSupportPage() {
 
   const FIELD = {
     width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm,
-    border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14,
+    border: `1.5px solid ${"var(--c-border)"}`, color: "var(--c-text)", fontSize: 14,
     outline: "none", boxSizing: "border-box", fontFamily: "inherit",
   };
 
@@ -336,7 +336,7 @@ export function CorporateSupportPage() {
           <button
             type="submit"
             disabled={sending}
-            style={{ width: "fit-content", background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 22px", fontWeight: 700, cursor: sending ? "not-allowed" : "pointer", opacity: sending ? 0.7 : 1 }}
+            style={{ width: "fit-content", background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 22px", fontWeight: 700, cursor: sending ? "not-allowed" : "pointer", opacity: sending ? 0.7 : 1 }}
           >
             {sending ? "Submitting…" : "Submit Ticket"}
           </button>
@@ -361,10 +361,10 @@ export function CorporateSupportPage() {
               <div
                 key={t.id}
                 onClick={() => setSelected(selected?.id === t.id ? null : t)}
-                style={{ background: selected?.id === t.id ? C.offWhite2 : C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "14px 16px", cursor: "pointer" }}
+                style={{ background: selected?.id === t.id ? "var(--c-surface-2)" : "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: "14px 16px", cursor: "pointer" }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{t.subject || "Support request"}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{t.subject || "Support request"}</div>
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     {t.admin_reply && (
                       <span style={{ fontSize: 10, fontWeight: 700, background: "#EDE9FE", color: "#7C3AED", padding: "3px 10px", borderRadius: 999, textTransform: "uppercase" }}>
@@ -374,29 +374,29 @@ export function CorporateSupportPage() {
                     <TicketStatusPill status={t.status || "open"} hasReply={!!t.admin_reply} />
                   </div>
                 </div>
-                <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: "var(--c-text-muted)", marginTop: 4 }}>
                   {new Date(t.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                 </div>
 
                 {selected?.id === t.id && (
                   <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
-                    <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", marginBottom: 6 }}>Your message</div>
-                      <div style={{ fontSize: 13, color: C.navy, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{t.message}</div>
+                    <div style={{ background: "var(--c-surface)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", marginBottom: 6 }}>Your message</div>
+                      <div style={{ fontSize: 13, color: "var(--c-text)", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{t.message}</div>
                     </div>
                     {t.admin_reply ? (
                       <div style={{ background: "#F5F3FF", border: "1px solid #DDD6FE", borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
                         <div style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", marginBottom: 6 }}>Admin reply</div>
-                        <div style={{ fontSize: 13, color: C.navy, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{t.admin_reply}</div>
+                        <div style={{ fontSize: 13, color: "var(--c-text)", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{t.admin_reply}</div>
                         {t.admin_replied_at && (
-                          <div style={{ fontSize: 11, color: C.muted, marginTop: 8 }}>
+                          <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 8 }}>
                             Replied {new Date(t.admin_replied_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
-                        <div style={{ fontSize: 13, color: C.muted, fontStyle: "italic" }}>No reply yet — our team will respond within 1 business day.</div>
+                      <div style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
+                        <div style={{ fontSize: 13, color: "var(--c-text-muted)", fontStyle: "italic" }}>No reply yet — our team will respond within 1 business day.</div>
                       </div>
                     )}
                   </div>
@@ -525,7 +525,7 @@ export function CorporateDocumentsPage() {
         <>
           {/* ── Pending requests ── */}
           {pending.length > 0 && (
-            <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
+            <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
               <div style={{ padding: "14px 22px", background: "#FFFBEB", borderBottom: "1px solid #FDE68A", display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 16 }}>⚠️</span>
                 <span style={{ fontSize: 13, fontWeight: 800, color: "#D97706" }}>
@@ -535,22 +535,22 @@ export function CorporateDocumentsPage() {
               {pending.map((req, i) => {
                 const isUploading = uploading === req.id;
                 return (
-                  <div key={req.id} style={{ padding: "18px 22px", borderBottom: i < pending.length - 1 ? `1px solid ${C.border}` : "none" }}>
+                  <div key={req.id} style={{ padding: "18px 22px", borderBottom: i < pending.length - 1 ? `1px solid ${"var(--c-border)"}` : "none" }}>
                     <div style={{ display: "flex", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
                       <div style={{ flex: 1, minWidth: 200 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
-                          <div style={{ fontSize: 15, fontWeight: 800, color: C.navy }}>{req.document_type}</div>
+                          <div style={{ fontSize: 15, fontWeight: 800, color: "var(--c-text)" }}>{req.document_type}</div>
                           <DocumentTemplateButton documentName={req.document_type} size={24} />
                           <DocStatusPill status={req.status} />
                         </div>
                         {req.description && (
-                          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.65, marginBottom: 6 }}>{req.description}</div>
+                          <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.65, marginBottom: 6 }}>{req.description}</div>
                         )}
-                        <div style={{ fontSize: 11, color: C.muted }}>
+                        <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>
                           Requested {new Date(req.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                         </div>
                       </div>
-                      <label style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, borderRadius: RETAIL_THEME.radius.sm, padding: "11px 20px", fontSize: 13, fontWeight: 800, cursor: isUploading ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "inline-block", opacity: isUploading ? 0.7 : 1, flexShrink: 0 }}>
+                      <label style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", borderRadius: RETAIL_THEME.radius.sm, padding: "11px 20px", fontSize: 13, fontWeight: 800, cursor: isUploading ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "inline-block", opacity: isUploading ? 0.7 : 1, flexShrink: 0 }}>
                         {isUploading ? "Uploading…" : "📎 Upload File"}
                         <input type="file" onChange={e => handleUpload(req, e.target.files?.[0])} style={{ display: "none" }} disabled={isUploading} accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
                       </label>
@@ -563,7 +563,7 @@ export function CorporateDocumentsPage() {
 
           {/* ── Fulfilled requests ── */}
           {fulfilled.length > 0 && (
-            <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
+            <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
               <div style={{ padding: "14px 22px", background: "#ECFDF5", borderBottom: "1px solid #A7F3D0", display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 16 }}>✅</span>
                 <span style={{ fontSize: 13, fontWeight: 800, color: "#059669" }}>
@@ -571,15 +571,15 @@ export function CorporateDocumentsPage() {
                 </span>
               </div>
               {fulfilled.map((req, i) => (
-                <div key={req.id} style={{ padding: "16px 22px", borderBottom: i < fulfilled.length - 1 ? `1px solid ${C.border}` : "none", display: "flex", alignItems: "center", gap: 16 }}>
+                <div key={req.id} style={{ padding: "16px 22px", borderBottom: i < fulfilled.length - 1 ? `1px solid ${"var(--c-border)"}` : "none", display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#ECFDF5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>✅</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{req.document_type}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{req.document_type}</span>
                       <DocStatusPill status={req.status} />
                     </div>
-                    {req.description && <div style={{ fontSize: 12, color: C.muted }}>{req.description}</div>}
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>
+                    {req.description && <div style={{ fontSize: 12, color: "var(--c-text-muted)" }}>{req.description}</div>}
+                    <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 4 }}>
                       Requested {new Date(req.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                     </div>
                   </div>
@@ -590,13 +590,13 @@ export function CorporateDocumentsPage() {
 
           {/* ── Cancelled requests ── */}
           {cancelled.length > 0 && (
-            <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, overflow: "hidden", opacity: 0.7 }}>
-              <div style={{ padding: "12px 22px", borderBottom: `1px solid ${C.border}`, fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>
+            <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", opacity: 0.7 }}>
+              <div style={{ padding: "12px 22px", borderBottom: `1px solid ${"var(--c-border)"}`, fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>
                 Cancelled ({cancelled.length})
               </div>
               {cancelled.map((req, i) => (
-                <div key={req.id} style={{ padding: "14px 22px", borderBottom: i < cancelled.length - 1 ? `1px solid ${C.border}` : "none", display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ fontSize: 13, color: C.muted, flex: 1 }}>{req.document_type}</div>
+                <div key={req.id} style={{ padding: "14px 22px", borderBottom: i < cancelled.length - 1 ? `1px solid ${"var(--c-border)"}` : "none", display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ fontSize: 13, color: "var(--c-text-muted)", flex: 1 }}>{req.document_type}</div>
                   <DocStatusPill status={req.status} />
                 </div>
               ))}
@@ -613,9 +613,9 @@ export function CorporateDocumentsPage() {
             ["Accepted formats", "PDF, JPG, PNG, DOC, DOCX. Maximum 50 MB per file."],
             ["After upload", "Your advisor is notified immediately and will review the document. You may re-upload if requested."],
           ].map(([q, a]) => (
-            <div key={q} style={{ background: C.offWhite, borderRadius: RETAIL_THEME.radius.sm, border: `1px solid ${C.border}`, padding: 14 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 4 }}>{q}</div>
-              <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.65 }}>{a}</div>
+            <div key={q} style={{ background: "var(--c-bg)", borderRadius: RETAIL_THEME.radius.sm, border: `1px solid ${"var(--c-border)"}`, padding: 14 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--c-text)", marginBottom: 4 }}>{q}</div>
+              <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.65 }}>{a}</div>
             </div>
           ))}
         </div>
@@ -638,8 +638,8 @@ export function CorporateFeatureWorkspacePage({ feature }) {
       <Card title={data.title} subtitle={data.subtitle}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
           {data.cards.map((item) => (
-            <div key={item} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, lineHeight: 1.7 }}>{item}</div>
+            <div key={item} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)", lineHeight: 1.7 }}>{item}</div>
             </div>
           ))}
         </div>

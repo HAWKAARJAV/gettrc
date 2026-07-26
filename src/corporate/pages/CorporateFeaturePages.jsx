@@ -14,9 +14,9 @@ const C = RETAIL_THEME.colors;
 
 function Card({ title, subtitle, children, highlight = false }) {
   return (
-    <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${highlight ? C.gold : C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${highlight ? C.gold : "var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>{title}</div>
-      {subtitle && <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>{subtitle}</p>}
+      {subtitle && <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>{subtitle}</p>}
       {children}
     </div>
   );
@@ -24,17 +24,17 @@ function Card({ title, subtitle, children, highlight = false }) {
 
 const FIELD = {
   width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm,
-  border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14,
+  border: `1.5px solid ${"var(--c-border)"}`, color: "var(--c-text)", fontSize: 14,
   outline: "none", boxSizing: "border-box", fontFamily: "inherit",
 };
 
 const PRIMARY_BTN = {
-  background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none",
+  background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", border: "none",
   borderRadius: RETAIL_THEME.radius.sm, padding: "12px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer",
 };
 
 const SECONDARY_BTN = {
-  background: C.white, color: C.navy, border: `1px solid ${C.border}`,
+  background: "var(--c-surface)", color: "var(--c-text)", border: `1px solid ${"var(--c-border)"}`,
   borderRadius: RETAIL_THEME.radius.sm, padding: "12px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer",
 };
 
@@ -97,12 +97,12 @@ export function CorporateApplicationsPage() {
         ) : (
           <div style={{ display: "grid", gap: 12 }}>
             {applications.map((app) => (
-              <div key={app.id} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 18, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+              <div key={app.id} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 18, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: C.navy, marginBottom: 4 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "var(--c-text)", marginBottom: 4 }}>
                     {getWorkflowStateLabel(normalizeWorkflowState(app))}
                   </div>
-                  <div style={{ fontSize: 12, color: C.muted }}>
+                  <div style={{ fontSize: 12, color: "var(--c-text-muted)" }}>
                     Filed {new Date(app.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} · Ref {app.id.slice(0, 8)}
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export function CorporateEmployeesPage() {
             </div>
 
             {showForm && (
-              <form onSubmit={handleAdd} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 18, background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+              <form onSubmit={handleAdd} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 18, background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
                 <input placeholder="Full name *" value={form.full_name} onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))} style={FIELD} required />
                 <input placeholder="Email" type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={FIELD} />
                 <input placeholder="Position" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: e.target.value }))} style={FIELD} />
@@ -226,12 +226,12 @@ export function CorporateEmployeesPage() {
             ) : (
               <div style={{ display: "grid", gap: 10 }}>
                 {rows.map((r) => (
-                  <div key={r.id} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                  <div key={r.id} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{r.full_name}</div>
-                      <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{[r.position, r.email].filter(Boolean).join(" · ") || "—"}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{r.full_name}</div>
+                      <div style={{ fontSize: 12, color: "var(--c-text-muted)", marginTop: 2 }}>{[r.position, r.email].filter(Boolean).join(" · ") || "—"}</div>
                     </div>
-                    <button onClick={() => handleDelete(r.id)} style={{ background: "none", border: `1px solid ${C.border}`, color: "#DC2626", borderRadius: RETAIL_THEME.radius.sm, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                    <button onClick={() => handleDelete(r.id)} style={{ background: "none", border: `1px solid ${"var(--c-border)"}`, color: "#DC2626", borderRadius: RETAIL_THEME.radius.sm, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                       Delete
                     </button>
                   </div>
@@ -294,10 +294,10 @@ export function CorporateComplianceCenterPage() {
     <div style={{ display: "grid", gap: 18 }}>
       <Card title="Compliance Center" subtitle="A checklist view of required documentation and its current review status. Upload files from the Documents page.">
         <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-          <div style={{ width: 64, height: 64, borderRadius: "50%", background: `conic-gradient(${C.gold} ${completion * 3.6}deg, ${C.offWhite2} 0deg)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <div style={{ width: 50, height: 50, borderRadius: "50%", background: C.white, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: C.navy }}>{completion}%</div>
+          <div style={{ width: 64, height: 64, borderRadius: "50%", background: `conic-gradient(${C.gold} ${completion * 3.6}deg, ${"var(--c-surface-2)"} 0deg)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: 50, height: 50, borderRadius: "50%", background: "var(--c-surface)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "var(--c-text)" }}>{completion}%</div>
           </div>
-          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>
+          <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.7 }}>
             {rows.filter((r) => r.status === "complete").length} of {rows.length} required documents approved.
           </div>
         </div>
@@ -311,10 +311,10 @@ export function CorporateComplianceCenterPage() {
             {rows.map((r) => {
               const meta = STATUS_META[r.status];
               return (
-                <div key={r.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "14px 16px", flexWrap: "wrap" }}>
+                <div key={r.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: "14px 16px", flexWrap: "wrap" }}>
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{r.document_name}</div>
-                    {r.description && <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{r.description}</div>}
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{r.document_name}</div>
+                    {r.description && <div style={{ fontSize: 12, color: "var(--c-text-muted)", marginTop: 2 }}>{r.description}</div>}
                   </div>
                   <span style={{ background: meta.bg, color: meta.color, fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 999, textTransform: "uppercase", letterSpacing: ".04em", whiteSpace: "nowrap" }}>
                     {meta.icon} {meta.label}
@@ -445,7 +445,7 @@ export function CorporateBillingPage() {
       </Card>
 
       <Card title="Online payments not yet available">
-        <p style={{ fontSize: 14, color: C.navy, lineHeight: 1.8 }}>
+        <p style={{ fontSize: 14, color: "var(--c-text)", lineHeight: 1.8 }}>
           Online payment collection is not yet available. Your assigned compliance manager will confirm billing arrangements and payment instructions directly.
         </p>
       </Card>
@@ -459,9 +459,9 @@ export function CorporateBillingPage() {
           ) : (
             <div style={{ display: "grid", gap: 8 }}>
               {history.map((h) => (
-                <div key={h.id} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "12px 16px", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: C.navy }}>{getWorkflowStateLabel(h.new_state)}</span>
-                  <span style={{ fontSize: 12, color: C.muted }}>{new Date(h.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
+                <div key={h.id} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: "12px 16px", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--c-text)" }}>{getWorkflowStateLabel(h.new_state)}</span>
+                  <span style={{ fontSize: 12, color: "var(--c-text-muted)" }}>{new Date(h.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
                 </div>
               ))}
             </div>
@@ -564,7 +564,7 @@ export function CorporateSettingsPage() {
           <>
             <label style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
               <input type="checkbox" checked={optIn} onChange={handleToggleOptIn} disabled={prefSaving} style={{ width: 20, height: 20, cursor: "pointer" }} />
-              <span style={{ fontSize: 14, fontWeight: 600, color: C.navy }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "var(--c-text)" }}>
                 {optIn ? "Email notifications are ON" : "Email notifications are OFF"}
               </span>
             </label>

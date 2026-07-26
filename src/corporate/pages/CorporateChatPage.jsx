@@ -82,14 +82,14 @@ function Bubble({ msg, isOwn, advisorName }) {
         borderRadius: isOwn ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
         background: isOwn
           ? `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`
-          : C.white,
-        color: isOwn ? C.white : C.navy,
+          : "var(--c-surface)",
+        color: isOwn ? "var(--c-surface)" : "var(--c-text)",
         fontSize: 14, lineHeight: 1.55,
         boxShadow: "0 1px 6px rgba(0,0,0,.08)",
-        border: isOwn ? "none" : `1px solid ${C.border}`,
+        border: isOwn ? "none" : `1px solid ${"var(--c-border)"}`,
       }}>
         <div>{msg.message}</div>
-        <div style={{ fontSize: 10, color: isOwn ? "rgba(255,255,255,.65)" : C.muted, marginTop: 5, textAlign: "right" }}>
+        <div style={{ fontSize: 10, color: isOwn ? "rgba(255,255,255,.65)" : "var(--c-text-muted)", marginTop: 5, textAlign: "right" }}>
           {isOwn ? "You" : advisorName}
           {" · "}{new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
         </div>
@@ -100,10 +100,10 @@ function Bubble({ msg, isOwn, advisorName }) {
 
 function LockedState({ label, message }) {
   return (
-    <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 48, textAlign: "center" }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 48, textAlign: "center" }}>
       <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-      <h2 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 10 }}>{label}</h2>
-      <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 420, margin: "0 auto" }}>{message}</p>
+      <h2 style={{ fontFamily: SERIF, fontSize: 26, color: "var(--c-text)", marginBottom: 10 }}>{label}</h2>
+      <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, maxWidth: 420, margin: "0 auto" }}>{message}</p>
     </div>
   );
 }
@@ -191,7 +191,7 @@ export default function CorporateChatPage() {
   if (!advisorLoading && !advisorId) {
     return (
       <div style={{ display: "grid", gap: 18 }}>
-        <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
           <EmptyState
             title="No advisor assigned yet"
             message="A compliance manager will be assigned to your company shortly. You'll be able to message them directly here once assigned."
@@ -204,13 +204,13 @@ export default function CorporateChatPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14, fontFamily: SANS }}>
       {/* Advisor info card */}
-      <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: "18px 22px", display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ width: 44, height: 44, borderRadius: "50%", background: `linear-gradient(135deg, ${C.navy}, #1A3570)`, display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontSize: 19, flexShrink: 0 }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: "18px 22px", display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ width: 44, height: 44, borderRadius: "50%", background: `linear-gradient(135deg, ${C.navy}, #1A3570)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 19, flexShrink: 0 }}>
           ⚖
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, color: C.navy }}>{advisorLoading ? "Loading…" : advisorName}</div>
-          <div style={{ fontSize: 12, color: C.muted, marginTop: 1 }}>
+          <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, color: "var(--c-text)" }}>{advisorLoading ? "Loading…" : advisorName}</div>
+          <div style={{ fontSize: 12, color: "var(--c-text-muted)", marginTop: 1 }}>
             {advisor?.specialties?.length ? advisor.specialties.join(", ") : "Compliance Manager"} · TRC Advisor
           </div>
         </div>
@@ -220,9 +220,9 @@ export default function CorporateChatPage() {
       </div>
 
       {/* Chat panel */}
-      <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 260px)", minHeight: 420, background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 260px)", minHeight: 420, background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
         {/* Messages area */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "20px 22px", background: C.offWhite }}>
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px 22px", background: "var(--c-bg)" }}>
           {loading ? (
             <div style={{ padding: 12 }}>
               <SkeletonCard height={120} />
@@ -244,7 +244,7 @@ export default function CorporateChatPage() {
         </div>
 
         {/* Input */}
-        <div style={{ padding: "12px 16px", borderTop: `1px solid ${C.border}`, display: "flex", gap: 10, alignItems: "flex-end", background: C.white }}>
+        <div style={{ padding: "12px 16px", borderTop: `1px solid ${"var(--c-border)"}`, display: "flex", gap: 10, alignItems: "flex-end", background: "var(--c-surface)" }}>
           <textarea
             ref={inputRef}
             value={text}
@@ -254,8 +254,8 @@ export default function CorporateChatPage() {
             rows={2}
             style={{
               flex: 1, padding: "11px 14px", borderRadius: 12,
-              border: `1.5px solid ${C.border}`, fontFamily: SANS,
-              fontSize: 14, resize: "none", outline: "none", color: C.navy,
+              border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS,
+              fontSize: 14, resize: "none", outline: "none", color: "var(--c-text)",
               lineHeight: 1.5,
             }}
           />
@@ -265,7 +265,7 @@ export default function CorporateChatPage() {
             style={{
               padding: "11px 20px", borderRadius: 12,
               background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`,
-              color: C.white, border: "none", fontWeight: 700, fontSize: 14,
+              color: "#fff", border: "none", fontWeight: 700, fontSize: 14,
               fontFamily: SANS, flexShrink: 0,
               cursor: sending || !text.trim() ? "not-allowed" : "pointer",
               opacity: sending || !text.trim() ? 0.5 : 1,
