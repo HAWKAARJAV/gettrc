@@ -5,6 +5,7 @@ import React from "react";
 import * as ReactRouterDom from "react-router-dom";
 import { useSEO, ORGANIZATION_JSONLD, WEBSITE_JSONLD, LOCAL_BUSINESS_JSONLD } from "../seo/useSEO";
 import { C } from "../theme/marketingColors";
+import { supabase } from "../supabaseClient";
 
 // ── Local copies of small helpers also used elsewhere in TRCConnectApp.jsx —
 // duplicated here (not extracted to a shared module) since they're trivial
@@ -16,6 +17,14 @@ const MARKETING_ROUTE_TARGETS = {
   "/resources": "resources",
   "/about": "about",
 };
+
+// Fallback only — the real content is editable via Admin → Resources
+// (homepage_resources table) and fetched at mount.
+const DEFAULT_RESOURCE_CARDS = [
+  { id: "eligibility-guide", title: "UAE eligibility guide", description: "UAE-specific eligibility, document, and FTA authority requirements for TRC applicants.", action_label: "Check Eligibility", action_type: "scroll", action_value: "for-who" },
+  { id: "document-readiness", title: "Document readiness", description: "Structured checklists that convert advisor requirements into trackable client tasks and upload states.", action_label: "View Workflow", action_type: "scroll", action_value: "workflow" },
+  { id: "trc-articles", title: "TRC articles", description: "Practical guides on cross-border income, double tax treaty benefits, and common UAE TRC questions.", action_label: "Read Blog", action_type: "path", action_value: "/blog" },
+];
 
 function scrollToElementId(id, behavior = "smooth") {
   const el = document.getElementById(id);
@@ -154,6 +163,23 @@ export default function HomePage() {
     const timer = window.setTimeout(() => scrollToElementId(target, "auto"), 80);
     return () => window.clearTimeout(timer);
   }, [pathname]);
+
+  // Resources cards are editable from Admin → Resources; this hardcoded set
+  // is only the fallback shown before the fetch resolves (or if it fails).
+  const [resourceCards, setResourceCards] = React.useState(DEFAULT_RESOURCE_CARDS);
+  React.useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("homepage_resources")
+      .select("id,title,description,action_label,action_type,action_value")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .then(({ data, error }) => {
+        if (cancelled || error || !data?.length) return;
+        setResourceCards(data);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div style={{ fontFamily: "'DM Sans', -apple-system, sans-serif", color: C.navy, background: C.white }}>
@@ -592,7 +618,10 @@ export default function HomePage() {
                 { name: "Corporate", price: "Case scoped", desc: "For one company or founder-led entity.", points: ["Entity assessment", "Corporate documents", "Assigned compliance manager", "Billing and reports"], cta: "Start Corporate", action: () => navigate('/corporate/check-eligibility'), featured: true },
                 { name: "Enterprise", price: "Custom", desc: "For teams managing recurring TRC operations.", points: ["Multi-entity workflow", "Renewal tracking", "Audit-ready exports", "Priority support"], cta: "Discuss Fit", action: () => scrollToElementId('about') },
               ].map((plan) => (
-                <div key={plan.name} style={{ background: plan.featured ? C.navy : C.white, border: `1px solid ${plan.featured ? "transparent" : C.border}`, borderRadius: 16, padding: 22, boxShadow: plan.featured ? "0 22px 48px rgba(15,37,87,0.22)" : "0 8px 22px rgba(15,37,87,0.06)" }}>
+                <div key={plan.name}
+                  style={{ background: plan.featured ? C.navy : C.white, border: `1px solid ${plan.featured ? "transparent" : C.border}`, borderRadius: 16, padding: 22, boxShadow: plan.featured ? "0 22px 48px rgba(15,37,87,0.22)" : "0 8px 22px rgba(15,37,87,0.06)", transition: "transform .2s ease, box-shadow .2s ease" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = plan.featured ? "0 28px 56px rgba(15,37,87,0.3)" : "0 14px 32px rgba(15,37,87,0.1)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = plan.featured ? "0 22px 48px rgba(15,37,87,0.22)" : "0 8px 22px rgba(15,37,87,0.06)"; }}>
                   <div style={{ fontSize: 12, color: plan.featured ? C.goldLight : C.gold, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10 }}>{plan.name}</div>
                   <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 30, fontWeight: 700, color: plan.featured ? C.white : C.navy, lineHeight: 1 }}>{plan.price}</div>
                   <p style={{ fontSize: 13, color: plan.featured ? "rgba(255,255,255,0.62)" : C.textMuted, lineHeight: 1.65, marginTop: 12, minHeight: 44 }}>{plan.desc}</p>
@@ -626,17 +655,17 @@ export default function HomePage() {
               Guidance on UAE eligibility rules, the documents advisors typically request, and how a case moves from application to certificate.
             </p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 18 }} className="hero-grid">
-            {[
-              { title: "UAE eligibility guide", desc: "UAE-specific eligibility, document, and FTA authority requirements for TRC applicants.", action: "Check Eligibility", target: "for-who" },
-              { title: "Document readiness", desc: "Structured checklists that convert advisor requirements into trackable client tasks and upload states.", action: "View Workflow", target: "workflow" },
-              { title: "TRC articles", desc: "Practical guides on cross-border income, double tax treaty benefits, and common UAE TRC questions.", action: "Read Blog", path: "/blog" },
-            ].map((item) => (
-              <div key={item.title} style={{ border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, background: C.offWhite, boxShadow: "0 8px 22px rgba(15,37,87,0.05)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 18 }}>
+            {resourceCards.map((item) => (
+              <div key={item.id} style={{ border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, background: C.offWhite, boxShadow: "0 8px 22px rgba(15,37,87,0.05)" }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 10 }}>{item.title}</div>
-                <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.75, minHeight: 68 }}>{item.desc}</p>
-                <button onClick={() => item.path ? navigate(item.path) : scrollToElementId(item.target)} style={{ marginTop: 18, background: "transparent", color: C.gold, border: "none", padding: 0, fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
-                  {item.action} →
+                <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.75, minHeight: 68 }}>{item.description}</p>
+                <button onClick={() => {
+                  if (item.action_type === "path") navigate(item.action_value);
+                  else if (item.action_type === "url") window.open(item.action_value, "_blank", "noopener,noreferrer");
+                  else scrollToElementId(item.action_value);
+                }} style={{ marginTop: 18, background: "transparent", color: C.gold, border: "none", padding: 0, fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
+                  {item.action_label} →
                 </button>
               </div>
             ))}
