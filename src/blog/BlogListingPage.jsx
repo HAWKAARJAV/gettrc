@@ -12,13 +12,15 @@ const C = {
   navyLight: "#1A3570",
   gold:      "#C9A84C",
   goldLight: "#E2C47A",
+  // Literal white — text-on-dark only. Backgrounds/cards below are
+  // theme-reactive (invert in dark mode via CSS vars in theme/global.css).
   white:     "#FFFFFF",
-  offWhite:  "#F7F8FC",
-  text:      "#1E293B",
-  muted:     "#64748B",
-  border:    "#E2E8F0",
-  card:      "#FFFFFF",
-  surface:   "#FBFCFE",
+  offWhite:  "var(--c-surface-2)",
+  text:      "var(--c-text)",
+  muted:     "var(--c-text-muted)",
+  border:    "var(--c-border)",
+  card:      "var(--c-surface)",
+  surface:   "var(--c-surface)",
 };
 
 // ── Category pill ─────────────────────────────────────────────────────────────
@@ -96,7 +98,7 @@ function PostCard({ post }) {
 
         <h3 style={{
           fontFamily:"'Cormorant Garamond',serif",
-          fontSize: 18, fontWeight: 700, color: C.navy,
+          fontSize: 18, fontWeight: 700, color: C.text,
           lineHeight: 1.25, letterSpacing:"-.01em",
           margin: 0,
           display: "-webkit-box",
@@ -123,7 +125,7 @@ function PostCard({ post }) {
             {post.author_name?.[0] || "T"}
           </div>
           <div style={{ minWidth: 0, flex:1 }}>
-            <p style={{ fontSize:11, color:C.navy, fontWeight:700, margin:0, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{post.author_name}</p>
+            <p style={{ fontSize:11, color:C.text, fontWeight:700, margin:0, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{post.author_name}</p>
             <p style={{ fontSize:11, color:C.muted, margin:0 }}>{publishedDate}</p>
           </div>
           <p style={{ fontSize:11, color:C.muted, margin:0, whiteSpace:"nowrap" }}>{post.read_time_minutes} min</p>
@@ -147,7 +149,7 @@ function SearchBar({ value, onChange }) {
           width:"100%", padding:"10px 14px 10px 38px",
           border:`1px solid ${C.border}`, borderRadius:12,
           fontSize:14, fontFamily:"inherit", color:C.text,
-          background:C.white, outline:"none",
+          background:C.card, outline:"none",
           boxShadow:"0 1px 4px rgba(0,0,0,.06)",
         }}
       />
@@ -195,7 +197,7 @@ export default function BlogListingPage() {
   });
 
   return (
-    <div style={{ minHeight:"100vh", background:`radial-gradient(circle at top, rgba(201,168,76,.10), transparent 34%), linear-gradient(180deg, #F7F8FC 0%, #EEF2F8 100%)`, fontFamily:"'DM Sans',-apple-system,sans-serif" }}>
+    <div style={{ minHeight:"100vh", background:`radial-gradient(circle at top, rgba(201,168,76,.10), transparent 34%), var(--c-bg)`, fontFamily:"'DM Sans',-apple-system,sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
         * { box-sizing:border-box; }
@@ -209,7 +211,7 @@ export default function BlogListingPage() {
       <section style={{ padding:"138px 24px 0" }}>
         <div style={{ maxWidth:1200, margin:"0 auto" }}>
           <div style={{
-            background:C.white,
+            background:C.card,
             border:`1px solid ${C.border}`,
             borderRadius:18,
             padding:"18px",
@@ -223,7 +225,7 @@ export default function BlogListingPage() {
                 </span>
                 <h1 style={{
                   fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(22px,2.6vw,30px)",
-                  fontWeight:700, color:C.navy, lineHeight:1.08, marginBottom:8,
+                  fontWeight:700, color:C.text, lineHeight:1.08, marginBottom:8,
                 }}>
                   TRC Insights, now in a cleaner card layout.
                 </h1>
@@ -259,7 +261,7 @@ export default function BlogListingPage() {
             style={{
               padding:"7px 12px", borderRadius:999, fontSize:11, fontWeight:700,
               cursor:"pointer", transition:"all .15s",
-              background: activeCategory==="" ? C.navy : C.white,
+              background: activeCategory==="" ? C.navy : C.card,
               color: activeCategory==="" ? C.white : C.muted,
               border: activeCategory==="" ? "none" : `1px solid ${C.border}`,
               boxShadow: activeCategory==="" ? "0 8px 18px rgba(15,37,87,.18)" : "0 4px 14px rgba(15,37,87,.05)",
@@ -271,7 +273,7 @@ export default function BlogListingPage() {
               style={{
                 padding:"7px 12px", borderRadius:999, fontSize:11, fontWeight:700,
                 cursor:"pointer", border:"none", transition:"all .15s",
-                background: activeCategory===cat ? C.navy : C.white,
+                background: activeCategory===cat ? C.navy : C.card,
                 color: activeCategory===cat ? C.white : C.muted,
                 border: activeCategory===cat ? "none" : `1px solid ${C.border}`,
                 boxShadow: activeCategory===cat ? "0 8px 18px rgba(15,37,87,.18)" : "0 4px 14px rgba(15,37,87,.05)",

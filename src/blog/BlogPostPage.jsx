@@ -12,12 +12,13 @@ const C = {
   navyLight: "#1A3570",
   gold:      "#C9A84C",
   goldLight: "#E2C47A",
+  // Literal white — text-on-dark only. Everything below is theme-reactive.
   white:     "#FFFFFF",
-  offWhite:  "#F7F8FC",
-  text:      "#1E293B",
-  muted:     "#64748B",
-  border:    "#E2E8F0",
-  surface:   "#FBFCFE",
+  offWhite:  "var(--c-surface-2)",
+  text:      "var(--c-text)",
+  muted:     "var(--c-text-muted)",
+  border:    "var(--c-border)",
+  surface:   "var(--c-surface)",
 };
 
 // ── Minimal markdown renderer (no external deps) ─────────────────────────────
@@ -93,24 +94,24 @@ function renderMarkdown(md) {
 
 // ── Markdown CSS ──────────────────────────────────────────────────────────────
 const MD_CSS = `
-  .md-h1,.md-h2,.md-h3,.md-h4{font-family:'Cormorant Garamond',serif;font-weight:700;color:#0F2557;line-height:1.25;margin:1.6em 0 .6em;}
+  .md-h1,.md-h2,.md-h3,.md-h4{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--c-text);line-height:1.25;margin:1.6em 0 .6em;}
   .md-h1{font-size:clamp(26px,3vw,38px);}
-  .md-h2{font-size:clamp(22px,2.5vw,30px);padding-bottom:8px;border-bottom:2px solid #E2E8F0;}
+  .md-h2{font-size:clamp(22px,2.5vw,30px);padding-bottom:8px;border-bottom:2px solid var(--c-border);}
   .md-h3{font-size:clamp(18px,2vw,24px);}
   .md-h4{font-size:17px;}
-  .md-p{font-size:17px;line-height:1.8;color:#334155;margin:0 0 1.2em;}
+  .md-p{font-size:17px;line-height:1.8;color:var(--c-text-muted);margin:0 0 1.2em;}
   .md-link{color:#C9A84C;text-decoration:underline;text-underline-offset:3px;font-weight:600;}
   .md-link:hover{color:#A07C2E;}
   .md-ul,.md-ol{padding-left:1.5em;margin:0 0 1.2em;}
-  .md-ul li,.md-ol li{font-size:17px;line-height:1.75;color:#334155;margin-bottom:.4em;}
-  .md-bq{border-left:4px solid #C9A84C;margin:1.4em 0;padding:12px 20px;background:#FFFBF0;border-radius:0 8px 8px 0;font-size:16px;color:#5C4A1E;font-style:italic;}
-  .md-code{background:#F1F5F9;color:#0F2557;padding:2px 7px;border-radius:5px;font-family:'Fira Code',monospace;font-size:14px;}
-  .md-hr{border:none;border-top:1px solid #E2E8F0;margin:2em 0;}
+  .md-ul li,.md-ol li{font-size:17px;line-height:1.75;color:var(--c-text-muted);margin-bottom:.4em;}
+  .md-bq{border-left:4px solid #C9A84C;margin:1.4em 0;padding:12px 20px;background:var(--c-warning-bg);border-radius:0 8px 8px 0;font-size:16px;color:var(--c-text);font-style:italic;}
+  .md-code{background:var(--c-surface-2);color:var(--c-text);padding:2px 7px;border-radius:5px;font-family:'Fira Code',monospace;font-size:14px;}
+  .md-hr{border:none;border-top:1px solid var(--c-border);margin:2em 0;}
   .md-table-wrap{overflow-x:auto;margin:1.4em 0;}
   .md-table{width:100%;border-collapse:collapse;font-size:15px;}
   .md-table th{background:#0F2557;color:#fff;padding:10px 16px;text-align:left;font-weight:600;}
-  .md-table td{padding:10px 16px;border-bottom:1px solid #E2E8F0;color:#334155;}
-  .md-table tr:nth-child(even) td{background:#F7F8FC;}
+  .md-table td{padding:10px 16px;border-bottom:1px solid var(--c-border);color:var(--c-text-muted);}
+  .md-table tr:nth-child(even) td{background:var(--c-surface-2);}
   strong{font-weight:700;}
   em{font-style:italic;}
 `;
@@ -144,7 +145,7 @@ function ShareBar({ url, title }) {
 function Tag({ label }) {
   return (
     <span style={{
-      background: "#F1F5F9", color: C.muted, fontSize:12,
+      background: "var(--c-surface-2)", color: C.muted, fontSize:12,
       fontWeight:600, padding:"4px 10px", borderRadius:6,
     }}>#{label}</span>
   );
@@ -265,7 +266,7 @@ export default function BlogPostPage() {
     <div style={{ minHeight:"100vh", display:"flex", flexDirection:"column", alignItems:"center",
       justifyContent:"center", fontFamily:"'DM Sans',sans-serif", gap:16 }}>
       <p style={{ fontSize:56 }}>📭</p>
-      <h2 style={{ color:C.navy, fontFamily:"'Cormorant Garamond',serif", fontSize:28 }}>Article not found</h2>
+      <h2 style={{ color:C.text, fontFamily:"'Cormorant Garamond',serif", fontSize:28 }}>Article not found</h2>
       <Link to="/blog" style={{ color:C.gold, fontWeight:600 }}>← Back to Blog</Link>
     </div>
   );
@@ -273,7 +274,7 @@ export default function BlogPostPage() {
   const postUrl = `https://gettrc.com/blog/${post.slug}`;
 
   return (
-    <div style={{ minHeight:"100vh", background:`radial-gradient(circle at top, rgba(201,168,76,.10), transparent 34%), linear-gradient(180deg, #F7F8FC 0%, #EEF2F8 100%)`, fontFamily:"'DM Sans',-apple-system,sans-serif" }}>
+    <div style={{ minHeight:"100vh", background:`radial-gradient(circle at top, rgba(201,168,76,.10), transparent 34%), var(--c-bg)`, fontFamily:"'DM Sans',-apple-system,sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
         * { box-sizing:border-box; } body { margin:0; }
@@ -289,19 +290,19 @@ export default function BlogPostPage() {
           <span style={{ margin:"0 8px" }}>/</span>
           <Link to="/blog" style={{ color:C.muted, textDecoration:"none" }}>Blog</Link>
           <span style={{ margin:"0 8px" }}>/</span>
-          <span style={{ color:C.navy, fontWeight:700 }}>{post.category}</span>
+          <span style={{ color:C.text, fontWeight:700 }}>{post.category}</span>
         </nav>
 
         <div style={{ display:"grid", gridTemplateColumns:"minmax(0, 1fr) 320px", gap:24, alignItems:"start" }}>
-          <article style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:24, overflow:"hidden", boxShadow:"0 18px 50px rgba(15,37,87,.08)" }}>
+          <article style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:24, overflow:"hidden", boxShadow:"0 18px 50px rgba(15,37,87,.08)" }}>
             <div style={{ padding:"28px" }}>
               <div style={{ display:"flex", gap:12, alignItems:"center", flexWrap:"wrap", marginBottom:16 }}>
-                <span style={{ background:"rgba(201,168,76,.14)", color:C.navy, fontSize:11, fontWeight:700, padding:"3px 10px", borderRadius:20, letterSpacing:".05em", textTransform:"uppercase" }}>{post.category}</span>
+                <span style={{ background:"rgba(201,168,76,.14)", color:C.text, fontSize:11, fontWeight:700, padding:"3px 10px", borderRadius:20, letterSpacing:".05em", textTransform:"uppercase" }}>{post.category}</span>
                 <span style={{ fontSize:12, color:C.muted }}>⏱ {post.read_time_minutes} min read</span>
                 <span style={{ fontSize:12, color:C.muted }}>Published {post.published_at ? new Date(post.published_at).toLocaleDateString("en-US", { year:"numeric", month:"short", day:"numeric" }) : "Draft"}</span>
               </div>
 
-              <h1 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(30px,4vw,46px)", fontWeight:700, color:C.navy, lineHeight:1.1, marginBottom:14 }}>
+              <h1 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(30px,4vw,46px)", fontWeight:700, color:C.text, lineHeight:1.1, marginBottom:14 }}>
                 {post.title}
               </h1>
 
@@ -314,7 +315,7 @@ export default function BlogPostPage() {
                   {post.author_name?.[0] || "T"}
                 </div>
                 <div>
-                  <p style={{ fontSize:14,fontWeight:700,color:C.navy,margin:0 }}>{post.author_name}</p>
+                  <p style={{ fontSize:14,fontWeight:700,color:C.text,margin:0 }}>{post.author_name}</p>
                   <p style={{ fontSize:12,color:C.muted,margin:0 }}>TRC Connect editorial team</p>
                 </div>
               </div>
@@ -328,8 +329,8 @@ export default function BlogPostPage() {
 
             <div style={{ padding:"0 28px 28px" }}>
               {tocItems.length > 0 && (
-                <section style={{ maxWidth:760, margin:"0 auto 24px", padding:"18px 20px", background:"#F8FAFC", borderRadius:16, border:`1px solid ${C.border}` }}>
-                  <p style={{ margin:"0 0 10px", fontSize:13, fontWeight:700, color:C.navy, textTransform:"uppercase", letterSpacing:".08em" }}>On this page</p>
+                <section style={{ maxWidth:760, margin:"0 auto 24px", padding:"18px 20px", background:"var(--c-surface-2)", borderRadius:16, border:`1px solid ${C.border}` }}>
+                  <p style={{ margin:"0 0 10px", fontSize:13, fontWeight:700, color:C.text, textTransform:"uppercase", letterSpacing:".08em" }}>On this page</p>
                   <ol style={{ margin:0, paddingLeft:18, display:"grid", gap:8 }}>
                     {tocItems.map(item => (
                       <li key={item.id} style={{ fontSize:13, lineHeight:1.5 }}>
@@ -350,11 +351,11 @@ export default function BlogPostPage() {
 
               {faqItems.length > 0 && (
                 <section style={{ maxWidth:760, margin:"32px auto 0", padding:"24px", background:C.offWhite, borderRadius:18, border:`1px solid ${C.border}` }}>
-                  <h2 style={{ margin:"0 0 14px", fontFamily:"'Cormorant Garamond',serif", fontSize:28, color:C.navy }}>Frequently asked questions</h2>
+                  <h2 style={{ margin:"0 0 14px", fontFamily:"'Cormorant Garamond',serif", fontSize:28, color:C.text }}>Frequently asked questions</h2>
                   <div style={{ display:"grid", gap:12 }}>
                     {faqItems.map(item => (
-                      <div key={item.question} style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:14, padding:"16px 18px" }}>
-                        <h3 style={{ margin:"0 0 8px", fontSize:15, color:C.navy, lineHeight:1.4 }}>{item.question}</h3>
+                      <div key={item.question} style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:14, padding:"16px 18px" }}>
+                        <h3 style={{ margin:"0 0 8px", fontSize:15, color:C.text, lineHeight:1.4 }}>{item.question}</h3>
                         <p style={{ margin:0, fontSize:13, color:C.muted, lineHeight:1.65 }}>{item.answer}</p>
                       </div>
                     ))}
@@ -376,16 +377,16 @@ export default function BlogPostPage() {
                 </div>
               </section>
 
-              <div style={{ maxWidth:760, margin:"28px auto 0", padding:"22px 24px", background:"#F8FAFC", borderRadius:16, border:`1px solid ${C.border}` }}>
+              <div style={{ maxWidth:760, margin:"28px auto 0", padding:"22px 24px", background:"var(--c-surface-2)", borderRadius:16, border:`1px solid ${C.border}` }}>
                 <ShareBar url={postUrl} title={post.title} />
               </div>
 
-              <div style={{ maxWidth:760, margin:"28px auto 0", padding:"28px", background:C.white, borderRadius:16, border:`1px solid ${C.border}`, display:"flex", gap:20, alignItems:"flex-start" }}>
+              <div style={{ maxWidth:760, margin:"28px auto 0", padding:"28px", background:C.surface, borderRadius:16, border:`1px solid ${C.border}`, display:"flex", gap:20, alignItems:"flex-start" }}>
                 <div style={{ width:56, height:56, borderRadius:"50%", flexShrink:0, background:`linear-gradient(135deg,${C.navy},${C.navyLight})`, display:"flex",alignItems:"center",justifyContent:"center", fontSize:22,fontWeight:700,color:C.gold }}>
                   {post.author_name?.[0] || "T"}
                 </div>
                 <div>
-                  <p style={{ fontWeight:700, color:C.navy, fontSize:15, margin:"0 0 4px" }}>{post.author_name}</p>
+                  <p style={{ fontWeight:700, color:C.text, fontSize:15, margin:"0 0 4px" }}>{post.author_name}</p>
                   <p style={{ fontSize:13, color:C.muted, lineHeight:1.6, margin:0 }}>
                     TRC Connect helps individuals and companies navigate Tax Residency Certificates and Double Taxation Avoidance Agreements across 90+ countries. Our certified advisors have processed thousands of TRC applications.
                   </p>
@@ -395,13 +396,13 @@ export default function BlogPostPage() {
           </article>
 
           <aside style={{ position:"sticky", top:24, display:"grid", gap:16 }}>
-            <div style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:18, padding:18, boxShadow:"0 10px 28px rgba(15,37,87,.06)" }}>
+            <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:18, padding:18, boxShadow:"0 10px 28px rgba(15,37,87,.06)" }}>
               <p style={{ margin:"0 0 8px", fontSize:12, fontWeight:700, textTransform:"uppercase", letterSpacing:".08em", color:C.gold }}>Jump to section</p>
               <p style={{ margin:"0 0 10px", fontSize:13, color:C.muted }}>Quick scan for key headings and decision points.</p>
               {tocItems.length > 0 ? (
                 <div style={{ display:"grid", gap:8 }}>
                   {tocItems.map(item => (
-                    <a key={item.id} href={`#${item.id}`} style={{ textDecoration:"none", color:C.navy, fontSize:13, fontWeight:600, lineHeight:1.4 }}>{item.text}</a>
+                    <a key={item.id} href={`#${item.id}`} style={{ textDecoration:"none", color:C.text, fontSize:13, fontWeight:600, lineHeight:1.4 }}>{item.text}</a>
                   ))}
                 </div>
               ) : (
@@ -413,13 +414,13 @@ export default function BlogPostPage() {
 
         {related.length > 0 && (
           <section style={{ maxWidth:1200, margin:"32px auto 0" }}>
-            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:28, fontWeight:700, color:C.navy, marginBottom:18 }}>Related Articles</h2>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:28, fontWeight:700, color:C.text, marginBottom:18 }}>Related Articles</h2>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(240px, 1fr))", gap:16 }}>
               {related.map(r => (
-                <div key={r.id} onClick={() => nav(`/blog/${r.slug}`)} style={{ background:C.white, borderRadius:16, padding:"18px", border:`1px solid ${C.border}`, cursor:"pointer", display:"flex", flexDirection:"column", justifyContent:"space-between", gap:14, transition:"box-shadow .15s, transform .15s", boxShadow:"0 8px 24px rgba(15,37,87,.06)" }} onMouseEnter={e => { e.currentTarget.style.boxShadow="0 14px 30px rgba(15,37,87,.12)"; e.currentTarget.style.transform="translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow="0 8px 24px rgba(15,37,87,.06)"; e.currentTarget.style.transform=""; }}>
+                <div key={r.id} onClick={() => nav(`/blog/${r.slug}`)} style={{ background:C.surface, borderRadius:16, padding:"18px", border:`1px solid ${C.border}`, cursor:"pointer", display:"flex", flexDirection:"column", justifyContent:"space-between", gap:14, transition:"box-shadow .15s, transform .15s", boxShadow:"0 8px 24px rgba(15,37,87,.06)" }} onMouseEnter={e => { e.currentTarget.style.boxShadow="0 14px 30px rgba(15,37,87,.12)"; e.currentTarget.style.transform="translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow="0 8px 24px rgba(15,37,87,.06)"; e.currentTarget.style.transform=""; }}>
                   <div>
                     <p style={{ fontSize:12,fontWeight:700,color:C.gold,marginBottom:8, textTransform:"uppercase", letterSpacing:".08em" }}>{r.category}</p>
-                    <p style={{ fontSize:16,fontWeight:700,color:C.navy,lineHeight:1.35, margin:0 }}>{r.title}</p>
+                    <p style={{ fontSize:16,fontWeight:700,color:C.text,lineHeight:1.35, margin:0 }}>{r.title}</p>
                     <p style={{ fontSize:13,color:C.muted,marginTop:6 }}>⏱ {r.read_time_minutes} min read</p>
                   </div>
                   <span style={{ color:C.gold,fontSize:14,fontWeight:700, alignSelf:"flex-end" }}>Read Guide →</span>
