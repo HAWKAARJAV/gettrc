@@ -202,30 +202,11 @@ export default function BlogListingPage() {
         body { margin:0; }
       `}</style>
 
-      {/* ── Header bar ── */}
-      <header style={{
-        background:`linear-gradient(135deg, ${C.navy} 0%, ${C.navyLight} 100%)`, padding:"14px 0",
-        borderBottom:`1px solid rgba(255,255,255,.08)`,
-        boxShadow:"0 8px 30px rgba(15,37,87,.18)",
-      }}>
-        <div style={{ maxWidth:1100, margin:"0 auto", padding:"0 24px",
-          display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <Link to="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
-            <div style={{ width:32,height:32,background:`linear-gradient(135deg,${C.gold},${C.goldLight})`,
-              borderRadius:8, display:"flex",alignItems:"center",justifyContent:"center",fontSize:16 }}>⚖</div>
-            <span style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, fontWeight:700, color:C.white }}>
-              TRC<span style={{ color:C.goldLight, fontWeight:400 }}> Connect</span>
-            </span>
-          </Link>
-          <nav style={{ display:"flex", gap:24, alignItems:"center" }}>
-            <Link to="/" style={{ color:"rgba(255,255,255,.7)", textDecoration:"none", fontSize:14 }}>Home</Link>
-            <Link to="/blog" style={{ color:C.goldLight, textDecoration:"none", fontSize:14, fontWeight:600 }}>Blog</Link>
-          </nav>
-        </div>
-      </header>
-
       {/* ── Intro card ── */}
-      <section style={{ padding:"18px 24px 0" }}>
+      {/* Top padding compensates for the fixed global site nav (rendered
+          once in TRCConnectApp.jsx's AppShell) — this page no longer rolls
+          its own header, so it needs clearance instead. */}
+      <section style={{ padding:"138px 24px 0" }}>
         <div style={{ maxWidth:1200, margin:"0 auto" }}>
           <div style={{
             background:C.white,

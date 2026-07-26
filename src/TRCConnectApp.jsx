@@ -522,7 +522,7 @@ export default function App() {
 
 function AppShell() {
   const { pathname } = ReactRouterDom.useLocation();
-  const hideGlobalNav = pathname.startsWith("/retail") || pathname.startsWith("/corporate") || pathname.startsWith("/advisor") || pathname.startsWith("/blog") || ["/check-eligibility", "/login", "/dashboard", "/admin"].includes(pathname);
+  const hideGlobalNav = pathname.startsWith("/retail") || pathname.startsWith("/corporate") || pathname.startsWith("/advisor") || ["/check-eligibility", "/login", "/dashboard", "/admin"].includes(pathname);
 
   return (
     <>
