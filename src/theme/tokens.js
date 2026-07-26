@@ -6,33 +6,38 @@
 // radius/typography scale, and refined (softer multi-layer shadows,
 // consistent focus rings, hover/active/disabled states).
 
+// Theme-reactive — these resolve via CSS custom properties defined in
+// theme/global.css ([data-theme="dark"] on <html> overrides them), so any
+// component using COLOR.* gets both light and dark mode automatically.
+// Components still holding their own hardcoded hex constants (most of the
+// app, pre-migration) do not — see theme/ThemeContext.jsx for the toggle
+// and global.css for the variable definitions.
 export const COLOR = {
-  navy: "#0F2557",
-  navyLight: "#1A3570",
-  navyDark: "#091A3D",
-  gold: "#C9A84C",
-  goldLight: "#E2C47A",
-  goldDark: "#A07C2E",
+  navy: "var(--c-navy)",
+  navyLight: "var(--c-navy-light)",
+  navyDark: "var(--c-navy-dark)",
+  gold: "var(--c-gold)",
+  goldLight: "var(--c-gold-light)",
+  goldDark: "var(--c-gold-dark)",
 
-  white: "#FFFFFF",
-  offWhite: "#F7F8FC",
-  offWhite2: "#EEF2FA",
+  white: "var(--c-surface)",
+  offWhite: "var(--c-bg)",
+  offWhite2: "var(--c-surface-2)",
 
-  // Neutral text/border scale (extends the old single "muted"/"border" pair)
-  text: "#0F2557",       // primary text — reuses navy for brand-consistent headings/body
-  textMuted: "#5B6B8C",  // slightly darker than the old #6B7A99 for AA contrast on white
-  textFaint: "#8B96AD",
-  border: "#E2E8F0",
-  borderStrong: "#CBD5E1",
+  text: "var(--c-text)",
+  textMuted: "var(--c-text-muted)",
+  textFaint: "var(--c-text-faint)",
+  border: "var(--c-border)",
+  borderStrong: "var(--c-border-strong)",
 
-  success: "#059669",
-  successBg: "#ECFDF5",
+  success: "var(--c-success)",
+  successBg: "var(--c-success-bg)",
   successBorder: "#A7F3D0",
-  warning: "#D97706",
-  warningBg: "#FFFBEB",
+  warning: "var(--c-warning)",
+  warningBg: "var(--c-warning-bg)",
   warningBorder: "#FDE68A",
-  error: "#DC2626",
-  errorBg: "#FEF2F2",
+  error: "var(--c-error)",
+  errorBg: "var(--c-error-bg)",
   errorBorder: "#FECACA",
   info: "#2563EB",
   infoBg: "#EFF6FF",

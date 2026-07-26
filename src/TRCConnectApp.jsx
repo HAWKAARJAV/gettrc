@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
 import * as ReactRouterDom from "react-router-dom";
 import * as Sentry from "@sentry/react";
 import { C } from "./theme/marketingColors";
+import { ThemeProvider, useTheme } from "./theme/ThemeContext";
+import ThemeToggle from "./theme/ThemeToggle";
 import WorkflowToastHost from "./components/WorkflowToastHost";
 
 // ─── Lazy-loaded routes ─────────────────────────────────────────────────────
@@ -301,13 +303,18 @@ function _AppNavbarInner() {
   const [activeSelector, setActiveSelector] = React.useState(null);
   const { pathname } = ReactRouterDom.useLocation();
   const nav = ReactRouterDom.useNavigate();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   React.useEffect(()=>{
     const fn=()=>setSc(window.scrollY>20);
     window.addEventListener('scroll',fn);
     return ()=>window.removeEventListener('scroll',fn);
   },[]);
   const tp = pathname==='/' && !sc;
-  const lc = tp?'rgba(255,255,255,.85)':C.navy;
+  const lc = tp?'rgba(255,255,255,.85)':(isDark?'rgba(237,241,250,.92)':C.navy);
+  const navBg = tp?'transparent':(isDark?'rgba(11,18,32,.92)':'rgba(255,255,255,.97)');
+  const navBorder = isDark?'rgba(255,255,255,.08)':C.border;
+  const logoTextColor = tp?C.white:(isDark?'#EDF1FA':C.navy);
   // hash = smooth-scroll on homepage; to = hard navigate for Blog
   const NAV=[
     { label: 'Solutions', hash: 'solutions' },
@@ -365,9 +372,9 @@ function _AppNavbarInner() {
   return (
     <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:1000,
       padding:sc?'12px 0':'18px 0',
-      background:tp?'transparent':'rgba(255,255,255,.97)',
+      background:navBg,
       backdropFilter:sc?'blur(12px)':'none',
-      borderBottom:sc?`1px solid ${C.border}`:'none',
+      borderBottom:sc?`1px solid ${navBorder}`:'none',
       transition:'all .3s ease'}}>
       <div className="marketing-nav-inner" style={{maxWidth:1300,margin:'0 auto',padding:'0 28px',
         display:'flex',alignItems:'center',justifyContent:'space-between'}}>
@@ -375,7 +382,7 @@ function _AppNavbarInner() {
           <div style={{width:36,height:36,background:`linear-gradient(135deg,${C.gold},${C.goldDark})`,
             borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>⚖</div>
           <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,
-            color:tp?C.white:C.navy}}>TRC</span>
+            color:logoTextColor}}>TRC</span>
           <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:400,
             color:tp?C.goldLight:C.gold}}> Connect</span>
         </ReactRouterDom.Link>
@@ -403,6 +410,7 @@ function _AppNavbarInner() {
           ))}
         </div>
         <div className="marketing-actions" style={{display:'flex',alignItems:'center',gap:10}}>
+          <ThemeToggle tone={tp?'light':'auto'} />
           <button className="marketing-secondary-action" onClick={() => setActiveSelector('signin')} style={{background:'transparent',border:'none',color:lc,fontSize:14,fontWeight:500,padding:'9px 14px',textDecoration:'none',cursor:'pointer'}}>
             Sign In
           </button>
@@ -514,9 +522,11 @@ class PageErrorBoundary extends React.Component {
 
 export default function App() {
   return (
-    <ReactRouterDom.BrowserRouter>
-      <AppShell/>
-    </ReactRouterDom.BrowserRouter>
+    <ThemeProvider>
+      <ReactRouterDom.BrowserRouter>
+        <AppShell/>
+      </ReactRouterDom.BrowserRouter>
+    </ThemeProvider>
   );
 }
 

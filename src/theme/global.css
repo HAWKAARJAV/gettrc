@@ -2,6 +2,73 @@
    structure. Inline styles handle per-element look; this file covers what
    inline styles can't (pseudo-classes, selection, scrollbar, keyframes). */
 
+/* ── Theme variables ──────────────────────────────────────────────────────
+   Brand accent (navy/gold) stays constant across themes — only surfaces,
+   borders, and text invert. Components read these via src/theme/tokens.js
+   (COLOR.*), so any component migrated to use tokens gets both themes for
+   free. Defaults to light; [data-theme="dark"] on <html> overrides, set by
+   ThemeProvider (src/theme/ThemeContext.jsx) from saved preference or
+   system setting, applied before paint to avoid a flash. */
+:root {
+  --c-navy: #0F2557;
+  --c-navy-light: #1A3570;
+  --c-navy-dark: #091A3D;
+  --c-gold: #C9A84C;
+  --c-gold-light: #E2C47A;
+  --c-gold-dark: #A07C2E;
+
+  --c-bg: #F7F8FC;
+  --c-surface: #FFFFFF;
+  --c-surface-2: #EEF2FA;
+  --c-text: #0F2557;
+  --c-text-muted: #5B6B8C;
+  --c-text-faint: #8B96AD;
+  --c-border: #E2E8F0;
+  --c-border-strong: #CBD5E1;
+
+  --c-success: #059669;
+  --c-success-bg: #ECFDF5;
+  --c-warning: #D97706;
+  --c-warning-bg: #FFFBEB;
+  --c-error: #DC2626;
+  --c-error-bg: #FEF2F2;
+
+  --c-shadow-color: 15, 37, 87;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --c-navy: #0F2557;
+  --c-navy-light: #2A4680;
+  --c-navy-dark: #060F26;
+  --c-gold: #D4B563;
+  --c-gold-light: #E8CE8C;
+  --c-gold-dark: #B08F3E;
+
+  --c-bg: #0B1220;
+  --c-surface: #131B2E;
+  --c-surface-2: #1A2338;
+  --c-text: #EDF1FA;
+  --c-text-muted: #9CA9C4;
+  --c-text-faint: #6B7691;
+  --c-border: #26314A;
+  --c-border-strong: #35415C;
+
+  --c-success: #34D399;
+  --c-success-bg: #0D2B22;
+  --c-warning: #FBBF24;
+  --c-warning-bg: #2E2308;
+  --c-error: #F87171;
+  --c-error-bg: #2E1315;
+
+  --c-shadow-color: 0, 0, 0;
+  color-scheme: dark;
+}
+
+html {
+  background: var(--c-bg);
+}
+
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -14,13 +81,13 @@ html {
 
 ::selection {
   background: rgba(201, 168, 76, 0.28);
-  color: #0F2557;
+  color: var(--c-text);
 }
 
 /* Consistent, visible keyboard focus everywhere — gold ring matching the
    brand accent, only shown for keyboard nav (not mouse clicks). */
 :focus-visible {
-  outline: 2px solid #C9A84C;
+  outline: 2px solid var(--c-gold);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -34,18 +101,18 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 37, 87, 0.15);
+  background: rgba(var(--c-shadow-color), 0.18);
   border-radius: 999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 37, 87, 0.28);
+  background: rgba(var(--c-shadow-color), 0.32);
   background-clip: padding-box;
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(15, 37, 87, 0.2) transparent;
+  scrollbar-color: rgba(var(--c-shadow-color), 0.22) transparent;
 }
 
 /* Universal button/link feel — every <button> and <a> in the app gets
@@ -87,7 +154,7 @@ a {
 }
 
 .trc-skeleton {
-  background: linear-gradient(90deg, #EEF2FA 25%, #F7F8FC 37%, #EEF2FA 63%);
+  background: linear-gradient(90deg, var(--c-surface-2) 25%, var(--c-bg) 37%, var(--c-surface-2) 63%);
   background-size: 800px 100%;
   animation: trc-shimmer 1.6s ease-in-out infinite;
 }
