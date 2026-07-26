@@ -1,0 +1,102 @@
+/* Global polish layer — applies universally without touching component
+   structure. Inline styles handle per-element look; this file covers what
+   inline styles can't (pseudo-classes, selection, scrollbar, keyframes). */
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: rgba(201, 168, 76, 0.28);
+  color: #0F2557;
+}
+
+/* Consistent, visible keyboard focus everywhere — gold ring matching the
+   brand accent, only shown for keyboard nav (not mouse clicks). */
+:focus-visible {
+  outline: 2px solid #C9A84C;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Thin, unobtrusive scrollbar for a more premium feel (WebKit + Firefox). */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 37, 87, 0.15);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 37, 87, 0.28);
+  background-clip: padding-box;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(15, 37, 87, 0.2) transparent;
+}
+
+/* Universal button/link feel — every <button> and <a> in the app gets
+   consistent hover/active feedback without any per-component change.
+   Individual components can still override via their own inline styles
+   (inline styles win over this stylesheet), this only fills the gap for
+   the pseudo-states inline styles can't express. */
+button:not(:disabled) {
+  transition: filter .15s ease, transform .1s ease, box-shadow .15s ease, opacity .15s ease;
+}
+button:not(:disabled):hover {
+  filter: brightness(1.04);
+}
+button:not(:disabled):active {
+  transform: scale(.98);
+  filter: brightness(0.98);
+}
+button:disabled {
+  cursor: not-allowed;
+}
+a {
+  transition: color .15s ease, opacity .15s ease;
+}
+
+/* Fade-in for route content so page transitions feel intentional rather
+   than an abrupt content swap. */
+#root > div {
+  animation: trc-fade-in .25s ease-out;
+}
+
+@keyframes trc-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes trc-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.trc-skeleton {
+  background: linear-gradient(90deg, #EEF2FA 25%, #F7F8FC 37%, #EEF2FA 63%);
+  background-size: 800px 100%;
+  animation: trc-shimmer 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

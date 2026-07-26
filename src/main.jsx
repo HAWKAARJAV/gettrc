@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as Sentry from '@sentry/react';
 import App from './TRCConnectApp';
+import './theme/global.css';
 
 if (import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
