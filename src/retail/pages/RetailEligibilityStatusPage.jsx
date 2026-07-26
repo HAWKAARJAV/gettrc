@@ -8,6 +8,7 @@ import { QuestionField } from "../../eligibility/retailQuestionnaire";
 import {
   RESIDENCY_QUESTIONS, PROFESSIONAL_QUESTIONS, dedupeQuestions,
   resolveOccupation, resolvePurpose, codeForOccupationLabel, codeForPurposeLabel,
+  deriveHasUaeEmploymentOrBusiness,
 } from "../../eligibility/retailQuestionnaireData";
 import { shouldRenderQuestion } from "../../services/assessmentService";
 
@@ -219,7 +220,6 @@ const SNAKE_CASE_MAP = {
   emiratesId: "emirates_id",
   visaType: "visa_type",
   hasPermanentResidence: "has_permanent_residence",
-  hasUaeEmploymentOrBusiness: "has_uae_employment_or_business",
   isCentreOfFinancialPersonalInterests: "is_centre_of_interests",
   trcPurpose: "trc_purpose",
   treatyCountry: "treaty_country",
@@ -280,6 +280,9 @@ function EditAndResubmitPanel({ applicationId, request, onResubmitted }) {
       updates.treaty_country = form.trcPurpose === "treaty" ? form.treatyCountry : "";
       updates.occupation = resolveOccupation(form.occupation, form.occupationOther);
       updates.purpose = resolvePurpose(form.purpose, form.purposeOther);
+      // Not asked on-screen (redundant with visaType) — keep it in sync with
+      // whatever visa type the applicant corrected on resubmission.
+      updates.has_uae_employment_or_business = deriveHasUaeEmploymentOrBusiness(form.visaType);
 
       await resubmitEligibility({ applicationId, updates });
       onResubmitted();

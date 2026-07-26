@@ -78,7 +78,11 @@ export const RESIDENCY_QUESTIONS = [
   { id: "emiratesId", field_key: "emiratesId", question: "Emirates ID available?", field_type: "select" },
   { id: "visaType", field_key: "visaType", question: "What type of UAE visa do you currently hold?", field_type: "dropdown", placeholder: "Select visa type", options: [["Employed", "Employed"], ["Dependent Visa", "Dependent Visa"], ["Investor/Partner Visa", "Investor/Partner Visa"], ["Tourist/Visit Visa", "Tourist/Visit Visa"]], helpText: "Tourist/Visit visas do not qualify for the 90-day residency test." },
   { id: "hasPermanentResidence", field_key: "hasPermanentResidence", question: "Do you have a permanent place of residence in the UAE?", field_type: "select", helpText: "e.g. a certified tenancy contract (Ejari) or owned property continuously available to you — not a hotel or short-term stay." },
-  { id: "hasUaeEmploymentOrBusiness", field_key: "hasUaeEmploymentOrBusiness", question: "Do you carry on employment or business in the UAE?", field_type: "select" },
+  // hasUaeEmploymentOrBusiness is intentionally NOT asked here — it's
+  // redundant with visaType for the vast majority of applicants, so it's
+  // derived automatically (see deriveHasUaeEmploymentOrBusiness below)
+  // rather than asked as its own question. The field itself still exists in
+  // the data model (feeds the 90-day test and gates a document requirement).
   { id: "isCentreOfFinancialPersonalInterests", field_key: "isCentreOfFinancialPersonalInterests", question: "Is the UAE the centre of your financial and personal interests?", field_type: "select", helpText: "Considers where your job, business, investments, and close family/social ties are primarily based." },
   { id: "trcPurpose", field_key: "trcPurpose", question: "Do you require TRC under a Tax Treaty, or issued under UAE Domestic law?", field_type: "select", options: [["UAE Domestic Law", "domestic"], ["Tax Treaty", "treaty"]], helpText: "Domestic law TRC needs less documentation. Choose Tax Treaty only if you need to claim relief in a specific treaty country." },
   { id: "treatyCountry", field_key: "treatyCountry", question: "Which country's tax treaty is this TRC for?", field_type: "dropdown", options: TREATY_COUNTRY_OPTIONS, placeholder: "Select a country", conditional_logic: { showWhen: { field: "trcPurpose", equals: "treaty" } } },
@@ -113,6 +117,39 @@ export const PROFESSIONAL_QUESTIONS = [
 ];
 
 export const RETAIL_ELIGIBILITY_REQUIRED_FIELDS = ["currentCountry", "vatRegistered", "trcPeriodYear", "daysInUaePeriod", "uaeVisa", "emiratesId", "visaType", "hasPermanentResidence", "hasUaeEmploymentOrBusiness", "isCentreOfFinancialPersonalInterests", "trcPurpose", "occupation", "incomeSource", "purpose", "urgency"];
+
+// hasUaeEmploymentOrBusiness is no longer asked as its own question (it was
+// redundant with visaType for nearly every applicant) — derive it instead.
+// Employed and Investor/Partner visa holders are treated as carrying on
+// employment/business; Dependent and Tourist/Visit visa holders are not.
+// Known gap: a Dependent Visa holder who separately runs a freelance
+// business without a work permit would be misclassified "no" here — an
+// accepted tradeoff for not asking a redundant question.
+export function deriveHasUaeEmploymentOrBusiness(visaType) {
+  return visaType === "Employed" || visaType === "Investor/Partner Visa" ? "yes" : "no";
+}
+
+// Common phone country/dial codes for the applicant's contact number.
+// Ordered UAE-first (the platform's primary market), then alphabetically.
+export const COUNTRY_DIAL_CODES = [
+  ["United Arab Emirates", "+971"],
+  ["India", "+91"], ["Pakistan", "+92"], ["United Kingdom", "+44"], ["United States", "+1"],
+  ["Philippines", "+63"], ["Egypt", "+20"], ["Saudi Arabia", "+966"], ["Bangladesh", "+880"],
+  ["Nepal", "+977"], ["Sri Lanka", "+94"], ["Nigeria", "+234"], ["Kenya", "+254"],
+  ["South Africa", "+27"], ["Jordan", "+962"], ["Lebanon", "+961"], ["Canada", "+1"],
+  ["Australia", "+61"], ["Germany", "+49"], ["France", "+33"], ["Italy", "+39"],
+  ["Spain", "+34"], ["Netherlands", "+31"], ["Russia", "+7"], ["China", "+86"],
+  ["Turkey", "+90"], ["Qatar", "+974"], ["Kuwait", "+965"], ["Bahrain", "+973"],
+  ["Oman", "+968"], ["Iran", "+98"], ["Iraq", "+964"], ["Indonesia", "+62"],
+  ["Malaysia", "+60"], ["Singapore", "+65"], ["Thailand", "+66"], ["Vietnam", "+84"],
+  ["South Korea", "+82"], ["Japan", "+81"], ["Morocco", "+212"], ["Algeria", "+213"],
+  ["Tunisia", "+216"], ["Sudan", "+249"], ["Ethiopia", "+251"], ["Ghana", "+233"],
+  ["Ukraine", "+380"], ["Poland", "+48"], ["Portugal", "+351"], ["Ireland", "+353"],
+  ["Switzerland", "+41"], ["Sweden", "+46"], ["Belgium", "+32"], ["Brazil", "+55"],
+  ["Mexico", "+52"], ["Afghanistan", "+93"], ["Yemen", "+967"], ["Syria", "+963"],
+  ["Palestine", "+970"], ["Uzbekistan", "+998"], ["Kazakhstan", "+7"], ["Azerbaijan", "+994"],
+  ["Armenia", "+374"], ["Georgia", "+995"], ["New Zealand", "+64"],
+];
 
 // Resolves a dropdown code (e.g. "employee", "other") to its human-readable
 // label, falling back to a caller-supplied "other" free-text value. Shared by

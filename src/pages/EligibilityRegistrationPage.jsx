@@ -9,6 +9,7 @@ import {
   INPUT_STYLE, dedupeQuestions,
   RESIDENCY_QUESTIONS, PROFESSIONAL_QUESTIONS,
   resolveOccupation, resolvePurpose,
+  deriveHasUaeEmploymentOrBusiness, COUNTRY_DIAL_CODES,
 } from "../eligibility/retailQuestionnaireData";
 import { useSEO, breadcrumbJsonLd } from "../seo/useSEO";
 import { validatePasswordStrength, findFirstMissingField } from "../services/formValidation";
@@ -47,7 +48,7 @@ function EligibilityShell({ children }) {
   );
 }
 
-const REQUIRED_FIELDS = ["fullName", "email", "phone", "nationality", "currentCountry", "vatRegistered", "trcPeriodYear", "daysInUaePeriod", "uaeVisa", "emiratesId", "visaType", "hasPermanentResidence", "hasUaeEmploymentOrBusiness", "isCentreOfFinancialPersonalInterests", "trcPurpose", "occupation", "incomeSource", "purpose", "urgency", "password", "confirmPassword"];
+const REQUIRED_FIELDS = ["fullName", "email", "phone", "nationality", "currentCountry", "vatRegistered", "trcPeriodYear", "daysInUaePeriod", "uaeVisa", "emiratesId", "visaType", "hasPermanentResidence", "isCentreOfFinancialPersonalInterests", "trcPurpose", "occupation", "incomeSource", "purpose", "urgency", "password", "confirmPassword"];
 
 // Human-readable labels for the "which field is missing" error message —
 // merges the manually-entered fields with the question text already defined
@@ -71,10 +72,10 @@ export default function EligibilityRegistrationPage() {
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    fullName: "", email: "", phone: "", nationality: "",
+    fullName: "", email: "", phone: "", phoneCountryCode: "+971", nationality: "",
     currentCountry: "", uaeVisa: "", emiratesId: "", visaType: "",
     vatRegistered: "", trcPeriodYear: "", daysInUaePeriod: "",
-    hasPermanentResidence: "", hasUaeEmploymentOrBusiness: "", isCentreOfFinancialPersonalInterests: "",
+    hasPermanentResidence: "", isCentreOfFinancialPersonalInterests: "",
     trcPurpose: "", treatyCountry: "",
     occupation: "", occupationOther: "", incomeSource: "", purpose: "", purposeOther: "", urgency: "",
     password: "", confirmPassword: "", terms: false,
@@ -110,7 +111,7 @@ export default function EligibilityRegistrationPage() {
       await registerRetailApplicant({
         fullName: form.fullName,
         email: form.email,
-        phone: form.phone,
+        phone: `${form.phoneCountryCode} ${form.phone}`.trim(),
         nationality: form.nationality,
         currentCountry: form.currentCountry,
         uaeVisa: form.uaeVisa,
@@ -120,7 +121,7 @@ export default function EligibilityRegistrationPage() {
         trcPeriodYear: form.trcPeriodYear,
         daysInUaePeriod: form.daysInUaePeriod,
         hasPermanentResidence: form.hasPermanentResidence,
-        hasUaeEmploymentOrBusiness: form.hasUaeEmploymentOrBusiness,
+        hasUaeEmploymentOrBusiness: deriveHasUaeEmploymentOrBusiness(form.visaType),
         isCentreOfFinancialPersonalInterests: form.isCentreOfFinancialPersonalInterests,
         trcPurpose: form.trcPurpose,
         treatyCountry: form.trcPurpose === "treaty" ? form.treatyCountry : "",
@@ -228,13 +229,28 @@ export default function EligibilityRegistrationPage() {
 
             <SectionCard number={1} title="Basic Details" description="Your personal identification information.">
               <div className="eligibility-two-col" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
-                {[["Full Name", "fullName", "Your legal name", "Must match your passport exactly."], ["Email Address", "email", "you@example.com"], ["Phone Number", "phone", "+971 ..."], ["Nationality", "nationality", "Your nationality"]].map(([label, field, ph, note]) => (
+                {[["Full Name", "fullName", "Your legal name", "Must match your passport exactly."], ["Email Address", "email", "you@example.com"]].map(([label, field, ph, note]) => (
                   <FieldCard key={field}>
                     <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: z.navy, lineHeight: 1.4, marginBottom: 10 }}>{label}</label>
                     <input className="elig-input" value={form[field]} onChange={e => set(field, e.target.value)} placeholder={ph} style={INPUT_STYLE} />
                     {note && <div style={{ fontSize: 12, color: z.muted, marginTop: 8, lineHeight: 1.55 }}>{note}</div>}
                   </FieldCard>
                 ))}
+                <FieldCard>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: z.navy, lineHeight: 1.4, marginBottom: 10 }}>Phone Number</label>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <select className="elig-select" value={form.phoneCountryCode} onChange={e => set("phoneCountryCode", e.target.value)} style={{ ...INPUT_STYLE, width: 118, flexShrink: 0, paddingLeft: 12 }}>
+                      {COUNTRY_DIAL_CODES.map(([name, code]) => (
+                        <option key={name} value={code}>{code} {name}</option>
+                      ))}
+                    </select>
+                    <input className="elig-input" value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="50 123 4567" style={INPUT_STYLE} />
+                  </div>
+                </FieldCard>
+                <FieldCard>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: z.navy, lineHeight: 1.4, marginBottom: 10 }}>Nationality</label>
+                  <input className="elig-input" value={form.nationality} onChange={e => set("nationality", e.target.value)} placeholder="Your nationality" style={INPUT_STYLE} />
+                </FieldCard>
               </div>
             </SectionCard>
 

@@ -5,6 +5,7 @@ import { RETAIL_THEME } from "../../config/retailTheme";
 import { registerCorporateApplicant } from "../services/corporateAuth";
 import { useSEO, breadcrumbJsonLd } from "../../seo/useSEO";
 import { validatePasswordStrength, findFirstMissingField } from "../../services/formValidation";
+import { COUNTRY_DIAL_CODES } from "../../eligibility/retailQuestionnaireData";
 
 const CORPORATE_FIELD_LABELS = {
   companyName: "Company Name", email: "Official Business Email", phone: "Contact Number",
@@ -85,6 +86,7 @@ export default function CorporateEligibilityPage() {
     companyName: "",
     email: "",
     phone: "",
+    phoneCountryCode: "+971",
     industry: "",
     website: "",
     entityType: "",
@@ -158,7 +160,7 @@ export default function CorporateEligibilityPage() {
       await registerCorporateApplicant({
         companyName: form.companyName,
         email: form.email,
-        phone: form.phone,
+        phone: `${form.phoneCountryCode} ${form.phone}`.trim(),
         industry: form.industry,
         website: form.website,
         entityType: form.entityType,
@@ -267,7 +269,6 @@ export default function CorporateEligibilityPage() {
                 {[
                   ["Company Name", "companyName", "Registered company name"],
                   ["Official Business Email", "email", "business@example.com"],
-                  ["Contact Number", "phone", "+971 ..."],
                   ["Industry Type", "industry", "Industry or sector"],
                   ["Company Website", "website", "Optional website"],
                 ].map(([label, key, placeholder]) => (
@@ -276,6 +277,17 @@ export default function CorporateEligibilityPage() {
                     <input value={form[key]} onChange={(e) => update(key, e.target.value)} placeholder={placeholder} style={INPUT_STYLE} />
                   </div>
                 ))}
+                <div>
+                  <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Contact Number</label>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <select value={form.phoneCountryCode} onChange={(e) => update("phoneCountryCode", e.target.value)} style={{ ...INPUT_STYLE, width: 118, flexShrink: 0, paddingLeft: 12 }}>
+                      {COUNTRY_DIAL_CODES.map(([name, code]) => (
+                        <option key={name} value={code}>{code} {name}</option>
+                      ))}
+                    </select>
+                    <input value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="50 123 4567" style={INPUT_STYLE} />
+                  </div>
+                </div>
                 <div>
                   <label style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: C.navy, lineHeight: 1.4, marginBottom: 10 }}>Registered Country</label>
                   <div style={{ ...INPUT_STYLE, display: "flex", alignItems: "center", gap: 8, background: C.offWhite, color: C.muted, cursor: "not-allowed" }}>
