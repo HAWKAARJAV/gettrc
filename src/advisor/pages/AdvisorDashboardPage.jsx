@@ -7,12 +7,12 @@ const SANS  = "'DM Sans', -apple-system, sans-serif";
 
 function StatCard({ icon, label, value, sub, color = C.navy }) {
   return (
-    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 20, display: "flex", gap: 14, alignItems: "center", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 20, display: "flex", gap: 14, alignItems: "center", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
       <div style={{ width: 46, height: 46, borderRadius: 12, background: `${color}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{icon}</div>
       <div>
         <div style={{ fontSize: 24, fontWeight: 800, color, lineHeight: 1 }}>{value}</div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginTop: 3 }}>{label}</div>
-        {sub && <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{sub}</div>}
+        <div style={{ fontSize: 13, fontWeight: 700, color: "var(--c-text)", marginTop: 3 }}>{label}</div>
+        {sub && <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 2 }}>{sub}</div>}
       </div>
     </div>
   );
@@ -47,12 +47,12 @@ export default function AdvisorDashboardPage() {
   return (
     <div style={{ display: "grid", gap: 22, fontFamily: SANS }}>
       {/* Header */}
-      <div style={{ background: C.white, borderRadius: 18, border: `1px solid ${C.border}`, padding: "24px 28px", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 18, border: `1px solid ${"var(--c-border)"}`, padding: "24px 28px", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 6 }}>Welcome back</div>
-        <h2 style={{ fontFamily: SERIF, fontSize: "clamp(22px,2.5vw,32px)", fontWeight: 700, color: C.navy, marginBottom: 6 }}>
+        <h2 style={{ fontFamily: SERIF, fontSize: "clamp(22px,2.5vw,32px)", fontWeight: 700, color: "var(--c-text)", marginBottom: 6 }}>
           {profile?.full_name || advisor?.name || "Advisor"}'s Dashboard
         </h2>
-        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.7 }}>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.7 }}>
           Overview of your assigned cases, messages, and pending updates.
         </p>
       </div>
@@ -66,9 +66,9 @@ export default function AdvisorDashboardPage() {
       </div>
 
       {/* Recent cases */}
-      <div style={{ background: C.white, borderRadius: 18, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Recent Cases</div>
+      <div style={{ background: "var(--c-surface)", borderRadius: 18, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${"var(--c-border)"}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>Recent Cases</div>
           <button onClick={() => navigate("/advisor/cases")} style={{ background: "none", border: "none", color: C.gold, fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: SANS }}>View all →</button>
         </div>
         {recentCases.length === 0 ? (
@@ -81,21 +81,21 @@ export default function AdvisorDashboardPage() {
               const client = c.profiles || {};
               return (
                 <div key={c.id} onClick={() => navigate(`/advisor/cases/${c.id}`)}
-                  style={{ padding: "14px 24px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 14, cursor: "pointer", transition: "background .15s" }}
-                  onMouseEnter={e => e.currentTarget.style.background = C.offWhite}
+                  style={{ padding: "14px 24px", borderBottom: `1px solid ${"var(--c-border)"}`, display: "flex", alignItems: "center", gap: 14, cursor: "pointer", transition: "background .15s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "var(--c-bg)"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                 >
                   <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg,${C.navy},#1A3570)`, color: "#fff", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     {(client.full_name || "C").charAt(0).toUpperCase()}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, color: C.navy, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div style={{ fontWeight: 700, color: "var(--c-text)", fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {client.full_name || client.email || "Client"}
                     </div>
-                    <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{c.country || "UAE"} · {c.application_type || "TRC"}</div>
+                    <div style={{ fontSize: 12, color: "var(--c-text-muted)", marginTop: 2 }}>{c.country || "UAE"} · {c.application_type || "TRC"}</div>
                   </div>
                   <WorkflowBadge state={c.workflow_state} />
-                  <div style={{ fontSize: 12, color: C.muted, flexShrink: 0 }}>
+                  <div style={{ fontSize: 12, color: "var(--c-text-muted)", flexShrink: 0 }}>
                     {new Date(c.created_at).toLocaleDateString()}
                   </div>
                 </div>

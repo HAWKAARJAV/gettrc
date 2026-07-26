@@ -38,25 +38,25 @@ const SANS  = "'DM Sans', -apple-system, sans-serif";
 
 function Field({ label, value }) {
   return (
-    <div style={{ padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 14, fontWeight: 600, color: C.navy }}>{value || "—"}</div>
+    <div style={{ padding: "10px 0", borderBottom: `1px solid ${"var(--c-border)"}` }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 14, fontWeight: 600, color: "var(--c-text)" }}>{value || "—"}</div>
     </div>
   );
 }
 
 function StatusBadge({ status }) {
   const map = {
-    uploaded:             [C.muted,    "#F3F4F6", "Uploaded"],
+    uploaded:             ["var(--c-text-muted)",    "#F3F4F6", "Uploaded"],
     under_review:         [C.purple,   C.purpleBg, "Under Review"],
     approved:             [C.success,  C.successBg, "Approved ✓"],
     rejected:             [C.error,    C.errorBg,   "Rejected"],
     needs_resubmission:   [C.warn,     C.warnBg,    "Needs Resubmission"],
     pending:              [C.warn,     C.warnBg,    "Pending"],
     fulfilled:            [C.success,  C.successBg, "Fulfilled ✓"],
-    cancelled:            [C.muted,    "#F3F4F6",   "Cancelled"],
+    cancelled:            ["var(--c-text-muted)",    "#F3F4F6",   "Cancelled"],
   };
-  const [color, bg, label] = map[status] || [C.muted, "#F3F4F6", status || "unknown"];
+  const [color, bg, label] = map[status] || ["var(--c-text-muted)", "#F3F4F6", status || "unknown"];
   return (
     <span style={{ background: bg, color, fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 999, whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: ".04em" }}>
       {label}
@@ -77,14 +77,14 @@ function WorkflowBadge({ state }) {
     payment_pending:         ["Payment Pending",  C.warnBg, C.warn],
     payment_completed:       ["Payment Done",     C.successBg, C.success],
   };
-  const [label, bg, color] = map[state] || ["—", "#F3F4F6", C.muted];
+  const [label, bg, color] = map[state] || ["—", "#F3F4F6", "var(--c-text-muted)"];
   return <span style={{ background: bg, color, fontSize: 12, fontWeight: 700, padding: "5px 12px", borderRadius: 999, textTransform: "uppercase", letterSpacing: ".04em" }}>{label}</span>;
 }
 
 // ── tab: Overview ─────────────────────────────────────────────────────────────
 
 function ConfidenceBadge({ confidence }) {
-  const tone = CONFIDENCE_TONE[confidence] || { bg: "#F3F4F6", color: C.muted, label: confidence || "unknown" };
+  const tone = CONFIDENCE_TONE[confidence] || { bg: "#F3F4F6", color: "var(--c-text-muted)", label: confidence || "unknown" };
   return (
     <span style={{ background: tone.bg, color: tone.color, fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 999, textTransform: "uppercase", letterSpacing: ".04em" }}>
       {tone.label}
@@ -100,8 +100,8 @@ function EligibilitySignalCard({ signal, dtaNote }) {
         <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em" }}>Preliminary Eligibility Signal — advisor must confirm</div>
         <ConfidenceBadge confidence={signal.confidence} />
       </div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 6 }}>{signal.label}</div>
-      <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
+      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)", marginBottom: 6 }}>{signal.label}</div>
+      <div style={{ fontSize: 12, color: "var(--c-text-muted)", lineHeight: 1.6 }}>
         Basis: {ELIGIBILITY_BASIS_LABELS[signal.basis] || signal.basis}
         {signal.daySource && <> · Day count source: <strong>{signal.daySource === "tracked" ? "tracked travel history" : signal.daySource === "self_reported" ? "self-reported at signup" : "legacy yes/no answer"}</strong> ({signal.days ?? 0} days)</>}
       </div>
@@ -116,12 +116,12 @@ function EligibilitySignalCard({ signal, dtaNote }) {
         </div>
       )}
       {signal.feeTier && (
-        <div style={{ marginTop: 10, fontSize: 12, color: C.muted }}>
+        <div style={{ marginTop: 10, fontSize: 12, color: "var(--c-text-muted)" }}>
           Indicative FTA fees: AED {signal.feeTier.submissionFeeAed} submission + AED {signal.feeTier.processingFeeAed} processing (informational only — no online payment collection).
         </div>
       )}
       {dtaNote && (
-        <div style={{ marginTop: 10, fontSize: 12, color: C.navy, background: C.offWhite2, borderRadius: 8, padding: "8px 10px", lineHeight: 1.6 }}>
+        <div style={{ marginTop: 10, fontSize: 12, color: "var(--c-text)", background: "var(--c-surface-2)", borderRadius: 8, padding: "8px 10px", lineHeight: 1.6 }}>
           ℹ {dtaNote}
         </div>
       )}
@@ -184,7 +184,7 @@ function EligibilityDeterminationCard({ caseData, advisorUserId, defaultBasis, o
   };
 
   return (
-    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
       <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Eligibility Determination</div>
 
       {!canEdit ? (
@@ -196,7 +196,7 @@ function EligibilityDeterminationCard({ caseData, advisorUserId, defaultBasis, o
               {caseData.eligibility_notes && <Field label="Notes" value={caseData.eligibility_notes} />}
             </>
           ) : (
-            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>
+            <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.7 }}>
               Determination is only recorded while the case is in Pending Review. Current state: {caseData.workflow_state}.
             </div>
           )}
@@ -204,15 +204,15 @@ function EligibilityDeterminationCard({ caseData, advisorUserId, defaultBasis, o
       ) : (
         <>
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirmed Basis</div>
-            <select value={basis} onChange={(e) => setBasis(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, color: C.navy, outline: "none" }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Confirmed Basis</div>
+            <select value={basis} onChange={(e) => setBasis(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, color: "var(--c-text)", outline: "none" }}>
               <option value="">— Select —</option>
               {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </select>
           </div>
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Notes {basis === "does_not_qualify" && "(required)"}</div>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Rationale for this determination" style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 13, color: C.navy, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Notes {basis === "does_not_qualify" && "(required)"}</div>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Rationale for this determination" style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 13, color: "var(--c-text)", outline: "none", resize: "vertical", boxSizing: "border-box" }} />
           </div>
           {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{err}</div>}
           <button onClick={submit} disabled={submitting || !basis}
@@ -257,16 +257,16 @@ function MarkAsFiledCard({ caseData, onFiled }) {
   };
 
   return (
-    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
       <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Filing</div>
       {alreadyFiled ? (
         <div style={{ fontSize: 13, color: C.success, fontWeight: 700 }}>✓ Filed with the UAE Federal Tax Authority.</div>
       ) : (
         <>
-          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, marginBottom: 12 }}>
+          <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.7, marginBottom: 12 }}>
             Once all required documents are approved and you're ready to submit this application to the FTA, record it here — the client will be notified that their case has been filed.
           </div>
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Optional notes (e.g. FTA reference number)" style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 13, color: C.navy, outline: "none", resize: "vertical", boxSizing: "border-box", marginBottom: 12 }} />
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Optional notes (e.g. FTA reference number)" style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 13, color: "var(--c-text)", outline: "none", resize: "vertical", boxSizing: "border-box", marginBottom: 12 }} />
           {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{err}</div>}
           <button onClick={submit} disabled={submitting}
             style={{ padding: "10px 20px", borderRadius: 10, background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, color: "#fff", border: "none", fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer", fontFamily: SANS, opacity: submitting ? 0.6 : 1 }}>
@@ -313,13 +313,13 @@ function MarkPaymentReceivedCard({ caseData, onUpdated }) {
   };
 
   return (
-    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
       <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Payment</div>
       {alreadyPaid ? (
         <div style={{ fontSize: 13, color: C.success, fontWeight: 700 }}>✓ Payment received.</div>
       ) : (
         <>
-          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, marginBottom: 12 }}>
+          <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.7, marginBottom: 12 }}>
             Online payment isn't live yet — once you've confirmed the client's payment off-platform, mark it here to unlock their document workspace.
           </div>
           {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{err}</div>}
@@ -372,7 +372,7 @@ function OverviewTab({ caseData, advisorUserId, onCaseUpdate }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 18 }}>
       {/* Client info */}
-      <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Client Information</div>
         <Field label="Full Name"   value={client.full_name} />
         <Field label="Email"       value={client.email} />
@@ -382,13 +382,13 @@ function OverviewTab({ caseData, advisorUserId, onCaseUpdate }) {
       </div>
 
       {/* Eligibility details */}
-      <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Eligibility Details</div>
         {isCorporate ? (
           loadingCorpElig ? (
-            <div style={{ fontSize: 13, color: C.muted }}>Loading…</div>
+            <div style={{ fontSize: 13, color: "var(--c-text-muted)" }}>Loading…</div>
           ) : !corpElig || Object.keys(corpElig).length === 0 ? (
-            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>No corporate eligibility record linked to this application yet.</div>
+            <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.7 }}>No corporate eligibility record linked to this application yet.</div>
           ) : (
             <>
               <Field label="Incorporation Date"     value={corpElig.incorporation_date} />
@@ -404,7 +404,7 @@ function OverviewTab({ caseData, advisorUserId, onCaseUpdate }) {
             </>
           )
         ) : Object.keys(elig).length === 0 ? (
-          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>
+          <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.7 }}>
             No eligibility record linked to this application yet.
           </div>
         ) : (
@@ -430,7 +430,7 @@ function OverviewTab({ caseData, advisorUserId, onCaseUpdate }) {
       </div>
 
       {/* Application details */}
-      <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 22, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>Application Details</div>
         <Field label="Application ID"   value={caseData.id} />
         <Field label="Applicant Type"   value={caseData.applicant_type} />
@@ -495,20 +495,20 @@ function RequestDocumentModal({ applicationId, onClose, onCreated }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(15,37,87,.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999, padding: 20 }}>
-      <div style={{ background: C.white, borderRadius: 18, padding: 28, maxWidth: 480, width: "100%", boxShadow: "0 12px 48px rgba(15,37,87,.18)" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 18, padding: 28, maxWidth: 480, width: "100%", boxShadow: "0 12px 48px rgba(15,37,87,.18)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, color: C.navy }}>Request Document</div>
-          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: C.muted }}>×</button>
+          <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, color: "var(--c-text)" }}>Request Document</div>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "var(--c-text-muted)" }}>×</button>
         </div>
 
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Document Type</div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Document Type</div>
           {!custom ? (
             <>
               <select
                 value={docType}
                 onChange={e => setDocType(e.target.value)}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, color: C.navy, outline: "none" }}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, color: "var(--c-text)", outline: "none" }}
               >
                 <option value="">— Select a type —</option>
                 {COMMON_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -522,9 +522,9 @@ function RequestDocumentModal({ applicationId, onClose, onCreated }) {
               <input
                 value={docType} onChange={e => setDocType(e.target.value)}
                 placeholder="e.g. Certificate of Domicile"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, color: C.navy, outline: "none", boxSizing: "border-box" }}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, color: "var(--c-text)", outline: "none", boxSizing: "border-box" }}
               />
-              <button onClick={() => { setCustom(false); setDocType(""); }} style={{ background: "none", border: "none", color: C.muted, fontSize: 12, cursor: "pointer", marginTop: 4, padding: 0, fontFamily: SANS }}>
+              <button onClick={() => { setCustom(false); setDocType(""); }} style={{ background: "none", border: "none", color: "var(--c-text-muted)", fontSize: 12, cursor: "pointer", marginTop: 4, padding: 0, fontFamily: SANS }}>
                 ← Choose from list
               </button>
             </>
@@ -532,19 +532,19 @@ function RequestDocumentModal({ applicationId, onClose, onCreated }) {
         </div>
 
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Description / Instructions (optional)</div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Description / Instructions (optional)</div>
           <textarea
             value={description} onChange={e => setDesc(e.target.value)}
             placeholder="Add context for the client — e.g. 'Certified copy required, less than 3 months old'"
             rows={3}
-            style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 13, color: C.navy, outline: "none", resize: "vertical", boxSizing: "border-box" }}
+            style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 13, color: "var(--c-text)", outline: "none", resize: "vertical", boxSizing: "border-box" }}
           />
         </div>
 
         {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 12 }}>{err}</div>}
 
         <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-          <button onClick={onClose} disabled={loading} style={{ padding: "10px 18px", borderRadius: 10, border: `1px solid ${C.border}`, background: C.offWhite, color: C.navy, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>
+          <button onClick={onClose} disabled={loading} style={{ padding: "10px 18px", borderRadius: 10, border: `1px solid ${"var(--c-border)"}`, background: "var(--c-bg)", color: "var(--c-text)", fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>
             Cancel
           </button>
           <button onClick={submit} disabled={loading || !docType.trim()} style={{ padding: "10px 20px", borderRadius: 10, background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, color: "#fff", border: "none", fontWeight: 700, cursor: loading || !docType.trim() ? "not-allowed" : "pointer", fontFamily: SANS, opacity: loading || !docType.trim() ? 0.7 : 1 }}>
@@ -581,25 +581,25 @@ function ReviewModal({ doc, action, onClose, onDone }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(15,37,87,.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999, padding: 20 }}>
-      <div style={{ background: C.white, borderRadius: 18, padding: 28, maxWidth: 440, width: "100%", boxShadow: "0 12px 48px rgba(15,37,87,.18)" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 18, padding: 28, maxWidth: 440, width: "100%", boxShadow: "0 12px 48px rgba(15,37,87,.18)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
           <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, color: isApprove ? C.success : C.error }}>
             {isApprove ? "✓ Approve Document" : "✗ Reject Document"}
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: C.muted }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "var(--c-text-muted)" }}>×</button>
         </div>
-        <div style={{ fontSize: 14, color: C.navy, marginBottom: 14 }}>
+        <div style={{ fontSize: 14, color: "var(--c-text)", marginBottom: 14 }}>
           <strong>{doc.document_type}</strong>
         </div>
         <textarea
           value={notes} onChange={e => setNotes(e.target.value)}
           placeholder={isApprove ? "Optional: any notes for the client" : "Required: explain why this document was rejected"}
           rows={3}
-          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${isApprove ? C.border : C.error}`, fontFamily: SANS, fontSize: 13, color: C.navy, outline: "none", resize: "vertical", boxSizing: "border-box", marginBottom: 14 }}
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${isApprove ? "var(--c-border)" : C.error}`, fontFamily: SANS, fontSize: 13, color: "var(--c-text)", outline: "none", resize: "vertical", boxSizing: "border-box", marginBottom: 14 }}
         />
         {err && <div style={{ color: C.error, fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{err}</div>}
         <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-          <button onClick={onClose} disabled={loading} style={{ padding: "10px 18px", borderRadius: 10, border: `1px solid ${C.border}`, background: C.offWhite, color: C.navy, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>Cancel</button>
+          <button onClick={onClose} disabled={loading} style={{ padding: "10px 18px", borderRadius: 10, border: `1px solid ${"var(--c-border)"}`, background: "var(--c-bg)", color: "var(--c-text)", fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>Cancel</button>
           <button onClick={submit} disabled={loading || (!isApprove && !notes.trim())} style={{ padding: "10px 20px", borderRadius: 10, background: isApprove ? C.success : C.error, color: "#fff", border: "none", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", fontFamily: SANS, opacity: loading ? 0.7 : 1 }}>
             {loading ? "Saving…" : isApprove ? "Approve" : "Reject"}
           </button>
@@ -724,11 +724,11 @@ function DocumentsTab({ caseData, advisorUserId }) {
 
       {/* ── Required Documents (standard checklist with upload status + quick request) ── */}
       {requirements.length > 0 && (
-        <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
-          <div style={{ padding: "16px 22px", borderBottom: `1px solid ${C.border}`, background: C.offWhite, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+          <div style={{ padding: "16px 22px", borderBottom: `1px solid ${"var(--c-border)"}`, background: "var(--c-bg)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: C.navy }}>Required Documents</div>
-              <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)" }}>Required Documents</div>
+              <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 2 }}>
                 {uploadedTypes.size} of {requirements.length} uploaded by client
               </div>
             </div>
@@ -743,7 +743,7 @@ function DocumentsTab({ caseData, advisorUserId }) {
           </div>
 
           {loadingDocs ? (
-            <div style={{ padding: 24, textAlign: "center", color: C.muted, fontSize: 13 }}>Loading…</div>
+            <div style={{ padding: 24, textAlign: "center", color: "var(--c-text-muted)", fontSize: 13 }}>Loading…</div>
           ) : (
             requirements.map((req, i) => {
               const isUploaded  = uploadedTypes.has(req.document_name);
@@ -752,13 +752,13 @@ function DocumentsTab({ caseData, advisorUserId }) {
               const relatedDoc  = documents.find(d => canonicalDocumentType(d.document_type) === req.document_name);
               return (
                 <div key={req.id || req.document_name}
-                  style={{ padding: "14px 22px", borderBottom: i < requirements.length - 1 ? `1px solid ${C.border}` : "none", display: "flex", alignItems: "flex-start", gap: 14 }}>
+                  style={{ padding: "14px 22px", borderBottom: i < requirements.length - 1 ? `1px solid ${"var(--c-border)"}` : "none", display: "flex", alignItems: "flex-start", gap: 14 }}>
                   {/* Status dot */}
                   <div style={{ width: 10, height: 10, borderRadius: "50%", marginTop: 5, flexShrink: 0, background: isUploaded ? "#059669" : "#DC2626" }} />
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 3 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{req.document_name}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{req.document_name}</span>
                       {isUploaded && (
                         <span style={{ background: "#ECFDF5", color: "#059669", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 20, textTransform: "uppercase" }}>
                           {relatedDoc?.review_status === "approved" ? "Approved ✓" : "Uploaded"}
@@ -769,7 +769,7 @@ function DocumentsTab({ caseData, advisorUserId }) {
                       )}
                     </div>
                     {req.description && (
-                      <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5 }}>{req.description}</div>
+                      <div style={{ fontSize: 12, color: "var(--c-text-muted)", lineHeight: 1.5 }}>{req.description}</div>
                     )}
                   </div>
 
@@ -791,11 +791,11 @@ function DocumentsTab({ caseData, advisorUserId }) {
       )}
 
       {/* ── Custom Document Requests (advisor-initiated) ── */}
-      <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
-        <div style={{ padding: "16px 22px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: C.offWhite }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+        <div style={{ padding: "16px 22px", borderBottom: `1px solid ${"var(--c-border)"}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--c-bg)" }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: C.navy }}>Additional Document Requests</div>
-            <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{pendingRequests.length} pending · {fulfilledReqs.length} fulfilled</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)" }}>Additional Document Requests</div>
+            <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 2 }}>{pendingRequests.length} pending · {fulfilledReqs.length} fulfilled</div>
           </div>
           <button
             onClick={() => setShowRequest(true)}
@@ -806,22 +806,22 @@ function DocumentsTab({ caseData, advisorUserId }) {
         </div>
 
         {loadingDocs ? (
-          <div style={{ padding: 28, textAlign: "center", color: C.muted, fontSize: 13 }}>Loading…</div>
+          <div style={{ padding: 28, textAlign: "center", color: "var(--c-text-muted)", fontSize: 13 }}>Loading…</div>
         ) : requests.length === 0 ? (
-          <div style={{ padding: 28, textAlign: "center", color: C.muted, fontSize: 13 }}>
+          <div style={{ padding: 28, textAlign: "center", color: "var(--c-text-muted)", fontSize: 13 }}>
             No document requests yet. Click <strong>"Request Document"</strong> to ask the client for a specific file.
           </div>
         ) : (
           <div>
             {requests.map(req => (
-              <div key={req.id} style={{ padding: "14px 22px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "flex-start", gap: 14 }}>
+              <div key={req.id} style={{ padding: "14px 22px", borderBottom: `1px solid ${"var(--c-border)"}`, display: "flex", alignItems: "flex-start", gap: 14 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{req.document_type}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{req.document_type}</span>
                     <StatusBadge status={req.status} />
                   </div>
-                  {req.description && <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>{req.description}</div>}
-                  <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>Requested {new Date(req.created_at).toLocaleDateString()}</div>
+                  {req.description && <div style={{ fontSize: 12, color: "var(--c-text-muted)", lineHeight: 1.6 }}>{req.description}</div>}
+                  <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 4 }}>Requested {new Date(req.created_at).toLocaleDateString()}</div>
                 </div>
               </div>
             ))}
@@ -830,10 +830,10 @@ function DocumentsTab({ caseData, advisorUserId }) {
       </div>
 
       {/* ── Uploaded Documents ── */}
-      <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
-        <div style={{ padding: "16px 22px", borderBottom: `1px solid ${C.border}`, background: C.offWhite }}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: C.navy }}>Client Uploaded Documents</div>
-          <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+        <div style={{ padding: "16px 22px", borderBottom: `1px solid ${"var(--c-border)"}`, background: "var(--c-bg)" }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)" }}>Client Uploaded Documents</div>
+          <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 2 }}>
             {documents.filter(d => d.review_status === "approved").length} approved · {documents.filter(d => d.review_status === "rejected").length} rejected · {documents.filter(d => !["approved","rejected"].includes(d.review_status)).length} awaiting review
           </div>
         </div>
@@ -852,20 +852,20 @@ function DocumentsTab({ caseData, advisorUserId }) {
         ) : (
           <div>
             {documents.map(doc => (
-              <div key={doc.id} style={{ padding: "16px 22px", borderBottom: `1px solid ${C.border}` }}>
+              <div key={doc.id} style={{ padding: "16px 22px", borderBottom: `1px solid ${"var(--c-border)"}` }}>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
                   {/* Icon */}
-                  <div style={{ width: 38, height: 38, borderRadius: 10, background: doc.review_status === "approved" ? C.successBg : doc.review_status === "rejected" ? C.errorBg : C.offWhite2, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 10, background: doc.review_status === "approved" ? C.successBg : doc.review_status === "rejected" ? C.errorBg : "var(--c-surface-2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
                     {doc.review_status === "approved" ? "✅" : doc.review_status === "rejected" ? "❌" : "📄"}
                   </div>
 
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{doc.document_type}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{doc.document_type}</span>
                       <StatusBadge status={doc.review_status || "uploaded"} />
                     </div>
-                    <div style={{ fontSize: 11, color: C.muted }}>
+                    <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>
                       Uploaded {new Date(doc.uploaded_at || doc.created_at).toLocaleDateString()}
                     </div>
                     {doc.reviewer_notes && (
@@ -880,7 +880,7 @@ function DocumentsTab({ caseData, advisorUserId }) {
                     {doc.file_url && (
                       <button
                         onClick={() => openSignedUrl(doc)}
-                        style={{ padding: "7px 12px", borderRadius: 8, background: C.offWhite2, color: C.navy, border: `1px solid ${C.border}`, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}
+                        style={{ padding: "7px 12px", borderRadius: 8, background: "var(--c-surface-2)", color: "var(--c-text)", border: `1px solid ${"var(--c-border)"}`, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}
                       >
                         👁 View
                       </button>
@@ -983,18 +983,18 @@ function MessagesTab({ caseData, advisorUserId }) {
   const clientName = caseData?.profiles?.full_name || caseData?.profiles?.email || "Client";
 
   return (
-    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, boxShadow: "0 2px 12px rgba(15,37,87,.05)", overflow: "hidden", display: "flex", flexDirection: "column", height: "calc(100vh - 280px)", minHeight: 400 }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, boxShadow: "0 2px 12px rgba(15,37,87,.05)", overflow: "hidden", display: "flex", flexDirection: "column", height: "calc(100vh - 280px)", minHeight: 400 }}>
       {/* Header */}
-      <div style={{ padding: "14px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 12, background: C.offWhite }}>
+      <div style={{ padding: "14px 20px", borderBottom: `1px solid ${"var(--c-border)"}`, display: "flex", alignItems: "center", gap: 12, background: "var(--c-bg)" }}>
         <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 16, flexShrink: 0 }}>👤</div>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{clientName}</div>
-          <div style={{ fontSize: 11, color: C.muted }}>Retail Client · updates every 6s</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "var(--c-text)" }}>{clientName}</div>
+          <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>Retail Client · updates every 6s</div>
         </div>
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "18px 20px", background: C.offWhite }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "18px 20px", background: "var(--c-bg)" }}>
         {loading ? (
           <div style={{ padding: 12 }}>
             <SkeletonCard height={160} />
@@ -1011,9 +1011,9 @@ function MessagesTab({ caseData, advisorUserId }) {
           const isOwn = m.sender_id === advisorUserId;
           return (
             <div key={m.id} style={{ display: "flex", justifyContent: isOwn ? "flex-end" : "flex-start", marginBottom: 10 }}>
-              <div style={{ maxWidth: "70%", padding: "10px 14px", borderRadius: isOwn ? "16px 16px 4px 16px" : "16px 16px 16px 4px", background: isOwn ? `linear-gradient(135deg,${C.navy},${C.navyLight})` : C.white, color: isOwn ? "#fff" : C.navy, fontSize: 14, lineHeight: 1.55, boxShadow: "0 1px 6px rgba(0,0,0,.08)", border: isOwn ? "none" : `1px solid ${C.border}` }}>
+              <div style={{ maxWidth: "70%", padding: "10px 14px", borderRadius: isOwn ? "16px 16px 4px 16px" : "16px 16px 16px 4px", background: isOwn ? `linear-gradient(135deg,${C.navy},${C.navyLight})` : "var(--c-surface)", color: isOwn ? "#fff" : "var(--c-text)", fontSize: 14, lineHeight: 1.55, boxShadow: "0 1px 6px rgba(0,0,0,.08)", border: isOwn ? "none" : `1px solid ${"var(--c-border)"}` }}>
                 <div>{m.message}</div>
-                <div style={{ fontSize: 10, color: isOwn ? "rgba(255,255,255,.6)" : C.muted, marginTop: 5, textAlign: "right" }}>
+                <div style={{ fontSize: 10, color: isOwn ? "rgba(255,255,255,.6)" : "var(--c-text-muted)", marginTop: 5, textAlign: "right" }}>
                   {isOwn ? "You" : clientName} · {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </div>
               </div>
@@ -1024,11 +1024,11 @@ function MessagesTab({ caseData, advisorUserId }) {
       </div>
 
       {/* Input */}
-      <div style={{ padding: "10px 14px", borderTop: `1px solid ${C.border}`, display: "flex", gap: 10, alignItems: "flex-end", background: C.white }}>
+      <div style={{ padding: "10px 14px", borderTop: `1px solid ${"var(--c-border)"}`, display: "flex", gap: 10, alignItems: "flex-end", background: "var(--c-surface)" }}>
         <textarea ref={inputRef} value={text} onChange={e => setText(e.target.value)} onKeyDown={handleKey}
           placeholder="Message the client… (Enter to send)"
           rows={2}
-          style={{ flex: 1, padding: "10px 13px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, resize: "none", outline: "none", color: C.navy, lineHeight: 1.5 }} />
+          style={{ flex: 1, padding: "10px 13px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, resize: "none", outline: "none", color: "var(--c-text)", lineHeight: 1.5 }} />
         <button onClick={handleSend} disabled={sending || !text.trim()}
           style={{ padding: "10px 18px", borderRadius: 10, background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, color: "#fff", border: "none", fontWeight: 700, fontSize: 14, fontFamily: SANS, flexShrink: 0, cursor: sending || !text.trim() ? "not-allowed" : "pointer", opacity: sending || !text.trim() ? 0.5 : 1 }}>
           {sending ? "…" : "Send"}
@@ -1120,12 +1120,12 @@ export default function AdvisorCaseDetailPage() {
   }, [id, advisorUserId, activeTab]);
 
   if (loading) return (
-    <div style={{ padding: 40, textAlign: "center", color: C.muted, fontFamily: SANS }}>Loading case…</div>
+    <div style={{ padding: 40, textAlign: "center", color: "var(--c-text-muted)", fontFamily: SANS }}>Loading case…</div>
   );
   if (!caseData) return (
     <div style={{ padding: 40, textAlign: "center", fontFamily: SANS }}>
       <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
-      <div style={{ color: C.muted }}>Case not found or not assigned to you.</div>
+      <div style={{ color: "var(--c-text-muted)" }}>Case not found or not assigned to you.</div>
       <button onClick={() => navigate("/advisor/cases")} style={{ marginTop: 16, padding: "10px 20px", borderRadius: 10, background: C.navy, color: "#fff", border: "none", fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>← Back to Cases</button>
     </div>
   );
@@ -1136,14 +1136,14 @@ export default function AdvisorCaseDetailPage() {
     <div style={{ display: "grid", gap: 20, fontFamily: SANS }}>
       {/* Page header */}
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-        <button onClick={() => navigate("/advisor/cases")} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: 8, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: SANS, color: C.navy }}>
+        <button onClick={() => navigate("/advisor/cases")} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: 8, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: SANS, color: "var(--c-text)" }}>
           ← Cases
         </button>
         <div style={{ flex: 1 }}>
-          <h2 style={{ fontFamily: SERIF, fontSize: 24, fontWeight: 700, color: C.navy }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: 24, fontWeight: 700, color: "var(--c-text)" }}>
             {client.full_name || client.email || caseData.id.slice(0, 8)}
           </h2>
-          <div style={{ fontSize: 12, color: C.muted }}>
+          <div style={{ fontSize: 12, color: "var(--c-text-muted)" }}>
             {caseData.country || "UAE"} · {caseData.application_type || "TRC"} · ID: {caseData.id.slice(0, 8)}
           </div>
         </div>
@@ -1168,7 +1168,7 @@ export default function AdvisorCaseDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", gap: 4, background: C.white, borderRadius: 14, border: `1px solid ${C.border}`, padding: 6, boxShadow: "0 2px 12px rgba(15,37,87,.05)", width: "fit-content" }}>
+      <div style={{ display: "flex", gap: 4, background: "var(--c-surface)", borderRadius: 14, border: `1px solid ${"var(--c-border)"}`, padding: 6, boxShadow: "0 2px 12px rgba(15,37,87,.05)", width: "fit-content" }}>
         {TABS.map(tab => {
           const showBadge = tab.key === "messages" && unreadCount > 0 && activeTab !== "messages";
           return (
@@ -1178,7 +1178,7 @@ export default function AdvisorCaseDetailPage() {
               style={{
                 padding: "9px 18px", borderRadius: 10, border: "none", fontFamily: SANS, fontSize: 13, fontWeight: 700, cursor: "pointer",
                 background: activeTab === tab.key ? C.navy : "transparent",
-                color: activeTab === tab.key ? "#fff" : C.muted,
+                color: activeTab === tab.key ? "#fff" : "var(--c-text-muted)",
                 transition: "all .15s",
                 display: "flex", alignItems: "center", gap: 6,
                 position: "relative",

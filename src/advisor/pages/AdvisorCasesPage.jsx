@@ -53,16 +53,16 @@ export default function AdvisorCasesPage() {
   return (
     <div style={{ display: "grid", gap: 20, fontFamily: SANS }}>
       {/* Header */}
-      <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: "20px 24px", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
-        <h2 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, color: C.navy, marginBottom: 6 }}>My Cases</h2>
-        <p style={{ color: C.muted, fontSize: 14 }}>{cases.length} total case{cases.length !== 1 ? "s" : ""} assigned to you</p>
+      <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: "20px 24px", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+        <h2 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, color: "var(--c-text)", marginBottom: 6 }}>My Cases</h2>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 14 }}>{cases.length} total case{cases.length !== 1 ? "s" : ""} assigned to you</p>
       </div>
 
       {/* Filters + search */}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
         <div style={{ display: "flex", gap: 6 }}>
           {FILTERS.map(f => (
-            <button key={f.key} onClick={() => setFilter(f.key)} style={{ padding: "8px 16px", borderRadius: 999, border: "none", fontFamily: SANS, fontSize: 13, fontWeight: 700, cursor: "pointer", background: filter === f.key ? C.navy : C.white, color: filter === f.key ? "#fff" : C.muted, boxShadow: "0 1px 4px rgba(15,37,87,.08)" }}>
+            <button key={f.key} onClick={() => setFilter(f.key)} style={{ padding: "8px 16px", borderRadius: 999, border: "none", fontFamily: SANS, fontSize: 13, fontWeight: 700, cursor: "pointer", background: filter === f.key ? C.navy : "var(--c-surface)", color: filter === f.key ? "#fff" : "var(--c-text-muted)", boxShadow: "0 1px 4px rgba(15,37,87,.08)" }}>
               {f.label}
             </button>
           ))}
@@ -70,12 +70,12 @@ export default function AdvisorCasesPage() {
         <input
           value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search by client name or ID…"
-          style={{ flex: 1, minWidth: 200, padding: "9px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, outline: "none", color: C.navy }}
+          style={{ flex: 1, minWidth: 200, padding: "9px 14px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, outline: "none", color: "var(--c-text)" }}
         />
       </div>
 
       {/* Table */}
-      <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
         {filtered.length === 0 ? (
           <div style={{ padding: 20 }}>
             {cases.length === 0 ? (
@@ -95,27 +95,27 @@ export default function AdvisorCasesPage() {
         ) : (
           <>
             {/* Table header */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 130px 170px 90px 170px", gap: 12, padding: "10px 20px", borderBottom: `1px solid ${C.border}`, background: C.offWhite }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 130px 170px 90px 170px", gap: 12, padding: "10px 20px", borderBottom: `1px solid ${"var(--c-border)"}`, background: "var(--c-bg)" }}>
               {["Client", "Country / Type", "Status", "Date", "Actions"].map(h => (
-                <div key={h} style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>{h}</div>
+                <div key={h} style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>{h}</div>
               ))}
             </div>
             {filtered.map(c => {
               const client = c.profiles || {};
               return (
                 <div key={c.id}
-                  style={{ display: "grid", gridTemplateColumns: "1fr 130px 170px 90px 170px", gap: 12, padding: "14px 20px", borderBottom: `1px solid ${C.border}`, alignItems: "center", transition: "background .15s", cursor: "pointer" }}
+                  style={{ display: "grid", gridTemplateColumns: "1fr 130px 170px 90px 170px", gap: 12, padding: "14px 20px", borderBottom: `1px solid ${"var(--c-border)"}`, alignItems: "center", transition: "background .15s", cursor: "pointer" }}
                   onClick={() => navigate(`/advisor/cases/${c.id}`)}
-                  onMouseEnter={e => e.currentTarget.style.background = C.offWhite}
+                  onMouseEnter={e => e.currentTarget.style.background = "var(--c-bg)"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                 >
                   <div>
-                    <div style={{ fontWeight: 700, color: C.navy, fontSize: 14 }}>{client.full_name || client.email || "—"}</div>
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{client.email || c.id.slice(0,8)}</div>
+                    <div style={{ fontWeight: 700, color: "var(--c-text)", fontSize: 14 }}>{client.full_name || client.email || "—"}</div>
+                    <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 2 }}>{client.email || c.id.slice(0,8)}</div>
                   </div>
-                  <div style={{ fontSize: 13, color: C.navy }}>{c.country || "UAE"} · {c.application_type || "TRC"}</div>
+                  <div style={{ fontSize: 13, color: "var(--c-text)" }}>{c.country || "UAE"} · {c.application_type || "TRC"}</div>
                   <div><Badge state={c.workflow_state} /></div>
-                  <div style={{ fontSize: 12, color: C.muted }}>{new Date(c.created_at).toLocaleDateString()}</div>
+                  <div style={{ fontSize: 12, color: "var(--c-text-muted)" }}>{new Date(c.created_at).toLocaleDateString()}</div>
                     <div style={{ display: "flex", gap: 8, alignItems: 'center' }}>
                       <button onClick={e => { e.stopPropagation(); navigate(`/advisor/cases/${c.id}`); }}
                         style={{ padding: "5px 10px", borderRadius: 7, background: C.navy, color: "#fff", border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>

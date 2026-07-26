@@ -105,8 +105,8 @@ export default function AdvisorUpdatesPage() {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <div>
-          <h2 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, color: C.navy }}>Updates & Inquiries</h2>
-          <p style={{ color: C.muted, fontSize: 14 }}>Send updates or inquiries to admin. Track their status here.</p>
+          <h2 style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, color: "var(--c-text)" }}>Updates & Inquiries</h2>
+          <p style={{ color: "var(--c-text-muted)", fontSize: 14 }}>Send updates or inquiries to admin. Track their status here.</p>
         </div>
         <button onClick={() => { setShowForm(true); setSelected(null); }}
           style={{ background: `linear-gradient(135deg,${C.navy},${C.navyLight})`, color: "#fff", border: "none", borderRadius: 12, padding: "12px 20px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>
@@ -116,8 +116,8 @@ export default function AdvisorUpdatesPage() {
 
       {/* New ticket form */}
       {showForm && (
-        <div style={{ background: C.white, borderRadius: 18, border: `1px solid ${C.border}`, padding: 24, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 18, fontFamily: SERIF, fontSize: 20 }}>New Update / Inquiry to Admin</div>
+        <div style={{ background: "var(--c-surface)", borderRadius: 18, border: `1px solid ${"var(--c-border)"}`, padding: 24, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)", marginBottom: 18, fontFamily: SERIF, fontSize: 20 }}>New Update / Inquiry to Admin</div>
 
           {formError && (
             <div style={{ background: C.errorBg, color: C.error, borderRadius: 10, padding: "10px 14px", fontSize: 13, marginBottom: 14, border: `1px solid #FECACA` }}>{formError}</div>
@@ -125,15 +125,15 @@ export default function AdvisorUpdatesPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 14 }}>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Subject *</label>
+              <label style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Subject *</label>
               <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Brief summary…"
-                style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, outline: "none", color: C.navy, boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, outline: "none", color: "var(--c-text)", boxSizing: "border-box" }} />
             </div>
 
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Priority</label>
+              <label style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Priority</label>
               <select value={priority} onChange={e => setPriority(e.target.value)}
-                style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, outline: "none", color: C.navy, background: C.white, boxSizing: "border-box" }}>
+                style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, outline: "none", color: "var(--c-text)", background: "var(--c-surface)", boxSizing: "border-box" }}>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -141,9 +141,9 @@ export default function AdvisorUpdatesPage() {
             </div>
 
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Related Case (optional)</label>
+              <label style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Related Case (optional)</label>
               <select value={appId} onChange={e => setAppId(e.target.value)}
-                style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, outline: "none", color: C.navy, background: C.white, boxSizing: "border-box" }}>
+                style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, outline: "none", color: "var(--c-text)", background: "var(--c-surface)", boxSizing: "border-box" }}>
                 <option value="">— None —</option>
                 {cases.map(c => (
                   <option key={c.id} value={c.id}>{(c.profiles?.full_name || c.profiles?.email || c.id.slice(0,8))}</option>
@@ -153,10 +153,10 @@ export default function AdvisorUpdatesPage() {
           </div>
 
           <div style={{ marginBottom: 18 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Message *</label>
+            <label style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", display: "block", marginBottom: 6 }}>Message *</label>
             <textarea value={message} onChange={e => setMessage(e.target.value)} rows={5}
               placeholder="Describe the update or inquiry in detail…"
-              style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14, outline: "none", color: C.navy, resize: "vertical", boxSizing: "border-box" }} />
+              style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14, outline: "none", color: "var(--c-text)", resize: "vertical", boxSizing: "border-box" }} />
           </div>
 
           <div style={{ display: "flex", gap: 10 }}>
@@ -165,7 +165,7 @@ export default function AdvisorUpdatesPage() {
               {submitting ? "Sending…" : "Send to Admin"}
             </button>
             <button onClick={() => { setShowForm(false); setFormError(null); }}
-              style={{ background: C.offWhite, border: `1px solid ${C.border}`, color: C.navy, borderRadius: 10, padding: "11px 18px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>
+              style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, color: "var(--c-text)", borderRadius: 10, padding: "11px 18px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: SANS }}>
               Cancel
             </button>
           </div>
@@ -175,18 +175,18 @@ export default function AdvisorUpdatesPage() {
       {/* Ticket list + detail */}
       <div style={{ display: "grid", gridTemplateColumns: selected ? "340px 1fr" : "1fr", gap: 16 }}>
         {/* Ticket list */}
-        <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
           {loading ? (
-            <div style={{ padding: 40, textAlign: "center", color: C.muted, fontSize: 13 }}>Loading tickets…</div>
+            <div style={{ padding: 40, textAlign: "center", color: "var(--c-text-muted)", fontSize: 13 }}>Loading tickets…</div>
           ) : tickets.length === 0 ? (
             <div style={{ padding: 40, textAlign: "center" }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>📢</div>
-              <div style={{ color: C.muted, fontSize: 14 }}>No updates sent yet.</div>
-              <div style={{ color: C.muted, fontSize: 13, marginTop: 6 }}>Use the button above to send your first update or inquiry to admin.</div>
+              <div style={{ color: "var(--c-text-muted)", fontSize: 14 }}>No updates sent yet.</div>
+              <div style={{ color: "var(--c-text-muted)", fontSize: 13, marginTop: 6 }}>Use the button above to send your first update or inquiry to admin.</div>
             </div>
           ) : (
             <>
-              <div style={{ padding: "12px 20px", borderBottom: `1px solid ${C.border}`, fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>
+              <div style={{ padding: "12px 20px", borderBottom: `1px solid ${"var(--c-border)"}`, fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>
                 {tickets.length} ticket{tickets.length !== 1 ? "s" : ""}
               </div>
               {tickets.map(t => (
@@ -199,17 +199,17 @@ export default function AdvisorUpdatesPage() {
                     markTicketViewed(t.id).then(() => refresh?.(true));
                   }
                 }}
-                  style={{ padding: "14px 20px", borderBottom: `1px solid ${C.border}`, cursor: "pointer", background: selected === t.id ? "#EEF2FF" : "transparent", borderLeft: selected === t.id ? "3px solid #5B21B6" : "3px solid transparent", transition: "background .15s" }}
-                  onMouseEnter={e => { if (selected !== t.id) e.currentTarget.style.background = C.offWhite; }}
+                  style={{ padding: "14px 20px", borderBottom: `1px solid ${"var(--c-border)"}`, cursor: "pointer", background: selected === t.id ? "#EEF2FF" : "transparent", borderLeft: selected === t.id ? "3px solid #5B21B6" : "3px solid transparent", transition: "background .15s" }}
+                  onMouseEnter={e => { if (selected !== t.id) e.currentTarget.style.background = "var(--c-bg)"; }}
                   onMouseLeave={e => { if (selected !== t.id) e.currentTarget.style.background = "transparent"; }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
-                    <div style={{ fontWeight: 700, fontSize: 13, color: C.navy, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{t.subject}</div>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: "var(--c-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{t.subject}</div>
                     <Badge val={t.status} metaMap={STATUS_META} />
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <Badge val={t.priority} metaMap={PRIORITY_META} />
-                    <span style={{ fontSize: 11, color: C.muted }}>{new Date(t.created_at).toLocaleDateString()}</span>
+                    <span style={{ fontSize: 11, color: "var(--c-text-muted)" }}>{new Date(t.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))}
@@ -219,22 +219,22 @@ export default function AdvisorUpdatesPage() {
 
         {/* Ticket detail panel */}
         {ticketById && (
-          <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, padding: 24, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
+          <div style={{ background: "var(--c-surface)", borderRadius: 16, border: `1px solid ${"var(--c-border)"}`, padding: 24, boxShadow: "0 2px 12px rgba(15,37,87,.05)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
               <div>
-                <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, color: C.navy, marginBottom: 6 }}>{ticketById.subject}</div>
+                <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, color: "var(--c-text)", marginBottom: 6 }}>{ticketById.subject}</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <Badge val={ticketById.status} metaMap={STATUS_META} />
                   <Badge val={ticketById.priority} metaMap={PRIORITY_META} />
                 </div>
               </div>
               <button onClick={() => setSelected(null)}
-                style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: C.muted, padding: 4 }}>✕</button>
+                style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "var(--c-text-muted)", padding: 4 }}>✕</button>
             </div>
 
             {/* Your message */}
-            <div style={{ marginBottom: 8, fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>Your Message</div>
-            <div style={{ padding: "14px", background: C.offWhite, borderRadius: 12, marginBottom: 20, fontSize: 14, color: C.navy, lineHeight: 1.7, border: `1px solid ${C.border}` }}>
+            <div style={{ marginBottom: 8, fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>Your Message</div>
+            <div style={{ padding: "14px", background: "var(--c-bg)", borderRadius: 12, marginBottom: 20, fontSize: 14, color: "var(--c-text)", lineHeight: 1.7, border: `1px solid ${"var(--c-border)"}` }}>
               {ticketById.message}
             </div>
 
@@ -250,7 +250,7 @@ export default function AdvisorUpdatesPage() {
                 <div style={{ fontSize: 14, color: "#3B0764", lineHeight: 1.7 }}>{ticketById.admin_reply}</div>
               </div>
             ) : (
-              <div style={{ marginBottom: 20, background: C.offWhite, borderRadius: 10, padding: "10px 14px", fontSize: 13, color: C.muted, border: `1px dashed ${C.border}` }}>
+              <div style={{ marginBottom: 20, background: "var(--c-bg)", borderRadius: 10, padding: "10px 14px", fontSize: 13, color: "var(--c-text-muted)", border: `1px dashed ${"var(--c-border)"}` }}>
                 No reply from admin yet.
               </div>
             )}
@@ -262,9 +262,9 @@ export default function AdvisorUpdatesPage() {
                 ["Last Updated", new Date(ticketById.updated_at || ticketById.created_at).toLocaleString()],
                 ["Related Case", ticketById.application_id ? ticketById.application_id.slice(0, 8) : "—"],
               ].map(([k, v]) => (
-                <div key={k} style={{ padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 3 }}>{k}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{v}</div>
+                <div key={k} style={{ padding: "10px 0", borderBottom: `1px solid ${"var(--c-border)"}` }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 3 }}>{k}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--c-text)" }}>{v}</div>
                 </div>
               ))}
             </div>
