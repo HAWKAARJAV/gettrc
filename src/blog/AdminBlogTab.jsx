@@ -496,6 +496,15 @@ export default function AdminBlogTab() {
     load();
   };
 
+  const handleEdit = async (post) => {
+    // The list query only selects summary columns (keeps the list fetch light);
+    // fetch the full row here so content/SEO fields aren't blank in the editor.
+    const { data, error } = await sb.from("blog_posts").select("*").eq("id", post.id).single();
+    if (error) { showToast("Failed to load post: " + error.message, "error"); return; }
+    setEditing(data);
+    setView("edit");
+  };
+
   const handleDelete = async () => {
     if (!deleteTarget) return;
     const { error } = await sb.from("blog_posts").delete().eq("id", deleteTarget.id);
@@ -628,7 +637,7 @@ export default function AdminBlogTab() {
             <PostRow
               key={p.id}
               post={p}
-              onEdit={post => { setEditing(post); setView("edit"); }}
+              onEdit={handleEdit}
               onToggleStatus={handleToggleStatus}
               onDelete={post => setDeleteTarget(post)}
             />
