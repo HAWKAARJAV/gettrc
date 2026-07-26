@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { SUPABASE_KEY, SUPABASE_URL, supabase } from "./supabaseClient";
 import AdminBlogTab from "./blog/AdminBlogTab";
+import AdminResourcesTab from "./AdminResourcesTab";
 import { APPLICATION_STATES, getApplicationStateMeta, mapLegacyRequestStatusToWorkflowState } from "./workflow/applicationWorkflow";
 import { buildApplicationPatchFromRequest, getLegacyRequestKey, getLegacyRequestTable } from "./workflow/legacyRequestSync";
 import { generateRequiredActions } from "./workflow/generateRequiredActions";
@@ -1647,11 +1648,12 @@ export default function AdminDashboard() {
     {key:"accounts",           label:"Accounts",           icon:"👥"},
     {key:"analytics",          label:"Analytics",          icon:"📊"},
     {key:"blog",               label:"Blog",               icon:"✍️"},
+    {key:"resources",          label:"Resources",          icon:"🗂️"},
   ];
 
   return (
     <div style={{display:"flex",minHeight:"100vh",
-      fontFamily:"'DM Sans',-apple-system,sans-serif",color:C.navy,background:C.offWhite}}>
+      fontFamily:"'DM Sans',-apple-system,sans-serif",color:"var(--c-text)",background:"var(--c-bg)"}}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0;}
@@ -1729,7 +1731,7 @@ export default function AdminDashboard() {
 
       {/* MAIN */}
       <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
-        <div style={{height:62,background:C.white,borderBottom:`1px solid ${C.border}`,
+        <div style={{height:62,background:"var(--c-surface)",borderBottom:"1px solid var(--c-border)",
           display:"flex",alignItems:"center",justifyContent:"space-between",
           padding:"0 32px",position:"sticky",top:0,zIndex:100,
           boxShadow:"0 1px 8px rgba(15,37,87,.05)"}}>
@@ -1738,10 +1740,10 @@ export default function AdminDashboard() {
               className="adm-hamburger"
               onClick={()=>setMobileNavOpen(true)}
               aria-label="Open menu"
-              style={{display:"none",flexShrink:0,width:36,height:36,borderRadius:9,border:`1px solid ${C.border}`,background:C.white,color:C.navy,fontSize:16,cursor:"pointer",alignItems:"center",justifyContent:"center"}}>
+              style={{display:"none",flexShrink:0,width:36,height:36,borderRadius:9,border:"1px solid var(--c-border)",background:"var(--c-surface)",color:"var(--c-text)",fontSize:16,cursor:"pointer",alignItems:"center",justifyContent:"center"}}>
               ☰
             </button>
-            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:C.navy}}>
+            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:700,color:"var(--c-text)"}}>
               {NAV.find(n=>n.key===tab)?.label || "Admin"}
             </h1>
           </div>
@@ -1811,6 +1813,7 @@ export default function AdminDashboard() {
           {tab==="accounts"&&<AccountsTab/>}
           {tab==="analytics"&&<AnalyticsTab/>}
           {tab==="blog"&&<AdminBlogTab/>}
+          {tab==="resources"&&<AdminResourcesTab/>}
         </main>
       </div>
     </div>
