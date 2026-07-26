@@ -34,10 +34,10 @@ function StatusPill({ status }) {
 
 function LockedState() {
   return (
-    <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 48, textAlign: "center" }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 48, textAlign: "center" }}>
       <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-      <h2 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 10 }}>Workspace Locked</h2>
-      <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 420, margin: "0 auto" }}>
+      <h2 style={{ fontFamily: SERIF, fontSize: 26, color: "var(--c-text)", marginBottom: 10 }}>Workspace Locked</h2>
+      <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, maxWidth: 420, margin: "0 auto" }}>
         Document requests from your advisor will appear here once your workspace is unlocked after payment confirmation.
       </p>
     </div>
@@ -100,20 +100,20 @@ export default function RetailRequestedPage() {
 
   const INPUT_STYLE = {
     width: "100%", padding: "14px 16px", borderRadius: RETAIL_THEME.radius.sm,
-    border: `1.5px solid ${C.border}`, fontFamily: SANS, fontSize: 14,
-    outline: "none", color: C.navy, boxSizing: "border-box",
+    border: `1.5px solid ${"var(--c-border)"}`, fontFamily: SANS, fontSize: 14,
+    outline: "none", color: "var(--c-text)", boxSizing: "border-box",
   };
 
   return (
     <div style={{ display: "grid", gap: 18, fontFamily: SANS }}>
 
       {/* Header card */}
-      <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>Document Requests</div>
-            <h2 style={{ fontFamily: SERIF, fontSize: 32, color: C.navy, marginBottom: 10 }}>Requested by Your Advisor</h2>
-            <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 680 }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: 32, color: "var(--c-text)", marginBottom: 10 }}>Requested by Your Advisor</h2>
+            <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, maxWidth: 680 }}>
               Your advisor has requested specific documents to progress your TRC application. Upload each one to avoid delays.
             </p>
           </div>
@@ -144,10 +144,10 @@ export default function RetailRequestedPage() {
               <SkeletonCard height={120} />
             </div>
           ) : requests.length === 0 ? (
-        <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 60, textAlign: "center" }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 60, textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
-          <div style={{ fontFamily: SERIF, fontSize: 22, color: C.navy, marginBottom: 8 }}>No requests yet</div>
-          <div style={{ color: C.muted, fontSize: 14, maxWidth: 380, margin: "0 auto", lineHeight: 1.7 }}>
+          <div style={{ fontFamily: SERIF, fontSize: 22, color: "var(--c-text)", marginBottom: 8 }}>No requests yet</div>
+          <div style={{ color: "var(--c-text-muted)", fontSize: 14, maxWidth: 380, margin: "0 auto", lineHeight: 1.7 }}>
             Your advisor hasn't requested any specific documents yet. They'll appear here when needed.
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function RetailRequestedPage() {
         <>
           {/* ── Pending requests ── */}
           {pending.length > 0 && (
-            <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
+            <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
               <div style={{ padding: "14px 22px", background: "#FFFBEB", borderBottom: `1px solid #FDE68A`, display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 16 }}>⚠️</span>
                 <span style={{ fontSize: 13, fontWeight: 800, color: "#D97706" }}>
@@ -165,24 +165,24 @@ export default function RetailRequestedPage() {
               {pending.map((req, i) => {
                 const isUploading = uploading === req.id;
                 return (
-                  <div key={req.id} style={{ padding: "18px 22px", borderBottom: i < pending.length - 1 ? `1px solid ${C.border}` : "none" }}>
+                  <div key={req.id} style={{ padding: "18px 22px", borderBottom: i < pending.length - 1 ? `1px solid ${"var(--c-border)"}` : "none" }}>
                     <div style={{ display: "flex", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
                       <div style={{ flex: 1, minWidth: 200 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
-                          <div style={{ fontSize: 15, fontWeight: 800, color: C.navy }}>{req.document_type}</div>
+                          <div style={{ fontSize: 15, fontWeight: 800, color: "var(--c-text)" }}>{req.document_type}</div>
                           <DocumentTemplateButton documentName={req.document_type} size={24} />
                           <StatusPill status={req.status} />
                         </div>
                         {req.description && (
-                          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.65, marginBottom: 6 }}>{req.description}</div>
+                          <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.65, marginBottom: 6 }}>{req.description}</div>
                         )}
-                        <div style={{ fontSize: 11, color: C.muted }}>
+                        <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>
                           Requested {new Date(req.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                         </div>
                       </div>
                       <label style={{
                         background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`,
-                        color: C.white, borderRadius: RETAIL_THEME.radius.sm,
+                        color: "#fff", borderRadius: RETAIL_THEME.radius.sm,
                         padding: "11px 20px", fontSize: 13, fontWeight: 800,
                         cursor: isUploading ? "not-allowed" : "pointer",
                         whiteSpace: "nowrap", display: "inline-block",
@@ -206,7 +206,7 @@ export default function RetailRequestedPage() {
 
           {/* ── Fulfilled requests ── */}
           {fulfilled.length > 0 && (
-            <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
+            <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
               <div style={{ padding: "14px 22px", background: "#ECFDF5", borderBottom: `1px solid #A7F3D0`, display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 16 }}>✅</span>
                 <span style={{ fontSize: 13, fontWeight: 800, color: "#059669" }}>
@@ -214,15 +214,15 @@ export default function RetailRequestedPage() {
                 </span>
               </div>
               {fulfilled.map((req, i) => (
-                <div key={req.id} style={{ padding: "16px 22px", borderBottom: i < fulfilled.length - 1 ? `1px solid ${C.border}` : "none", display: "flex", alignItems: "center", gap: 16 }}>
+                <div key={req.id} style={{ padding: "16px 22px", borderBottom: i < fulfilled.length - 1 ? `1px solid ${"var(--c-border)"}` : "none", display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#ECFDF5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>✅</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{req.document_type}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{req.document_type}</span>
                       <StatusPill status={req.status} />
                     </div>
-                    {req.description && <div style={{ fontSize: 12, color: C.muted }}>{req.description}</div>}
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>
+                    {req.description && <div style={{ fontSize: 12, color: "var(--c-text-muted)" }}>{req.description}</div>}
+                    <div style={{ fontSize: 11, color: "var(--c-text-muted)", marginTop: 4 }}>
                       Requested {new Date(req.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                     </div>
                   </div>
@@ -233,13 +233,13 @@ export default function RetailRequestedPage() {
 
           {/* ── Cancelled requests ── */}
           {cancelled.length > 0 && (
-            <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, overflow: "hidden", opacity: 0.7 }}>
-              <div style={{ padding: "12px 22px", borderBottom: `1px solid ${C.border}`, fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>
+            <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, overflow: "hidden", opacity: 0.7 }}>
+              <div style={{ padding: "12px 22px", borderBottom: `1px solid ${"var(--c-border)"}`, fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>
                 Cancelled requests ({cancelled.length})
               </div>
               {cancelled.map((req, i) => (
-                <div key={req.id} style={{ padding: "14px 22px", borderBottom: i < cancelled.length - 1 ? `1px solid ${C.border}` : "none", display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ fontSize: 13, color: C.muted, flex: 1 }}>{req.document_type}</div>
+                <div key={req.id} style={{ padding: "14px 22px", borderBottom: i < cancelled.length - 1 ? `1px solid ${"var(--c-border)"}` : "none", display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ fontSize: 13, color: "var(--c-text-muted)", flex: 1 }}>{req.document_type}</div>
                   <StatusPill status={req.status} />
                 </div>
               ))}
@@ -249,7 +249,7 @@ export default function RetailRequestedPage() {
       )}
 
       {/* Info box */}
-      <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 22 }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 22 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 10 }}>About Document Requests</div>
         <div style={{ display: "grid", gap: 10 }}>
           {[
@@ -257,9 +257,9 @@ export default function RetailRequestedPage() {
             ["What file formats are accepted?", "PDF, JPG, PNG, DOC, and DOCX. Maximum 50 MB per file."],
             ["What happens after I upload?", "Your advisor is notified and will review the document. You can still re-upload if asked."],
           ].map(([q, a]) => (
-            <div key={q} style={{ background: C.offWhite, borderRadius: RETAIL_THEME.radius.sm, border: `1px solid ${C.border}`, padding: 14 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 4 }}>{q}</div>
-              <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.65 }}>{a}</div>
+            <div key={q} style={{ background: "var(--c-bg)", borderRadius: RETAIL_THEME.radius.sm, border: `1px solid ${"var(--c-border)"}`, padding: 14 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--c-text)", marginBottom: 4 }}>{q}</div>
+              <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.65 }}>{a}</div>
             </div>
           ))}
         </div>

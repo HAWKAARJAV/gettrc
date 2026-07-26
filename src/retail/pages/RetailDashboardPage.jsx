@@ -137,9 +137,9 @@ function ProgressStepper({ stage }) {
               <div style={{
                 width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: done ? 14 : 12, fontWeight: 800,
-                background: done ? C.gold : active ? C.navy : C.offWhite2,
-                color: done ? "#fff" : active ? "#fff" : C.muted,
-                border: active ? `2px solid ${C.navy}` : done ? "none" : `1.5px solid ${C.border}`,
+                background: done ? C.gold : active ? C.navy : "var(--c-surface-2)",
+                color: done ? "#fff" : active ? "#fff" : "var(--c-text-muted)",
+                border: active ? `2px solid ${C.navy}` : done ? "none" : `1.5px solid ${"var(--c-border)"}`,
                 boxShadow: active ? `0 0 0 4px ${C.navy}18` : "none",
                 transition: "all .2s",
                 flexShrink: 0,
@@ -148,7 +148,7 @@ function ProgressStepper({ stage }) {
               </div>
               <div style={{
                 fontSize: 10, fontWeight: active ? 800 : 600,
-                color: active ? C.navy : done ? C.gold : C.muted,
+                color: active ? "var(--c-text)" : done ? C.gold : "var(--c-text-muted)",
                 textAlign: "center", lineHeight: 1.3, whiteSpace: "nowrap",
               }}>
                 {step.label}
@@ -156,7 +156,7 @@ function ProgressStepper({ stage }) {
             </div>
             {/* Connector line */}
             {i < STEPS.length - 1 && (
-              <div style={{ flex: 1, height: 2, background: done ? C.gold : C.border, marginBottom: 22, marginLeft: 2, marginRight: 2, transition: "background .3s" }} />
+              <div style={{ flex: 1, height: 2, background: done ? C.gold : "var(--c-border)", marginBottom: 22, marginLeft: 2, marginRight: 2, transition: "background .3s" }} />
             )}
           </div>
         );
@@ -183,10 +183,10 @@ function DocRequestsBanner({ count, navigate }) {
     >
       <div style={{ fontSize: 24, flexShrink: 0 }}>📋</div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: C.navy }}>
+        <div style={{ fontSize: 14, fontWeight: 800, color: "var(--c-text)" }}>
           {count === 1 ? "Your advisor has requested 1 document" : `Your advisor has requested ${count} documents`}
         </div>
-        <div style={{ fontSize: 13, color: C.muted, marginTop: 2 }}>
+        <div style={{ fontSize: 13, color: "var(--c-text-muted)", marginTop: 2 }}>
           Upload them to keep your application on track.
         </div>
       </div>
@@ -235,9 +235,9 @@ function StatusTimeline({ applicationId }) {
 
   return (
     <div style={{
-      background: C.white,
+      background: "var(--c-surface)",
       borderRadius: RETAIL_THEME.radius.lg,
-      border: `1px solid ${C.border}`,
+      border: `1px solid ${"var(--c-border)"}`,
       boxShadow: RETAIL_THEME.shadows.card,
       overflow: "hidden",
     }}>
@@ -252,14 +252,14 @@ function StatusTimeline({ applicationId }) {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 16 }}>📅</span>
-          <span style={{ fontSize: 13, fontWeight: 800, color: C.navy }}>
+          <span style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)" }}>
             Application History
           </span>
-          <span style={{ fontSize: 11, fontWeight: 700, background: C.offWhite2, color: C.muted, padding: "2px 8px", borderRadius: 999 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, background: "var(--c-surface-2)", color: "var(--c-text-muted)", padding: "2px 8px", borderRadius: 999 }}>
             {history.length} event{history.length !== 1 ? "s" : ""}
           </span>
         </div>
-        <span style={{ fontSize: 13, color: C.muted, fontWeight: 700 }}>
+        <span style={{ fontSize: 13, color: "var(--c-text-muted)", fontWeight: 700 }}>
           {expanded ? "Collapse ▲" : "Show all ▼"}
         </span>
       </button>
@@ -270,14 +270,14 @@ function StatusTimeline({ applicationId }) {
           {/* Vertical line */}
           <div style={{
             position: "absolute", left: 6, top: 0, bottom: 0,
-            width: 2, background: C.border, borderRadius: 99,
+            width: 2, background: "var(--c-border)", borderRadius: 99,
           }} />
 
           {visible.map((entry, i) => {
             const isLatest  = i === 0;
             const isSuccess = ["completed", "eligible", "payment_completed"].includes(entry.new_state);
             const isError   = entry.new_state === "rejected";
-            const dotColor  = isLatest ? C.gold : isSuccess ? C.success : isError ? C.error : C.border;
+            const dotColor  = isLatest ? C.gold : isSuccess ? C.success : isError ? C.error : "var(--c-border)";
 
             return (
               <div key={entry.id} style={{ position: "relative", paddingBottom: i < visible.length - 1 ? 18 : 0 }}>
@@ -286,21 +286,21 @@ function StatusTimeline({ applicationId }) {
                   position: "absolute", left: -20, top: 3,
                   width: 14, height: 14, borderRadius: "50%",
                   background: dotColor,
-                  border: `2px solid ${C.white}`,
+                  border: `2px solid ${"var(--c-surface)"}`,
                   boxShadow: isLatest ? `0 0 0 3px ${C.gold}30` : "none",
                   zIndex: 1,
                 }} />
 
                 <div style={{ paddingLeft: 8 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 2 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--c-text)", marginBottom: 2 }}>
                     {STATE_LABELS[entry.new_state] || entry.new_state.replaceAll("_", " ")}
                   </div>
                   {entry.notes && (
-                    <div style={{ fontSize: 12, color: C.muted, marginBottom: 3, fontStyle: "italic" }}>
+                    <div style={{ fontSize: 12, color: "var(--c-text-muted)", marginBottom: 3, fontStyle: "italic" }}>
                       "{entry.notes}"
                     </div>
                   )}
-                  <div style={{ fontSize: 11, color: C.muted }}>
+                  <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>
                     {new Date(entry.created_at).toLocaleDateString("en-GB", {
                       day: "numeric", month: "short", year: "numeric",
                     })}
@@ -381,14 +381,14 @@ export default function RetailDashboardPage() {
     <div style={{ display: "grid", gap: 20, fontFamily: SANS }}>
 
       {/* ── Greeting + status hero ── */}
-      <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
         {/* Coloured top strip */}
         <div style={{ height: 5, background: `linear-gradient(90deg, ${C.navy}, ${C.gold})` }} />
 
         <div style={{ padding: "28px 28px 24px" }}>
           {/* Greeting */}
-          <div style={{ fontSize: 13, color: C.muted, marginBottom: 4 }}>
-            Welcome back, <strong style={{ color: C.navy }}>{firstName}</strong>
+          <div style={{ fontSize: 13, color: "var(--c-text-muted)", marginBottom: 4 }}>
+            Welcome back, <strong style={{ color: "var(--c-text)" }}>{firstName}</strong>
           </div>
 
           {/* Status */}
@@ -403,10 +403,10 @@ export default function RetailDashboardPage() {
               {content.icon}
             </div>
             <div style={{ flex: 1 }}>
-              <h2 style={{ fontFamily: SERIF, fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 700, color: C.navy, marginBottom: 8, lineHeight: 1.25 }}>
+              <h2 style={{ fontFamily: SERIF, fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 700, color: "var(--c-text)", marginBottom: 8, lineHeight: 1.25 }}>
                 {content.title}
               </h2>
-              <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.75, maxWidth: 620, margin: 0 }}>
+              <p style={{ fontSize: 14, color: "var(--c-text-muted)", lineHeight: 1.75, maxWidth: 620, margin: 0 }}>
                 {content.message}
               </p>
             </div>
@@ -429,8 +429,8 @@ export default function RetailDashboardPage() {
             <button
               onClick={() => navigate("/retail/support")}
               style={{
-                background: C.offWhite, color: C.muted,
-                border: `1px solid ${C.border}`,
+                background: "var(--c-bg)", color: "var(--c-text-muted)",
+                border: `1px solid ${"var(--c-border)"}`,
                 borderRadius: RETAIL_THEME.radius.sm,
                 padding: "12px 20px", fontSize: 14, fontWeight: 600,
                 cursor: "pointer", fontFamily: SANS,
@@ -442,8 +442,8 @@ export default function RetailDashboardPage() {
         </div>
 
         {/* Progress stepper */}
-        <div style={{ borderTop: `1px solid ${C.border}`, padding: "18px 28px 22px", background: C.offWhite }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 16 }}>
+        <div style={{ borderTop: `1px solid ${"var(--c-border)"}`, padding: "18px 28px 22px", background: "var(--c-bg)" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 16 }}>
             Your journey
           </div>
           <ProgressStepper stage={stage} />
@@ -462,18 +462,18 @@ export default function RetailDashboardPage() {
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
           gap: 1,
-          background: C.border,
+          background: "var(--c-border)",
           borderRadius: RETAIL_THEME.radius.md,
           overflow: "hidden",
-          border: `1px solid ${C.border}`,
+          border: `1px solid ${"var(--c-border)"}`,
         }}>
           {[
             appliedDate && ["Applied on",      appliedDate],
             app?.id && ["Ref",                  app.id.slice(0, 8).toUpperCase()],
           ].filter(Boolean).map(([label, value]) => (
-            <div key={label} style={{ background: C.white, padding: "14px 18px" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 5 }}>{label}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{value}</div>
+            <div key={label} style={{ background: "var(--c-surface)", padding: "14px 18px" }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 5 }}>{label}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)" }}>{value}</div>
             </div>
           ))}
         </div>

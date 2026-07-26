@@ -91,14 +91,14 @@ function DocRow({ doc, uploaded, onUpload, periodYear }) {
   const hint = withPeriodNote(doc.hint, doc.label, periodYear);
 
   return (
-    <div style={{ background:C.white, borderRadius:14, border:`1px solid ${C.border}`, padding:"18px 20px", boxShadow:"0 1px 6px rgba(15,37,87,.04)" }}>
+    <div style={{ background:"var(--c-surface)", borderRadius:14, border:`1px solid ${"var(--c-border)"}`, padding:"18px 20px", boxShadow:"0 1px 6px rgba(15,37,87,.04)" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:8 }}>
         <div style={{ flex:1 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
-            <div style={{ fontWeight:700, fontSize:14, color:C.navy }}>{doc.label}</div>
+            <div style={{ fontWeight:700, fontSize:14, color:"var(--c-text)" }}>{doc.label}</div>
             <DocumentTemplateButton documentName={doc.label} size={24} />
           </div>
-          <div style={{ fontSize:12, color:C.muted }}>{hint}</div>
+          <div style={{ fontSize:12, color:"var(--c-text-muted)" }}>{hint}</div>
         </div>
         {latestUpload
           ? <StatusPill status={latestUpload.review_status} />
@@ -107,7 +107,7 @@ function DocRow({ doc, uploaded, onUpload, periodYear }) {
       </div>
 
       {latestUpload && (
-        <div style={{ fontSize:11, color:C.muted, marginBottom:10 }}>
+        <div style={{ fontSize:11, color:"var(--c-text-muted)", marginBottom:10 }}>
           Uploaded {new Date(latestUpload.uploaded_at || latestUpload.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}
           {latestUpload.review_status === "rejected" && (
             <span style={{ color:"#DC2626", fontWeight:700, marginLeft:8 }}>— Rejected, please re-upload</span>
@@ -125,7 +125,7 @@ function DocRow({ doc, uploaded, onUpload, periodYear }) {
       <button
         onClick={() => inputRef.current?.click()}
         disabled={uploading}
-        style={{ padding:"8px 16px", borderRadius:10, fontSize:12, fontWeight:700, cursor:uploading?"not-allowed":"pointer", border:`1px solid ${C.gold}`, background:latestUpload && latestUpload.review_status !== "rejected" ? C.offWhite : `linear-gradient(135deg,${C.gold},${C.goldDark})`, color:latestUpload && latestUpload.review_status !== "rejected" ? C.navy : "#fff", opacity:uploading?0.6:1 }}>
+        style={{ padding:"8px 16px", borderRadius:10, fontSize:12, fontWeight:700, cursor:uploading?"not-allowed":"pointer", border:`1px solid ${C.gold}`, background:latestUpload && latestUpload.review_status !== "rejected" ? "var(--c-bg)" : `linear-gradient(135deg,${C.gold},${C.goldDark})`, color:latestUpload && latestUpload.review_status !== "rejected" ? "var(--c-text)" : "#fff", opacity:uploading?0.6:1 }}>
         {uploading ? "Uploading…" : latestUpload ? "Re-upload" : "Upload File"}
       </button>
     </div>
@@ -181,18 +181,18 @@ export default function RetailDocumentsPage() {
   return (
     <div style={{ display:"grid", gap:20, fontFamily:SANS }}>
       {/* Header */}
-      <div style={{ background:C.white, borderRadius:16, border:`1px solid ${C.border}`, padding:"22px 24px", boxShadow:"0 2px 12px rgba(15,37,87,.05)" }}>
+      <div style={{ background:"var(--c-surface)", borderRadius:16, border:`1px solid ${"var(--c-border)"}`, padding:"22px 24px", boxShadow:"0 2px 12px rgba(15,37,87,.05)" }}>
         <div style={{ fontSize:12, fontWeight:700, color:C.gold, textTransform:"uppercase", letterSpacing:".12em", marginBottom:8 }}>Documents</div>
-        <h2 style={{ fontFamily:SERIF, fontSize:26, fontWeight:700, color:C.navy, marginBottom:8 }}>Upload Required Documents</h2>
-        <p style={{ color:C.muted, fontSize:14, lineHeight:1.8, maxWidth:600 }}>
+        <h2 style={{ fontFamily:SERIF, fontSize:26, fontWeight:700, color:"var(--c-text)", marginBottom:8 }}>Upload Required Documents</h2>
+        <p style={{ color:"var(--c-text-muted)", fontSize:14, lineHeight:1.8, maxWidth:600 }}>
           Upload the required compliance documents for your TRC application. All files are stored securely and reviewed by our team.
         </p>
         {appId && (
           <div style={{ marginTop:14, display:"flex", gap:12, alignItems:"center", flexWrap:"wrap" }}>
-            <div style={{ fontSize:13, fontWeight:700, color:C.navy }}>
+            <div style={{ fontSize:13, fontWeight:700, color:"var(--c-text)" }}>
               {approvedCount} / {requiredDocs.length} approved
             </div>
-            <div style={{ flex:1, minWidth:120, height:8, background:C.offWhite, borderRadius:99, overflow:"hidden" }}>
+            <div style={{ flex:1, minWidth:120, height:8, background:"var(--c-bg)", borderRadius:99, overflow:"hidden" }}>
               <div style={{ height:"100%", width:`${requiredDocs.length > 0 ? (approvedCount/requiredDocs.length)*100 : 0}%`, background:`linear-gradient(90deg,${C.gold},${C.goldDark})`, borderRadius:99, transition:"width .4s" }} />
             </div>
           </div>
@@ -273,11 +273,11 @@ export default function RetailDocumentsPage() {
               </div>
             ) : (
               <div>
-                <h4 style={{ margin: '8px 0', fontSize: 15, color: C.navy }}>Rejected documents</h4>
+                <h4 style={{ margin: '8px 0', fontSize: 15, color: "var(--c-text)" }}>Rejected documents</h4>
                 {uploaded.filter(u => u.review_status === 'rejected').map(d => (
                   <div key={d.id} style={{ background: '#FEF2F2', borderRadius: 10, padding: 10, border: `1px solid #FECACA`, marginBottom: 8 }}>
                     <div style={{ fontWeight: 700, color: '#DC2626' }}>{d.document_type}</div>
-                    <div style={{ fontSize: 13, color: C.muted }}>Rejected — please re-upload using the Re-upload action on the document row.</div>
+                    <div style={{ fontSize: 13, color: "var(--c-text-muted)" }}>Rejected — please re-upload using the Re-upload action on the document row.</div>
                   </div>
                 ))}
               </div>

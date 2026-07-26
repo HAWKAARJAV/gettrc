@@ -15,11 +15,11 @@ const C = RETAIL_THEME.colors;
 
 function Card({ eyebrow, title, children, action }) {
   return (
-    <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap" }}>
         <div>
           {eyebrow && <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>{eyebrow}</div>}
-          {title && <h2 style={{ fontSize: 24, fontWeight: 800, color: C.navy, marginBottom: 14 }}>{title}</h2>}
+          {title && <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--c-text)", marginBottom: 14 }}>{title}</h2>}
         </div>
         {action}
       </div>
@@ -33,8 +33,8 @@ function StatusPill({ children, tone = "info" }) {
     success: { background: C.successBg, color: C.success },
     warning: { background: C.warningBg, color: C.warning },
     error: { background: C.errorBg, color: C.error },
-    info: { background: C.offWhite2, color: C.navy },
-  }[tone] || { background: C.offWhite2, color: C.navy };
+    info: { background: "var(--c-surface-2)", color: "var(--c-text)" },
+  }[tone] || { background: "var(--c-surface-2)", color: "var(--c-text)" };
 
   return <span style={{ ...style, borderRadius: 999, padding: "5px 10px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", whiteSpace: "nowrap" }}>{children}</span>;
 }
@@ -138,7 +138,7 @@ function DocumentsWorkspace({ workspace, refresh }) {
           title="Requested by your advisor"
           action={pendingRequests.length > 0 ? <StatusPill tone="warning">{pendingRequests.length} Pending</StatusPill> : null}
         >
-          <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.7, marginBottom: 16, maxWidth: 680 }}>
+          <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.7, marginBottom: 16, maxWidth: 680 }}>
             Your advisor has requested the following documents. Please upload each one as soon as possible to avoid delays.
           </p>
           <div style={{ display: "grid", gap: 12 }}>
@@ -146,21 +146,21 @@ function DocumentsWorkspace({ workspace, refresh }) {
               const isUploading = uploading === `request-${req.id}`;
               const isPending   = req.status === "pending";
               return (
-                <div key={req.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: isPending ? C.warningBg || "#FFFBEB" : C.offWhite, border: `1.5px solid ${isPending ? C.warning || "#D97706" : C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+                <div key={req.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: isPending ? C.warningBg || "#FFFBEB" : "var(--c-bg)", border: `1.5px solid ${isPending ? C.warning || "#D97706" : "var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 5 }}>
-                      <div style={{ fontSize: 15, fontWeight: 800, color: C.navy }}>{req.document_type}</div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "var(--c-text)" }}>{req.document_type}</div>
                       <StatusPill tone={req.status === "fulfilled" ? "success" : req.status === "cancelled" ? "info" : "warning"}>
                         {req.status === "fulfilled" ? "Uploaded ✓" : req.status === "cancelled" ? "Cancelled" : "Upload needed"}
                       </StatusPill>
                     </div>
                     {req.description && (
-                      <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, marginBottom: 4 }}>{req.description}</div>
+                      <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.6, marginBottom: 4 }}>{req.description}</div>
                     )}
-                    <div style={{ fontSize: 11, color: C.muted }}>Requested {new Date(req.created_at).toLocaleDateString()}</div>
+                    <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>Requested {new Date(req.created_at).toLocaleDateString()}</div>
                   </div>
                   {isPending && (
-                    <label style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, borderRadius: RETAIL_THEME.radius.sm, padding: "10px 14px", fontSize: 13, fontWeight: 800, cursor: isUploading ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "inline-block", opacity: isUploading ? 0.7 : 1 }}>
+                    <label style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", borderRadius: RETAIL_THEME.radius.sm, padding: "10px 14px", fontSize: 13, fontWeight: 800, cursor: isUploading ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "inline-block", opacity: isUploading ? 0.7 : 1 }}>
                       {isUploading ? "Uploading…" : "Upload"}
                       <input type="file" onChange={(e) => handleRequestUpload(req, e.target.files?.[0])} style={{ display: "none" }} disabled={isUploading} />
                     </label>
@@ -179,7 +179,7 @@ function DocumentsWorkspace({ workspace, refresh }) {
 
       {/* ── Summary stats ── */}
       <Card eyebrow="Document management" title="Secure compliance document vault">
-        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>
           Requirements are loaded from the document requirement engine and filtered against your application details.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, marginTop: 18 }}>
@@ -189,9 +189,9 @@ function DocumentsWorkspace({ workspace, refresh }) {
             ["Approved",  readiness.approvedCount],
             ["Missing",   readiness.missingCount],
           ].map(([label, value]) => (
-            <div key={label} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 6 }}>{label}</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: C.navy }}>{value}</div>
+            <div key={label} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 6 }}>{label}</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "var(--c-text)" }}>{value}</div>
             </div>
           ))}
         </div>
@@ -205,7 +205,7 @@ function DocumentsWorkspace({ workspace, refresh }) {
       <Card eyebrow="Requirements" title="Required documents">
         <div style={{ display: "grid", gap: 12 }}>
           {requirements.length === 0 ? (
-            <div style={{ color: C.muted, fontSize: 14 }}>No active document requirements are configured for this application.</div>
+            <div style={{ color: "var(--c-text-muted)", fontSize: 14 }}>No active document requirements are configured for this application.</div>
           ) : requirements.map((requirement) => {
             const relatedDocuments = documents.filter((document) => document.document_type === requirement.document_name);
             const latest = relatedDocuments[0];
@@ -213,16 +213,16 @@ function DocumentsWorkspace({ workspace, refresh }) {
             const periodYear = workspace.request?.trc_period_year || "";
             const description = withPeriodNote(requirement.description || requirement.category || "Compliance evidence required.", requirement.document_name, periodYear);
             return (
-              <div key={requirement.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+              <div key={requirement.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: C.navy }}>{requirement.document_name}</div>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: "var(--c-text)" }}>{requirement.document_name}</div>
                     <DocumentTemplateButton documentName={requirement.document_name} size={24} />
                     <StatusPill tone={latest?.review_status === "approved" ? "success" : latest ? "info" : "warning"}>
                       {latest?.review_status || "pending upload"}
                     </StatusPill>
                   </div>
-                  <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{description}</div>
+                  <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.6 }}>{description}</div>
                   {latest?.reviewer_notes && (
                     <div style={{ fontSize: 12, color: C.warning, marginTop: 6, fontWeight: 700, background: C.warningBg, borderRadius: 8, padding: "5px 10px", display: "inline-block" }}>
                       💬 Advisor note: {latest.reviewer_notes}
@@ -231,11 +231,11 @@ function DocumentsWorkspace({ workspace, refresh }) {
                 </div>
                 <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
                   {latest?.file_url && (
-                    <button onClick={() => openSignedUrl(latest)} style={{ background: C.white, color: C.navy, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: "10px 12px", fontWeight: 800, cursor: "pointer" }}>
+                    <button onClick={() => openSignedUrl(latest)} style={{ background: "var(--c-surface)", color: "var(--c-text)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: "10px 12px", fontWeight: 800, cursor: "pointer" }}>
                       View
                     </button>
                   )}
-                  <label style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, borderRadius: RETAIL_THEME.radius.sm, padding: "10px 12px", fontSize: 13, fontWeight: 800, cursor: isUploading ? "not-allowed" : "pointer", opacity: isUploading ? 0.7 : 1 }}>
+                  <label style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", borderRadius: RETAIL_THEME.radius.sm, padding: "10px 12px", fontSize: 13, fontWeight: 800, cursor: isUploading ? "not-allowed" : "pointer", opacity: isUploading ? 0.7 : 1 }}>
                     {isUploading ? "Uploading…" : latest ? "Re-upload" : "Upload"}
                     <input type="file" onChange={(event) => handleUpload(requirement, event.target.files?.[0])} style={{ display: "none" }} disabled={isUploading} />
                   </label>
@@ -261,7 +261,7 @@ function ApplicationsWorkspace({ workspace }) {
   return (
     <div style={{ display: "grid", gap: 18 }}>
       <Card eyebrow="Application lifecycle" title="State-driven TRC workflow">
-        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>{currentMeta.description}</p>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>{currentMeta.description}</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginTop: 18 }}>
           {[
             ["Workflow state", currentMeta.label],
@@ -269,9 +269,9 @@ function ApplicationsWorkspace({ workspace }) {
             ["Application type", application?.application_type || "trc_eligibility"],
             ["Assigned manager", application?.assigned_manager || "Not assigned"],
           ].map(([label, value]) => (
-            <div key={label} style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 6 }}>{label}</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: C.navy, lineHeight: 1.6 }}>{value}</div>
+            <div key={label} style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 6 }}>{label}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--c-text)", lineHeight: 1.6 }}>{value}</div>
             </div>
           ))}
         </div>
@@ -280,14 +280,14 @@ function ApplicationsWorkspace({ workspace }) {
       <Card eyebrow="Audit timeline" title="Status history">
         <div style={{ display: "grid", gap: 10 }}>
           {timeline.map((step) => (
-            <div key={step.key} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: 14, border: `1px solid ${step.isCurrent ? C.gold : C.border}`, borderRadius: RETAIL_THEME.radius.sm, background: step.reached ? C.offWhite : C.white, opacity: step.reached ? 1 : 0.58 }}>
-              <div style={{ width: 30, height: 30, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: step.reached ? C.gold : C.offWhite2, color: step.reached ? C.white : C.muted, fontSize: 12, fontWeight: 800, flexShrink: 0 }}>{step.index + 1}</div>
+            <div key={step.key} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: 14, border: `1px solid ${step.isCurrent ? C.gold : "var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, background: step.reached ? "var(--c-bg)" : "var(--c-surface)", opacity: step.reached ? 1 : 0.58 }}>
+              <div style={{ width: 30, height: 30, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: step.reached ? C.gold : "var(--c-surface-2)", color: step.reached ? "var(--c-surface)" : "var(--c-text-muted)", fontSize: 12, fontWeight: 800, flexShrink: 0 }}>{step.index + 1}</div>
               <div>
                 <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: C.navy }}>{step.label}</div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--c-text)" }}>{step.label}</div>
                   {step.isCurrent && <StatusPill tone={step.tone}>Current</StatusPill>}
                 </div>
-                <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6, marginTop: 3 }}>{step.notes || step.description}</div>
+                <div style={{ fontSize: 12, color: "var(--c-text-muted)", lineHeight: 1.6, marginTop: 3 }}>{step.notes || step.description}</div>
                 {step.changedAt && <div style={{ fontSize: 11, color: C.gold, fontWeight: 800, marginTop: 5 }}>{new Date(step.changedAt).toLocaleString()}</div>}
               </div>
             </div>
@@ -341,12 +341,12 @@ function NotificationsWorkspace({ workspace }) {
             setNotifications((prev) => prev.map((item) => item.id === notification.id ? { ...item, read_at: new Date().toISOString() } : item));
             const path = resolveNotificationPath(notification);
             if (path) navigate(path);
-          }} role="button" tabIndex={0} onKeyDown={(event) => event.key === "Enter" && event.currentTarget.click()} style={{ textAlign: "left", background: notification.read_at ? C.white : C.offWhite, border: `1px solid ${notification.read_at ? C.border : C.gold}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16, cursor: "pointer" }}>
+          }} role="button" tabIndex={0} onKeyDown={(event) => event.key === "Enter" && event.currentTarget.click()} style={{ textAlign: "left", background: notification.read_at ? "var(--c-surface)" : "var(--c-bg)", border: `1px solid ${notification.read_at ? "var(--c-border)" : C.gold}`, borderRadius: RETAIL_THEME.radius.sm, padding: 16, cursor: "pointer" }}>
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 6 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: C.navy }}>{notification.title}</div>
-              <div style={{ fontSize: 11, color: C.muted }}>{new Date(notification.created_at).toLocaleDateString()}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--c-text)" }}>{notification.title}</div>
+              <div style={{ fontSize: 11, color: "var(--c-text-muted)" }}>{new Date(notification.created_at).toLocaleDateString()}</div>
             </div>
-            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{notification.body}</div>
+            <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.6 }}>{notification.body}</div>
           </div>
         ))}
       </div>
@@ -370,24 +370,24 @@ export default function RetailFeatureWorkspacePage({ feature }) {
 
   return (
     <div style={{ display: "grid", gap: 18 }}>
-      <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>Workspace unlocked</div>
-        <h2 style={{ fontSize: 28, fontWeight: 700, color: C.navy, marginBottom: 8 }}>{config.title}</h2>
-        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>{config.subtitle}</p>
+        <h2 style={{ fontSize: 28, fontWeight: 700, color: "var(--c-text)", marginBottom: 8 }}>{config.title}</h2>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>{config.subtitle}</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
         {config.cards.map((card) => (
-          <div key={card} style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, lineHeight: 1.7 }}>{card}</div>
+          <div key={card} style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--c-text)", lineHeight: 1.7 }}>{card}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 10 }}>Next step</div>
-        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>This is the expanded workspace for the {config.title.toLowerCase()} stage. The premium navigation is now route-based and section-aware.</p>
-        <button onClick={() => navigate("/retail/support")} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: "pointer" }}>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>This is the expanded workspace for the {config.title.toLowerCase()} stage. The premium navigation is now route-based and section-aware.</p>
+        <button onClick={() => navigate("/retail/support")} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 18px", fontWeight: 700, cursor: "pointer" }}>
           Contact Support
         </button>
       </div>

@@ -84,13 +84,13 @@ function VerticalTimeline({ stage }) {
           status === "done"     ? C.gold  :
           status === "current"  ? C.navy  :
           status === "rejected" ? C.error :
-          C.border;
+          "var(--c-border)";
 
         const dotBg =
           status === "done"     ? C.gold  :
           status === "current"  ? C.navy  :
           status === "rejected" ? C.error :
-          C.offWhite2;
+          "var(--c-surface-2)";
 
         const dotContent =
           status === "done"     ? "✓"  :
@@ -104,11 +104,11 @@ function VerticalTimeline({ stage }) {
               <div style={{
                 width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
                 background: dotBg,
-                border: status === "current" ? `2px solid ${C.navy}` : status === "upcoming" ? `1.5px solid ${C.border}` : "none",
+                border: status === "current" ? `2px solid ${C.navy}` : status === "upcoming" ? `1.5px solid ${"var(--c-border)"}` : "none",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: status === "done" || status === "rejected" ? 13 : 11,
                 fontWeight: 800,
-                color: status === "upcoming" ? C.muted : "#fff",
+                color: status === "upcoming" ? "var(--c-text-muted)" : "#fff",
                 boxShadow: status === "current" ? `0 0 0 5px ${C.navy}12` : "none",
                 zIndex: 1,
                 transition: "all .2s",
@@ -118,7 +118,7 @@ function VerticalTimeline({ stage }) {
               {!isLast && (
                 <div style={{
                   flex: 1, width: 2,
-                  background: status === "done" ? `linear-gradient(to bottom, ${C.gold}, ${C.gold}80)` : C.border,
+                  background: status === "done" ? `linear-gradient(to bottom, ${C.gold}, ${C.gold}80)` : "var(--c-border)",
                   marginTop: 4, marginBottom: 4,
                   minHeight: 24,
                 }} />
@@ -132,11 +132,11 @@ function VerticalTimeline({ stage }) {
               transition: "opacity .2s",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 4 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: status === "rejected" ? C.error : C.navy, lineHeight: 1.3 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: status === "rejected" ? C.error : "var(--c-text)", lineHeight: 1.3 }}>
                   {step.label}
                 </div>
                 {status === "current" && (
-                  <span style={{ background: `${C.navy}12`, color: C.navy, fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 999, textTransform: "uppercase", letterSpacing: ".06em" }}>
+                  <span style={{ background: `${C.navy}12`, color: "var(--c-text)", fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 999, textTransform: "uppercase", letterSpacing: ".06em" }}>
                     Current
                   </span>
                 )}
@@ -151,7 +151,7 @@ function VerticalTimeline({ stage }) {
                   </span>
                 )}
               </div>
-              <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.65 }}>{step.desc}</div>
+              <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.65 }}>{step.desc}</div>
             </div>
           </div>
         );
@@ -305,10 +305,10 @@ function EditAndResubmitPanel({ applicationId, request, onResubmitted }) {
   }
 
   return (
-    <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: "24px 24px 28px", display: "grid", gap: 16 }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: "24px 24px 28px", display: "grid", gap: 16 }}>
       <div>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 6 }}>Correct your information</div>
-        <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>Update the fields below based on the note from your advisor, then resubmit for another review.</div>
+        <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.6 }}>Update the fields below based on the note from your advisor, then resubmit for another review.</div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
@@ -330,7 +330,7 @@ function EditAndResubmitPanel({ applicationId, request, onResubmitted }) {
 
       <div style={{ display: "flex", gap: 10 }}>
         <button onClick={() => setOpen(false)} disabled={submitting}
-          style={{ background: C.offWhite, border: `1px solid ${C.border}`, color: C.navy, borderRadius: RETAIL_THEME.radius.sm, padding: "12px 18px", fontWeight: 700, cursor: "pointer" }}>
+          style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, color: "var(--c-text)", borderRadius: RETAIL_THEME.radius.sm, padding: "12px 18px", fontWeight: 700, cursor: "pointer" }}>
           Cancel
         </button>
         <button onClick={handleResubmit} disabled={submitting}
@@ -389,19 +389,19 @@ export default function RetailEligibilityStatusPage() {
     <div style={{ display: "grid", gap: 20, fontFamily: SANS }}>
 
       {/* ── Status header ── */}
-      <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
+      <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, overflow: "hidden" }}>
         <div style={{ height: 4, background: `linear-gradient(90deg, ${C.navy}, ${C.gold})` }} />
         <div style={{ padding: "24px 28px 22px", display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>
               Eligibility Status
             </div>
-            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(22px,2.5vw,30px)", fontWeight: 700, color: C.navy, marginBottom: 10, lineHeight: 1.2 }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(22px,2.5vw,30px)", fontWeight: 700, color: "var(--c-text)", marginBottom: 10, lineHeight: 1.2 }}>
               {profile?.full_name
                 ? `${profile.full_name.split(" ")[0]}'s TRC application`
                 : "Your TRC application"}
             </h2>
-            <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.75, maxWidth: 560, margin: 0 }}>
+            <p style={{ fontSize: 14, color: "var(--c-text-muted)", lineHeight: 1.75, maxWidth: 560, margin: 0 }}>
               {meta.msg}
             </p>
           </div>
@@ -412,7 +412,7 @@ export default function RetailEligibilityStatusPage() {
             display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
             minWidth: 160, flexShrink: 0,
           }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em" }}>Current status</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>Current status</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: toneStyle.color, textAlign: "center", lineHeight: 1.2 }}>{meta.label}</div>
           </div>
         </div>
@@ -427,9 +427,9 @@ export default function RetailEligibilityStatusPage() {
         }}>
           <div style={{ fontSize: 24, flexShrink: 0 }}>✓</div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: C.navy, marginBottom: 4 }}>Confirmed eligibility basis</div>
-            <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.75 }}>
-              Your advisor has confirmed you qualify under: <strong style={{ color: C.navy }}>{eligibilityBasis}</strong>.
+            <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)", marginBottom: 4 }}>Confirmed eligibility basis</div>
+            <div style={{ fontSize: 14, color: "var(--c-text-muted)", lineHeight: 1.75 }}>
+              Your advisor has confirmed you qualify under: <strong style={{ color: "var(--c-text)" }}>{eligibilityBasis}</strong>.
               {application?.eligibility_notes && <> {application.eligibility_notes}</>}
             </div>
           </div>
@@ -442,19 +442,19 @@ export default function RetailEligibilityStatusPage() {
           literally "eligible", so this must check "payment_pending". */}
       {stage === "payment_pending" && (
         <div style={{
-          background: C.white, border: `1.5px solid ${C.border}`,
+          background: "var(--c-surface)", border: `1.5px solid ${"var(--c-border)"}`,
           borderRadius: RETAIL_THEME.radius.md, padding: "20px 22px",
           display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap", justifyContent: "space-between",
         }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: C.navy, marginBottom: 4 }}>Next step: complete payment</div>
-            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, maxWidth: 460 }}>
+            <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)", marginBottom: 4 }}>Next step: complete payment</div>
+            <div style={{ fontSize: 13, color: "var(--c-text-muted)", lineHeight: 1.6, maxWidth: 460 }}>
               You're eligible — complete the service fee payment to unlock your full workspace and start document upload.
             </div>
             {payError && <div style={{ marginTop: 8, fontSize: 12, color: C.error, fontWeight: 600 }}>{payError}</div>}
           </div>
           <button onClick={handlePayNow} disabled={payLoading}
-            style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 22px", fontWeight: 800, fontSize: 14, cursor: payLoading ? "not-allowed" : "pointer", opacity: payLoading ? 0.7 : 1, flexShrink: 0 }}>
+            style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "13px 22px", fontWeight: 800, fontSize: 14, cursor: payLoading ? "not-allowed" : "pointer", opacity: payLoading ? 0.7 : 1, flexShrink: 0 }}>
             {payLoading ? "Starting…" : "Pay Now →"}
           </button>
         </div>
@@ -470,8 +470,8 @@ export default function RetailEligibilityStatusPage() {
           }}>
             <div style={{ fontSize: 24, flexShrink: 0 }}>✕</div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: C.navy, marginBottom: 4 }}>Not approved — here's why</div>
-              <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.75 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)", marginBottom: 4 }}>Not approved — here's why</div>
+              <div style={{ fontSize: 14, color: "var(--c-text-muted)", lineHeight: 1.75 }}>
                 {application?.eligibility_notes || "Your advisor did not find a clear basis for eligibility based on the information provided. Please review your answers below and resubmit."}
               </div>
             </div>
@@ -489,8 +489,8 @@ export default function RetailEligibilityStatusPage() {
         }}>
           <div style={{ fontSize: 24, flexShrink: 0 }}>📝</div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: C.navy, marginBottom: 4 }}>Note from our team</div>
-            <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.75 }}>{reviewNotes}</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)", marginBottom: 4 }}>Note from our team</div>
+            <div style={{ fontSize: 14, color: "var(--c-text-muted)", lineHeight: 1.75 }}>{reviewNotes}</div>
           </div>
         </div>
       )}
@@ -498,7 +498,7 @@ export default function RetailEligibilityStatusPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
 
         {/* ── Journey timeline ── */}
-        <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: "24px 24px 28px" }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: "24px 24px 28px" }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 22 }}>
             Your journey
           </div>
@@ -506,18 +506,18 @@ export default function RetailEligibilityStatusPage() {
         </div>
 
         {/* ── Submitted information ── */}
-        <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: "24px 24px 28px" }}>
+        <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: "24px 24px 28px" }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 16 }}>
             Information on file
           </div>
           {infoRows.length === 0 ? (
-            <div style={{ fontSize: 14, color: C.muted }}>No submitted information on record yet.</div>
+            <div style={{ fontSize: 14, color: "var(--c-text-muted)" }}>No submitted information on record yet.</div>
           ) : (
-            <div style={{ display: "grid", gap: 1, background: C.border, borderRadius: RETAIL_THEME.radius.sm, overflow: "hidden", border: `1px solid ${C.border}` }}>
+            <div style={{ display: "grid", gap: 1, background: "var(--c-border)", borderRadius: RETAIL_THEME.radius.sm, overflow: "hidden", border: `1px solid ${"var(--c-border)"}` }}>
               {infoRows.map(({ label, value }) => (
-                <div key={label} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "11px 16px", background: C.white, alignItems: "center" }}>
-                  <div style={{ fontSize: 12, color: C.muted, fontWeight: 600, flexShrink: 0 }}>{label}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, textAlign: "right", overflowWrap: "anywhere" }}>{String(value)}</div>
+                <div key={label} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "11px 16px", background: "var(--c-surface)", alignItems: "center" }}>
+                  <div style={{ fontSize: 12, color: "var(--c-text-muted)", fontWeight: 600, flexShrink: 0 }}>{label}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--c-text)", textAlign: "right", overflowWrap: "anywhere" }}>{String(value)}</div>
                 </div>
               ))}
             </div>

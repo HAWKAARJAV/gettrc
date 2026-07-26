@@ -8,9 +8,9 @@ const C = RETAIL_THEME.colors;
 
 function Card({ eyebrow, title, children }) {
   return (
-    <div style={{ background: C.white, borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${C.border}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
+    <div style={{ background: "var(--c-surface)", borderRadius: RETAIL_THEME.radius.lg, border: `1px solid ${"var(--c-border)"}`, boxShadow: RETAIL_THEME.shadows.card, padding: 24 }}>
       {eyebrow && <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 8 }}>{eyebrow}</div>}
-      {title && <h2 style={{ fontSize: 24, fontWeight: 700, color: C.navy, marginBottom: 14 }}>{title}</h2>}
+      {title && <h2 style={{ fontSize: 24, fontWeight: 700, color: "var(--c-text)", marginBottom: 14 }}>{title}</h2>}
       {children}
     </div>
   );
@@ -81,39 +81,39 @@ export default function RetailResidencyTrackerPage() {
   return (
     <div style={{ display: "grid", gap: 18 }}>
       <Card eyebrow="Residency presence tracker" title="UAE day-count control center">
-        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 14, lineHeight: 1.8, maxWidth: 760 }}>
           Presence days are calculated from travel records and used as operational evidence during TRC review.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 14, marginTop: 18 }}>
-          <div style={{ background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 18 }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>UAE presence</div>
-            <div style={{ fontSize: 34, fontWeight: 800, color: C.navy }}>{summary.totalDays}</div>
-            <div style={{ fontSize: 13, color: C.muted }}>tracked days</div>
+          <div style={{ background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 18 }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>UAE presence</div>
+            <div style={{ fontSize: 34, fontWeight: 800, color: "var(--c-text)" }}>{summary.totalDays}</div>
+            <div style={{ fontSize: 13, color: "var(--c-text-muted)" }}>tracked days</div>
           </div>
           {summary.thresholds.map((threshold) => (
-            <div key={threshold.label} style={{ background: threshold.met ? C.successBg : C.offWhite, border: `1px solid ${threshold.met ? C.success : C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 18 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: threshold.met ? C.success : C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{threshold.met ? "Threshold met" : "Threshold open"}</div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: C.navy, lineHeight: 1.5 }}>{threshold.label}</div>
-              <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{Math.max(threshold.days - summary.totalDays, 0)} days remaining</div>
+            <div key={threshold.label} style={{ background: threshold.met ? C.successBg : "var(--c-bg)", border: `1px solid ${threshold.met ? C.success : "var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 18 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: threshold.met ? C.success : "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>{threshold.met ? "Threshold met" : "Threshold open"}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: "var(--c-text)", lineHeight: 1.5 }}>{threshold.label}</div>
+              <div style={{ fontSize: 13, color: "var(--c-text-muted)", marginTop: 4 }}>{Math.max(threshold.days - summary.totalDays, 0)} days remaining</div>
             </div>
           ))}
         </div>
       </Card>
 
       <Card eyebrow="Travel entry" title="Add travel period">
-        <p style={{ color: C.muted, fontSize: 13, lineHeight: 1.7, marginTop: -6, marginBottom: 14 }}>
+        <p style={{ color: "var(--c-text-muted)", fontSize: 13, lineHeight: 1.7, marginTop: -6, marginBottom: 14 }}>
           Log each period you were physically present in the UAE. Only UAE presence counts toward the residency thresholds above.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, alignItems: "end" }}>
           <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Entry date</label>
-            <input type="date" value={form.entryDate} onChange={(event) => setForm((prev) => ({ ...prev, entryDate: event.target.value }))} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Entry date</label>
+            <input type="date" value={form.entryDate} onChange={(event) => setForm((prev) => ({ ...prev, entryDate: event.target.value }))} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${"var(--c-border)"}`, color: "var(--c-text)", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
           </div>
           <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Exit date</label>
-            <input type="date" value={form.exitDate} onChange={(event) => setForm((prev) => ({ ...prev, exitDate: event.target.value }))} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${C.border}`, color: C.navy, fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--c-text-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8 }}>Exit date</label>
+            <input type="date" value={form.exitDate} onChange={(event) => setForm((prev) => ({ ...prev, exitDate: event.target.value }))} style={{ width: "100%", padding: "13px 15px", borderRadius: RETAIL_THEME.radius.sm, border: `1.5px solid ${"var(--c-border)"}`, color: "var(--c-text)", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
           </div>
-          <button onClick={addTrip} disabled={saving} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: C.white, border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "14px 18px", fontWeight: 800, cursor: saving ? "not-allowed" : "pointer" }}>
+          <button onClick={addTrip} disabled={saving} style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.goldDark})`, color: "#fff", border: "none", borderRadius: RETAIL_THEME.radius.sm, padding: "14px 18px", fontWeight: 800, cursor: saving ? "not-allowed" : "pointer" }}>
             {saving ? "Adding..." : "Add Period"}
           </button>
         </div>
@@ -122,20 +122,20 @@ export default function RetailResidencyTrackerPage() {
 
       <Card eyebrow="Residency timeline" title="Travel history">
         {loading ? (
-          <div style={{ color: C.muted, fontSize: 14 }}>Loading travel history...</div>
+          <div style={{ color: "var(--c-text-muted)", fontSize: 14 }}>Loading travel history...</div>
         ) : trips.length === 0 ? (
-          <div style={{ color: C.muted, fontSize: 14 }}>No travel periods have been added yet.</div>
+          <div style={{ color: "var(--c-text-muted)", fontSize: 14 }}>No travel periods have been added yet.</div>
         ) : (
           <div style={{ display: "grid", gap: 10 }}>
             {trips.map((trip) => (
-              <div key={trip.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: C.offWhite, border: `1px solid ${C.border}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
+              <div key={trip.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "center", background: "var(--c-bg)", border: `1px solid ${"var(--c-border)"}`, borderRadius: RETAIL_THEME.radius.sm, padding: 14 }}>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: C.navy }}>{trip.entry_date} to {trip.exit_date || "present"}</div>
-                  <div style={{ height: 6, borderRadius: 999, background: C.offWhite2, marginTop: 8, overflow: "hidden" }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--c-text)" }}>{trip.entry_date} to {trip.exit_date || "present"}</div>
+                  <div style={{ height: 6, borderRadius: 999, background: "var(--c-surface-2)", marginTop: 8, overflow: "hidden" }}>
                     <div style={{ width: `${Math.min(((trip.total_days || 0) / 183) * 100, 100)}%`, height: "100%", background: `linear-gradient(90deg, ${C.gold}, ${C.goldDark})` }} />
                   </div>
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: C.navy }}>{trip.total_days || 0} days</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--c-text)" }}>{trip.total_days || 0} days</div>
               </div>
             ))}
           </div>
