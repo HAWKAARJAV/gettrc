@@ -3,11 +3,11 @@ import { dispatchEmail } from "./_sendStatusEmail.js";
 import { initSentry, captureError } from "./_sentry.js";
 initSentry();
 
-// Runs once a day via Vercel Cron (see vercel.json) and emails the admin a
-// summary of the previous UAE calendar day: new signups, eligibility calls,
-// payments, document activity, and filings — plus a snapshot of the open
-// pipeline. This is a reporting job, not a state-changing one: every query
-// here is read-only.
+// Compiled daily admin report email — currently disabled.
+// Previously ran once a day via Vercel Cron and emailed the admin a
+// summary of the previous UAE calendar day. The cron is removed from
+// vercel.json; this handler also no-ops so the report is not sent
+// if the endpoint is hit manually. Every query below is read-only.
 //
 // Cron auth: Vercel automatically sends `Authorization: Bearer <CRON_SECRET>`
 // for scheduled invocations when the CRON_SECRET env var is set on the
@@ -51,7 +51,17 @@ function section(title, rows) {
     </div>`;
 }
 
+const SEND_DAILY_ADMIN_SUMMARY = false;
+
 export default async function handler(req, res) {
+  if (!SEND_DAILY_ADMIN_SUMMARY) {
+    return res.status(200).json({
+      success: true,
+      skipped: true,
+      reason: "Automated daily compiled report email to admin is disabled.",
+    });
+  }
+
   if (!isAuthorizedCronRequest(req)) return res.status(401).json({ error: "Unauthorized" });
 
   try {

@@ -5,8 +5,5 @@
   ],
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "framework": "vite",
-  "crons": [
-    { "path": "/api/dailyAdminSummary", "schedule": "0 20 * * *" }
-  ]
+  "framework": "vite"
 }
