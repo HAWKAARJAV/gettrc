@@ -138,6 +138,14 @@ function buildEmailHtml({ content, name, applicationId, siteUrl, notes, ctaUrl }
 // Exported for callers that need to send a fully custom HTML email rather
 // than one of the templated ones below (e.g. the daily admin summary).
 export async function dispatchEmail({ email, subject, html, logContext }) {
+  const isDailyAdminSummary =
+    logContext === "daily admin summary" ||
+    (typeof subject === "string" && /daily summary/i.test(subject));
+  if (isDailyAdminSummary) {
+    console.warn("[sendStatusEmail] Blocked disabled daily admin summary email");
+    return;
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.warn("[sendStatusEmail] RESEND_API_KEY not set — skipping email");
